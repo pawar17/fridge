@@ -520,6 +520,22 @@ label.lbl{display:block;font-size:12.5px;font-weight:800;color:var(--ink-2);marg
 .sum-ic.ok{background:var(--ok);color:#fff}
 .sum-ic svg.i{width:16px;height:16px;stroke-width:3}
 .e3.card{padding:12px}
+
+/* calorie budget */
+.budget{background:var(--soft);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.bud-head span{display:block;font-size:13.5px;font-weight:700;color:var(--ink-2)}
+.bud-head b{display:block;font-size:40px;font-weight:900;line-height:1.05;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.bud-head small{font-size:17px;font-weight:800;color:var(--ink-2)}
+.bud-bar{height:12px;border-radius:12px;background:var(--line);overflow:hidden}
+.bud-bar span{display:block;height:100%;border-radius:12px;background:var(--accent);transition:width .6s}
+.bud-bar span.over{background:var(--bad)}
+.bud-eq{display:flex;align-items:flex-start;justify-content:space-between;gap:2px;text-align:center}
+.bud-eq>div{flex:1;min-width:0}
+.bud-eq b{display:block;font-size:17px;font-weight:900;font-variant-numeric:tabular-nums}
+.bud-eq span{display:block;font-size:11px;font-weight:700;color:var(--ink-2);line-height:1.2}
+.bud-eq i{font-style:normal;font-weight:900;color:var(--ink-2);padding-top:1px;font-size:16px}
+.bud-def{font-size:12.5px;font-weight:600;border-top:1.5px solid var(--line);padding-top:10px}
+.bud-note{margin:0;font-size:12px;font-weight:600;color:var(--ink-2);line-height:1.4}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1556,7 +1572,7 @@ function burnFor(id) {
 const FLOOR = () => (body()?.sex === "m" ? 1500 : 1200);
 function goalFor(id) {
   const st = S.settings;
-  if (st.goalMode === "auto" && bodyReady()) { const b = burnFor(id); return Math.max(FLOOR(), Math.round((b.total - (+st.deficit || 500)) / 10) * 10); }
+  if (st.goalMode === "auto" && bodyReady()) { const b = burnFor(id); return Math.max(FLOOR(), Math.round(b.total - (+st.deficit || 500))); }
   return +st.kcal || 1600;
 }
 const macroOf = (id, k) => (dayOf(id).meals || []).reduce((s, m) => s + (+m[k] || 0), 0);
@@ -1705,6 +1721,24 @@ function vBuild(b) {
   return h;
 }
 
+
+/* ---------- calorie budget: burned − deficit goal − eaten = left ---------- */
+function budgetCard(T) {
+  if (S.settings.noNumbers) return "";
+  const eaten = kcalOf(T), b = bodyReady() ? burnFor(T) : null, auto = !!b && S.settings.goalMode !== "fixed";
+  const gd = +S.settings.deficit || 500, goal = goalFor(T), left = goal - eaten, floorUsed = auto && goal > b.total - gd, steps = +actOf(T).steps || 0;
+  const pill = (v, l, cls = "") => `<div class="${cls}"><b>${num(v)}</b><span>${l}</span></div>`;
+  const eq = auto ? (floorUsed ? pill(goal, "minimum budget") : pill(b.total, "burned") + `<i>−</i>` + pill(gd, "deficit goal")) : pill(goal, "daily goal");
+  let note = auto ? `“Burned” is resting burn + ${num(steps)} steps${workoutsOn(T).length ? " + workouts" : ""} so far. It goes up as you move, and so does what you can eat.` : b ? "You're on a fixed goal. Switch to “Follow my activity” in Calories to use what you burn." : "Add your body stats in Calories so this is based on what you actually burn.";
+  if (floorUsed) note = `Your burn minus a ${num(gd)} deficit would be under ${num(FLOOR())} kcal, so your budget stays at ${num(FLOOR())}. ` + note;
+  const def = b ? b.total - eaten : null;
+  return `<div class="budget"><div class="bud-head"><span>${left >= 0 ? "You can still eat" : "You're over your budget by"}</span><b class="${left >= 0 ? "" : "t-bad"}">${num(Math.abs(left))}<small> kcal</small></b></div>
+    <div class="bud-bar" aria-hidden="true"><span class="${left < 0 ? "over" : ""}" style="width:${clamp(eaten / Math.max(goal, 1) * 100, 0, 100)}%"></span></div>
+    <div class="bud-eq">${eq}<i>−</i>${pill(eaten, "eaten")}<i>=</i>${pill(left, "left", left >= 0 ? "t-ok" : "t-bad")}</div>
+    ${b && eaten ? `<div class="bud-def">Deficit so far: <b class="${def >= gd ? "t-ok" : def < 0 ? "t-bad" : ""}">${def >= 0 ? num(def) : "−" + num(-def)} kcal</b> (burned ${num(b.total)} − eaten ${num(eaten)}) · goal ${num(gd)}</div>` : ""}
+    <p class="bud-note">${esc(note)}</p></div>`;
+}
+
 /* ---------- Calories & activity sheet ---------- */
 const lbToKg = lb => lb * 0.45359237, kgToLb = kg => kg / 0.45359237;
 function profDraft() {
@@ -1764,12 +1798,10 @@ function vCalories() {
       : def >= gd ? `On track: ${num(def)} kcal deficit so far (goal ${num(gd)}). ${left > 0 ? `About ${num(left)} kcal left if you're still hungry.` : ""}`
       : def > 0 ? `${num(def)} kcal deficit so far, ${num(gd - def)} short of your goal. ${Math.ceil((gd - def) / kcalPerStep() / 100) * 100 <= 8000 ? `A walk of about ${num(Math.ceil((gd - def) / kcalPerStep() / 100) * 100)} steps would close it.` : "A walk or a lighter dinner would close it."}`
       : `${num(-def)} kcal over your burn today. A lighter dinner or a walk helps; one day doesn't undo a week.`;
-    if (!nn) h += `<div class="energy-hero"><div class="e3"><div><span>Eaten</span><b>${num(eaten)}</b></div><div><span>Burned</span><b>${num(b.total)}</b></div><div class="${def >= gd ? "t-ok" : def >= 0 ? "" : "t-bad"}"><span>${def >= 0 ? "Deficit" : "Over"}</span><b>${num(Math.abs(def))}</b></div></div>
-      <div class="ebar"><span class="eaten" style="width:${clamp(eaten / Math.max(b.total, 1) * 100, 0, 100)}%"></span><i style="left:${clamp(goal / Math.max(b.total, 1) * 100, 0, 100)}%" title="your target"></i></div>
-      <p>${esc(status)}</p>${eaten && eaten < FLOOR() * 0.8 && new Date().getHours() >= 20 ? `<p class="t-warn" style="font-size:12.5px">Eating well under ${num(FLOOR())} kcal regularly isn't recommended. Make sure you're getting enough.</p>` : ""}</div>`;
+    if (!nn) h += budgetCard(T) + (eaten ? `<div class="card tiny" style="font-weight:600">${esc(status)}</div>` : "") + (eaten && eaten < FLOOR() * 0.8 && new Date().getHours() >= 20 ? `<p class="t-warn tiny" style="margin:0;font-weight:600">Eating well under ${num(FLOOR())} kcal regularly isn't recommended. Make sure you're getting enough.</p>` : "");
     else h += `<div class="energy-hero"><p>${steps ? `${num(steps)} steps today.` : "Log steps or a workout to see your activity."} ${(d.meals || []).length} meal${(d.meals || []).length === 1 ? "" : "s"} logged.</p></div>`;
   } else if (!nn) {
-    const goal = goalFor(T); h += `<div class="energy-hero"><div class="e3"><div><span>Eaten</span><b>${num(eaten)}</b></div><div><span>Goal</span><b>${num(goal)}</b></div><div><span>Left</span><b>${num(Math.max(0, goal - eaten))}</b></div></div><p>Add your body stats above to switch to a goal that follows your activity.</p></div>`;
+    h += budgetCard(T);
   }
   if (!nn) { const p = proteinOf(T), c = macroOf(T, "carbs"), f = macroOf(T, "fat"), pg = +S.settings.protein || 100;
     h += `<div class="macros"><div><span>Protein</span><b>${num(p)} / ${num(pg)} g</b><div class="bar"><span style="width:${clamp(p / pg * 100, 0, 100)}%"></span></div></div>${c || f ? `<div><span>Carbs</span><b>${num(c)} g</b></div><div><span>Fat</span><b>${num(f)} g</b></div>` : ""}</div>`; }
@@ -1863,6 +1895,7 @@ function vFitness() {
   const steps = +actOf(T).steps || 0, wk = weekWorkouts(T), m = wkMinutes(T);
   let h = `<div class="stack"><div class="seg">${[["today", "Today"], ["goals", "Goals"], ["history", "History"]].map(([k, l]) => `<button class="${tab === k ? "on" : ""}" data-act="fit-tab" data-v="${k}">${l}</button>`).join("")}</div>`;
   if (tab === "today") {
+    h += budgetCard(T);
     h += `<div class="rings-card">${ringsSvg(T, 118)}<div class="rings-legend">
       <div><i class="r-steps"></i><b>${num(steps)}</b><span>of ${num(stepGoal())} steps</span></div>
       <div><i class="r-move"></i><b>${m} min</b><span>of ${F.activeMin} min workout</span></div>
@@ -1870,7 +1903,7 @@ function vFitness() {
     const typeGoals = Object.entries(F.types || {}).filter(([, n]) => n > 0);
     if (typeGoals.length) h += `<div class="chipset">${typeGoals.map(([t, n]) => { const done = wk.filter(w => w.type === t).length; return `<span class="goal-chip ${done >= n ? "done" : ""}">${(WK[t] || [])[1] || "💪"} ${esc((WK[t] || [])[2] || t)} ${done}/${n}</span>`; }).join("")}</div>`;
     h += activityBlock(T, C, nn);
-    if (bodyReady() && !nn) { const b = burnFor(T); h += `<div class="card tiny" style="font-weight:600">Activity adds about <b>${num(b.move)} kcal</b> to your burn today (${num(b.total)} total). <button class="linkish" data-act="open" data-sheet="calories">See calories →</button></div>`; }
+    h += `<button class="btn soft block" data-act="open" data-sheet="calories">Meals & calorie details</button>`;
     h += `<button class="btn soft block" data-act="open" data-sheet="summary">🌙 See today's summary</button>`;
   }
   if (tab === "goals") {
