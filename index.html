@@ -152,7 +152,9 @@ svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke
 
 #mag-score{--mc:var(--m-mint);--r:-6deg;width:min(26cqw,70cqh);height:min(26cqw,70cqh);border-radius:50%;color:#10392b}
 #mag-score b{font-size:clamp(18px,6cqw,24px);font-weight:900;letter-spacing:-.01em}
-#mag-lab{--mc:var(--m-lilac);--r:4deg;width:min(24cqw,62cqh);height:min(24cqw,62cqh);color:#2a1d5c}
+#mag-lab{--mc:var(--m-lilac);--r:4deg;width:min(24cqw,62cqh);height:min(24cqw,62cqh);color:#2a1d5c;gap:0}
+#mag-lab .move-ring svg{width:min(9cqw,24cqh);height:min(9cqw,24cqh);display:block}
+#mag-lab b{font-size:12px}
 .letters{position:absolute;left:44px;top:50%;transform:translateY(-50%);display:flex;gap:2px;pointer-events:none}
 .letters span{font-size:clamp(20px,7.5cqw,30px);font-weight:900;color:var(--lc);text-shadow:0 1px 0 rgba(255,255,255,.6),0 3px 0 rgba(0,0,0,.18);transform:rotate(var(--lr))}
 
@@ -482,6 +484,42 @@ label.lbl{display:block;font-size:12.5px;font-weight:800;color:var(--ink-2);marg
 .tips div{background:var(--soft);border-radius:12px;padding:8px 12px;font-size:13.5px}
 .tips b{font-weight:800}
 .tips span{display:block;color:var(--ink-2);font-size:12px;font-weight:600}
+
+/* fitness & summary */
+.rg-bg{opacity:.18} .rg{transition:stroke-dashoffset .8s cubic-bezier(.3,1.2,.5,1)}
+.r-steps{stroke:#2fb36d} .r-move{stroke:#ff7a6b} .r-week{stroke:#6a8cff}
+.rings-legend i.r-steps{background:#2fb36d} .rings-legend i.r-move{background:#ff7a6b} .rings-legend i.r-week{background:#6a8cff}
+.rings-card{display:flex;align-items:center;gap:16px;background:var(--soft);border-radius:20px;padding:14px}
+.rings-card svg{flex:none}
+.rings-legend{display:flex;flex-direction:column;gap:8px;min-width:0}
+.rings-legend div{display:grid;grid-template-columns:12px auto;column-gap:8px;align-items:baseline}
+.rings-legend i{width:10px;height:10px;border-radius:50%;display:block;grid-row:span 2;align-self:center}
+.rings-legend b{font-size:17px;font-weight:900;font-variant-numeric:tabular-nums}
+.rings-legend span{grid-column:2;font-size:12px;color:var(--ink-2);font-weight:600}
+.goal-chip{border-radius:999px;padding:6px 11px;font-weight:700;font-size:13px;background:var(--soft)}
+.goal-chip.done{background:var(--c-green);color:var(--c-green-i)}
+.type-goals{display:grid;grid-template-columns:1fr;gap:6px}
+.tg{display:flex;align-items:center;justify-content:space-between;gap:6px;background:var(--tile);border-radius:12px;padding:5px 6px 5px 10px;font-size:13px;font-weight:700;min-width:0}
+.tg span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.tg.on{outline:2px solid var(--ok)}
+.stepper.sm button{width:26px;height:26px;font-size:15px}
+.stepper.sm output{min-width:18px;font-size:13px}
+.big-num{font-size:22px;font-weight:900;padding:6px 0}
+.linkish{border:0;background:none;padding:0;color:var(--accent);font-weight:800;font-size:inherit}
+.chart .s-bar{fill:var(--c-blue-i);opacity:.45} .chart .s-bar.hit{fill:var(--ok);opacity:.7} .chart .s-bar.today{opacity:1}
+.act-row{display:flex;align-items:center;gap:12px;width:100%;border:0;border-radius:16px;background:var(--soft);padding:10px 14px;text-align:left}
+.act-row div{flex:1;min-width:0} .act-row b{display:block;font-weight:800;font-size:14.5px} .act-row small{display:block;color:var(--ink-2);font-weight:600;font-size:12.5px}
+.act-rings{flex:none;display:grid}
+.sum-hero{background:linear-gradient(160deg,var(--c-violet),var(--c-blue));border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.sum-date{font-size:12.5px;font-weight:800;color:var(--c-violet-i)}
+.sum-hero h3{margin:0;font-size:19px;font-weight:900;line-height:1.3;text-wrap:balance}
+.sum-top{display:flex;align-items:center;gap:16px}
+.sum-score b{display:block;font-size:34px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.sum-score span{font-size:12.5px;font-weight:700;color:var(--ink-2)}
+.sum-ic{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--soft);color:var(--ink-2);font-weight:900;flex:none}
+.sum-ic.ok{background:var(--ok);color:#fff}
+.sum-ic svg.i{width:16px;height:16px;stroke-width:3}
+.e3.card{padding:12px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -517,7 +555,7 @@ label.lbl{display:block;font-size:12.5px;font-weight:800;color:var(--ink-2);marg
           <div class="face front" id="door-freezer">
             <button class="handle h-freezer" data-act="toggle" data-comp="freezer" aria-label="Open freezer"><span class="hit"></span></button>
             <div class="magnet gloss badge" id="mag-score" data-mag="score" data-act="open" data-sheet="insights" role="button" tabindex="0" aria-label="Your weekly progress"></div>
-            <div class="magnet gloss badge" id="mag-lab" data-mag="lab" data-act="toggle" data-comp="freezer" role="button" tabindex="0" aria-label="Open freezer"></div>
+            <div class="magnet gloss badge" id="mag-lab" data-mag="lab" data-act="open" data-sheet="fitness" role="button" tabindex="0" aria-label="Fitness and activity"></div>
           </div>
           <div class="face back"></div>
         </div>
@@ -798,11 +836,11 @@ function startLocal() {
   usageLoaded(us);
   let lr = null; try { lr = JSON.parse(localStorage.getItem("fridge.learn") || "null"); } catch (_) {}
   learnLoaded(lr);
-  UI.setLoaded = true; S.ready = true; renderAll(); maybeOnboard();
+  UI.setLoaded = true; S.ready = true; renderAll(); maybeOnboard(); maybeSummary();
 }
 function startDb(db) {
   store.db = db; S.mode = "db";
-  let got = 0; const mark = () => { if (++got >= 2) S.ready = true; renderAll(); refreshSheet(); maybeOnboard(); };
+  let got = 0; const mark = () => { if (++got >= 2) S.ready = true; renderAll(); refreshSheet(); maybeOnboard(); maybeSummary(); };
   db.doc("metrics/usage").get().then(x => usageLoaded(x.exists ? x.data() : null)).catch(() => usageLoaded(null));
   db.doc("learn/main").get().then(x => { learnLoaded(x.exists ? x.data() : null); refreshSheet(); }).catch(() => learnLoaded(null));
   const onErr = e => { console.warn(e); if (e?.code === "revoked") toast("This page lost access to your saved data."); };
@@ -955,16 +993,18 @@ function scheduleNudges() {
     try {
       const pend = await Native.LN.getPending();
       if (pend?.notifications?.length) await Native.LN.cancel({ notifications: pend.notifications.map(n => ({ id: n.id })) });
-      if (!S.settings.nudge) return;
+      if (!S.settings.nudge && fit().summaryOn === false) return;
       const perm = await Native.LN.checkPermissions(); if (perm?.display !== "granted") return;
       const [hh, mm] = String(S.settings.nudgeTime || "17:30").split(":").map(Number), out = [];
       for (let d = 0; d < 7; d++) {
-        const id = addDays(todayId(), d), when = parseId(id); when.setHours(hh || 17, mm || 0, 0, 0);
+        const id = addDays(todayId(), d), when = parseId(id); when.setHours(Number.isFinite(hh) ? hh : 17, Number.isFinite(mm) ? mm : 30, 0, 0);
         if (when <= new Date()) continue;
         const soon = active().filter(i => { const left = diffDays(id, i.expiresAt); return left >= 0 && left <= 1 && !["door", "freezer"].includes(i.zone); }).sort((a, b) => a.expiresAt.localeCompare(b.expiresAt));
-        if (!soon.length) continue;
+        if (!soon.length || !S.settings.nudge) continue;
         out.push({ id: 1000 + d, title: `Use up tonight: ${soon.slice(0, 2).map(i => i.name.toLowerCase()).join(" & ")}`, body: soon.length > 2 ? `${soon.length - 2} more going bad soon. Tap for a recipe.` : "Tap for a quick recipe that uses it.", schedule: { at: when, allowWhileIdle: true }, extra: { open: "recipes" } });
       }
+      const F = fit();
+      if (F.summaryOn !== false) { const [sh, sm] = String(F.summaryTime || "20:30").split(":").map(Number); for (let d = 0; d < 7; d++) { const when = parseId(addDays(todayId(), d)); when.setHours(Number.isFinite(sh) ? sh : 20, Number.isFinite(sm) ? sm : 30, 0, 0); if (when > new Date()) out.push({ id: 2000 + d, title: "Your day in Fridge 🌙", body: "See your calories, steps and goals for today.", schedule: { at: when, allowWhileIdle: true }, extra: { open: "summary" } }); } }
       if (out.length) await Native.LN.schedule({ notifications: out });
     } catch (e) { console.warn("nudges", e); }
   }, 2500);
@@ -1305,7 +1345,7 @@ function qBody() {
   if (Q.answer) h += `<div class="answer"><div class="q-asked">“${esc(Q.asked)}”</div><p>${esc(Q.answer)}</p>${Q.offline ? `<small>Offline ideas from the built-in recipe book. ${window.claude ? "" : "Add an AI key in Settings for custom answers."}</small>` : ""}</div>` + (SH.rec?.list?.length ? SH.rec.list.map((r, i) => recipeCard(r, i)).join("") : "");
   if (Q.err) h += `<div class="err">${esc(Q.err)}</div>`;
   if (!t && !Q.answer && Q.status !== "asking") {
-    h += `<div class="section-t">Ask</div><div class="chipset">${["What can I make tonight?", "High-protein dinner with what I have", "What's about to go bad?", "Quick breakfast ideas"].map(x => `<button data-act="q-suggest" data-t="${esc(x)}">${esc(x)}</button>`).join("")}</div>`;
+    h += `<div class="section-t">Ask</div><div class="chipset">${["What can I make tonight?", "High-protein dinner with what I have", "What's about to go bad?", "Quick breakfast ideas"].map(x => `<button data-act="q-suggest" data-t="${esc(x)}">${esc(x)}</button>`).join("")}<button data-act="open" data-sheet="summary">🌙 How did I do today?</button><button data-act="open" data-sheet="fitness">🏃 My fitness</button></div>`;
     const ba = buyAgain();
     if (ba.length) h += `<div class="section-t">Bought before</div><div class="chipset">${ba.map(b => `<button data-act="q-again" data-t="${esc(b.name)}">+ ${esc(b.name)}</button>`).join("")}</div>`;
     h += `<div class="section-t">Try typing</div><div class="tips"><div><b>2 avocados, milk, chicken</b><span>adds food to your fridge</span></div><div><b>ate naya kids meal</b><span>logs a meal with real numbers</span></div><div><b>8400 steps</b> · <b>30 min yoga</b><span>logs activity</span></div><div><b>what can I make with eggs?</b><span>asks for recipes</span></div></div>`;
@@ -1342,6 +1382,7 @@ function quickAdd() {
 const WK_WORDS = [["walk", /\b(walk(ed|ing)?)\b/], ["run", /\b(run|ran|running|jog(ged|ging)?)\b/], ["gym", /\b(gym|weights?|lift(ed|ing)?|strength|workout)\b/], ["yoga", /\byoga\b/], ["pilates", /\bpilates\b/], ["cycle", /\b(cycl\w*|bike|biking|spin|peloton)\b/], ["hiit", /\bhiit\b/], ["dance", /\bdanc\w*\b/], ["swim", /\bswim\w*\b/], ["hike", /\bhik(e|ed|ing)\b/], ["sport", /\b(tennis|badminton|basketball|soccer|football|pickleball|squash|volleyball)\b/]];
 function detectIntent(t) {
   const s = t.trim().toLowerCase(); let m;
+  if (/\b(how did i do|my day|day summary|daily summary|today'?s summary|summary)\b/.test(s)) return { kind: "summary" };
   if ((m = s.match(/^(?:my\s+)?(?:weight|weigh(?:ed)?|i weigh|weighed in at)\s*(?:is|at)?\s*(\d{2,3}(?:\.\d)?)\s*(lb|lbs|pounds|kg|kgs)?\b/))) return { kind: "weight", v: +m[1], unit: m[2] && /kg/.test(m[2]) ? "kg" : m[2] ? "lb" : ((S.settings.units || "us") === "us" ? "lb" : "kg") };
   if ((m = s.match(/(?:^|\b)([\d,]{3,6})\s*steps?\b/)) || (m = s.match(/\bsteps?\s*(?:today|so far)?\s*[:=]?\s*([\d,]{3,6})\b/))) return { kind: "steps", v: +m[1].replace(/,/g, "") };
   if ((m = s.match(/\b(\d{2,4})\s*(?:active|move)\s*(?:cal|kcal|calories)?\b/)) || (m = s.match(/\bactive\s*(?:energy|cal\w*)?\s*[:=]?\s*(\d{2,4})\b/))) return { kind: "active", v: +m[1] };
@@ -1356,6 +1397,7 @@ function detectIntent(t) {
 }
 function intentCard(it) {
   const nn = S.settings.noNumbers;
+  if (it.kind === "summary") return `<button class="intent" data-act="q-intent"><span>🌙</span><div><b>See today's summary</b><small>Calories, steps, workouts and goals</small></div>${icon("check")}</button>`;
   if (it.kind === "steps") return `<button class="intent" data-act="q-intent"><span>👟</span><div><b>Set today's steps to ${num(it.v)}</b><small>${bodyReady() && !nn ? `≈ ${num(Math.max(0, it.v - 2500) * kcalPerStep())} kcal on top of your everyday burn` : "Counts toward your step goal"}</small></div>${icon("check")}</button>`;
   if (it.kind === "active") return `<button class="intent" data-act="q-intent"><span>⌚</span><div><b>${num(it.v)} active calories today</b><small>From Apple Health. Replaces the step estimate.</small></div>${icon("check")}</button>`;
   if (it.kind === "workout") { const w = WK[it.type]; return `<button class="intent" data-act="q-intent"><span>${w[1]}</span><div><b>Log ${w[2].toLowerCase()} · ${it.min} min</b><small>${bodyReady() && !nn ? `≈ ${num(workoutKcal({ type: it.type, min: it.min }))} kcal` : "Adds to today's activity"}</small></div>${icon("check")}</button>`; }
@@ -1366,6 +1408,7 @@ function intentCard(it) {
 function runIntent(it) {
   if (!it) return;
   const done = msg => { SH.q.text = ""; const el = $("#quickIn"); if (el) el.value = ""; SH.q.intent = null; renderQuick(); toast(msg); };
+  if (it.kind === "summary") { closeSheet(); setTimeout(() => openSheet("summary"), 200); return; }
   if (it.kind === "steps") { setSteps(it.v); return done(`${num(it.v)} steps logged for today.`); }
   if (it.kind === "active") { editAct(todayId(), a => { a.active = it.v; }); return done(`${num(it.v)} active calories logged.`); }
   if (it.kind === "workout") { addWorkout(it.type, it.min); return done(`${WK[it.type][2]} · ${it.min} min logged.`); }
@@ -1517,7 +1560,7 @@ function goalFor(id) {
   return +st.kcal || 1600;
 }
 const macroOf = (id, k) => (dayOf(id).meals || []).reduce((s, m) => s + (+m[k] || 0), 0);
-function editAct(id, fn) { editDay(id, d => { d.act = { ...(d.act || {}) }; fn(d.act); }); renderAll(); if (SH?.kind === "calories") renderSheet(); }
+function editAct(id, fn) { editDay(id, d => { d.act = { ...(d.act || {}) }; fn(d.act); }); renderAll(); if (["calories", "fitness", "summary"].includes(SH?.kind)) renderSheet(); }
 function setSteps(n, id = todayId()) { editAct(id, a => { a.steps = Math.max(0, Math.round(n)); }); track("stepsLogged"); }
 function addWorkout(type, min, id = todayId()) { editAct(id, a => { a.workouts = [...(a.workouts || []), { id: uid(), type, min: Math.max(1, Math.round(min)) }]; }); }
 function parseHealthPaste(t) {
@@ -1730,24 +1773,9 @@ function vCalories() {
   }
   if (!nn) { const p = proteinOf(T), c = macroOf(T, "carbs"), f = macroOf(T, "fat"), pg = +S.settings.protein || 100;
     h += `<div class="macros"><div><span>Protein</span><b>${num(p)} / ${num(pg)} g</b><div class="bar"><span style="width:${clamp(p / pg * 100, 0, 100)}%"></span></div></div>${c || f ? `<div><span>Carbs</span><b>${num(c)} g</b></div><div><span>Fat</span><b>${num(f)} g</b></div>` : ""}</div>`; }
-  // activity
-  const b = bodyReady() ? burnFor(T) : null;
-  h += `<div class="section-t">Activity today</div><div class="card stack" style="gap:10px">
-    <div class="row" style="flex-wrap:nowrap;gap:8px"><div style="flex:1;min-width:0"><label class="lbl" for="stepsIn">👟 Steps</label><input class="inp" id="stepsIn" type="number" inputmode="numeric" placeholder="e.g. 8400" value="${steps || ""}"></div><button class="btn sm" style="align-self:end;padding:12px 12px" data-act="health-paste">Paste from Health</button></div>
-    <div><div class="bar"><span style="width:${clamp(steps / sg * 100, 0, 100)}%;background:var(--ok)"></span></div><div class="muted tiny" style="margin-top:4px">${num(steps)} of ${num(sg)} steps${b && !nn && b.src !== "health" ? ` · +${num(b.steps)} kcal` : ""}${a.src === "health" && a.at ? ` · from Health ${new Date(a.at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : ""}</div></div>
-    ${C.pasteBox ? `<div class="row" style="flex-wrap:nowrap"><input class="inp" id="healthPaste" placeholder="Paste here: fridge:steps=…"><button class="btn sm" data-act="health-apply">Use</button></div>` : ""}
-    <div><label class="lbl" for="activeIn">⌚ Active calories from Apple Health (optional)</label><input class="inp" id="activeIn" type="number" inputmode="numeric" placeholder="Most accurate if you wear an Apple Watch" value="${a.active ?? ""}"></div>
-    ${(a.workouts || []).length ? `<div class="list">${a.workouts.map(w => { const m = WK[w.type] || ["", "💪", "Workout"]; const covered = steps > 0 && ["walk", "run", "hike"].includes(w.type) && a.active == null; return `<div class="li"><span style="font-size:20px">${m[1]}</span><div class="main"><b>${esc(m[2])} · ${w.min} min</b><small>${a.active != null && a.active !== "" ? "included in Apple active calories" : covered ? "already counted in your steps" : nn ? "" : `≈ ${num(workoutKcal(w))} kcal`}</small></div><button class="x-btn" data-act="wk-del" data-id="${esc(w.id)}" aria-label="Remove">${icon("x")}</button></div>`; }).join("")}</div>` : ""}
-    <div class="mini-lbl">Add a workout</div><div class="cats">${WORKOUTS.map(w => `<button class="${(C.wtype || "walk") === w[0] ? "on" : ""}" data-act="wk-type" data-v="${w[0]}">${w[1]} ${w[2]}</button>`).join("")}</div>
-    <div class="row" style="justify-content:space-between"><div class="stepper"><button data-act="wk-min" data-d="-5" aria-label="5 minutes less">−</button><output>${C.wmin || 30} min</output><button data-act="wk-min" data-d="5" aria-label="5 minutes more">+</button></div><button class="btn soft sm" data-act="wk-add">Add ${esc((WK[C.wtype || "walk"] || [])[2] || "")}${bodyReady() && !nn ? ` · ≈ ${num(workoutKcal({ type: C.wtype || "walk", min: C.wmin || 30 }))} kcal` : ""}</button></div>
-    <details class="tiny muted"><summary style="cursor:pointer;font-weight:700">Get steps from Apple Health in one tap (2-minute setup)</summary><ol class="howto">
-      <li>Open the <b>Shortcuts</b> app → <b>+</b> → name it <b>Fridge steps</b>.</li>
-      <li>Add <b>Find Health Samples</b>: Type <b>Steps</b>, Start Date <b>is today</b>. Then add <b>Calculate Statistics</b> → <b>Sum</b>.</li>
-      <li>Add another <b>Find Health Samples</b>: Type <b>Active Energy</b>, today, then <b>Calculate Statistics</b> → <b>Sum</b> (skip if you don't wear a Watch).</li>
-      <li>Add <b>Text</b> and type <code>fridge:steps=</code> then insert the first Statistics result, then <code>;active=</code> and the second.</li>
-      <li>Add <b>Copy to Clipboard</b>. Allow Health access when asked.</li>
-      <li>Run it (add it to your Home Screen or Back Tap), open Fridge, tap <b>Paste from Health</b>.</li></ol></details>
-  </div>`;
+  // activity (full controls live in Fitness)
+  const b = bodyReady() ? burnFor(T) : null, wks = workoutsOn(T);
+  h += `<button class="act-row" data-act="open" data-sheet="fitness"><span class="act-rings">${ringsSvg(T, 46)}</span><div><b>${num(steps)} steps${wks.length ? ` · ${wks.map(w => `${(WK[w.type] || [])[1] || "💪"} ${w.min}m`).join(" ")}` : ""}</b><small>${b && !nn ? `Activity adds ${num(b.move)} kcal today · ` : ""}Log steps & workouts in Fitness</small></div>${icon("plus")}</button>`;
   if (b && !nn) h += `<details class="tiny muted"><summary style="cursor:pointer;font-weight:700">How your burn is calculated</summary><div class="calc">
     <div class="lr"><span>Resting burn (${body().sex === "f" ? "female" : "male"}, ${body().age}, ${fmtW(body().weightKg)})</span><span>${num(bmr())}</span></div>
     ${b.src === "health" ? `<div class="lr"><span>+10% digestion</span><span>${num(b.base - bmr())}</span></div><div class="lr"><span>Apple Health active calories</span><span>${num(b.move)}</span></div>` : `<div class="lr"><span>+20% digestion & everyday life (covers ~2,500 steps)</span><span>${num(b.base - bmr())}</span></div><div class="lr"><span>Steps beyond 2,500 (${num(Math.max(0, steps - 2500))} × ${kcalPerStep().toFixed(3)} kcal)</span><span>${num(b.steps)}</span></div><div class="lr"><span>Workouts (MET-based)</span><span>${num(b.work)}</span></div>`}
@@ -1785,6 +1813,142 @@ function renderLogMatches() {
   if (!hits.length && !L.dbHits.length && !brand && !aiOn()) h += `<p class="muted tiny" style="margin:4px 0 0">Not in the built-in list. Tap “Enter numbers myself”, or add an AI key in Settings to look up any restaurant dish.</p>`;
   el.innerHTML = h;
 }
+
+/* ---------- fitness: goals, rings, history ---------- */
+const FIT_DEF = { activeMin: 30, weekWorkouts: 4, types: {}, weightGoalKg: null, summaryTime: "20:30", summaryOn: true };
+const fit = () => ({ ...FIT_DEF, ...(S.settings.fit || {}) });
+function setFit(patch) { S.settings = { ...S.settings, fit: { ...fit(), ...patch } }; putSettings(); renderAll(); }
+const stepGoal = () => +S.settings.stepGoal || 8000;
+function weekStart(id) { const d = parseId(id), wd = (d.getDay() + 6) % 7; return addDays(id, -wd); }
+const weekIds = id => { const s = weekStart(id); return Array.from({ length: 7 }, (_, i) => addDays(s, i)).filter(x => x <= todayId()); };
+const workoutsOn = id => actOf(id).workouts || [];
+const wkMinutes = id => workoutsOn(id).reduce((s, w) => s + (+w.min || 0), 0);
+function weekWorkouts(id) { return weekIds(id).flatMap(d => workoutsOn(d).map(w => ({ ...w, day: d }))); }
+function stepStreak() { let n = 0, d = todayId(); if ((+actOf(d).steps || 0) < stepGoal()) d = addDays(d, -1); while ((+actOf(d).steps || 0) >= stepGoal() && n < 400) { n++; d = addDays(d, -1); } return n; }
+function kmFromSteps(steps) { const b = body(); const stride = b ? b.heightCm * (b.sex === "m" ? 0.415 : 0.413) / 100 : 0.7; return steps * stride / 1000; }
+function avgDeficit(days = 7) { if (!bodyReady()) return null; const ids = Array.from({ length: days }, (_, i) => addDays(todayId(), -i)).filter(id => kcalOf(id) > 0 && id !== todayId()); if (!ids.length) return null; return Math.round(ids.reduce((s, id) => s + burnFor(id).total - kcalOf(id), 0) / ids.length); }
+function ring(cx, cy, r, w, frac, cls) { const C = 2 * Math.PI * r; return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke-width="${w}" class="rg-bg ${cls}"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke-width="${w}" stroke-linecap="round" class="rg ${cls}" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - clamp(frac, 0, 1))}" transform="rotate(-90 ${cx} ${cy})"/>`; }
+function ringsSvg(id, size = 120) {
+  const F = fit(), steps = +actOf(id).steps || 0, wk = weekWorkouts(id).length, m = wkMinutes(id);
+  return `<svg viewBox="0 0 120 120" width="${size}" height="${size}" aria-hidden="true">${ring(60, 60, 52, 11, steps / stepGoal(), "r-steps")}${ring(60, 60, 38, 11, m / F.activeMin, "r-move")}${ring(60, 60, 24, 11, wk / F.weekWorkouts, "r-week")}</svg>`;
+}
+function activityBlock(T, C, nn) {
+  const a = actOf(T), steps = +a.steps || 0, sg = stepGoal(), b = bodyReady() ? burnFor(T) : null;
+  return `<div class="card stack" style="gap:10px">
+    <div class="row" style="flex-wrap:nowrap;gap:8px"><div style="flex:1;min-width:0"><label class="lbl" for="stepsIn">👟 Steps</label><input class="inp" id="stepsIn" type="number" inputmode="numeric" placeholder="e.g. 8400" value="${steps || ""}"></div><button class="btn sm" style="align-self:end;padding:12px 12px" data-act="health-paste">Paste from Health</button></div>
+    <div><div class="bar"><span style="width:${clamp(steps / sg * 100, 0, 100)}%;background:var(--ok)"></span></div><div class="muted tiny" style="margin-top:4px">${num(steps)} of ${num(sg)} steps · ${kmFromSteps(steps).toFixed(1)} km${b && !nn && b.src !== "health" ? ` · +${num(b.steps)} kcal` : ""}${a.src === "health" && a.at ? ` · from Health ${new Date(a.at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : ""}</div></div>
+    ${C.pasteBox ? `<div class="row" style="flex-wrap:nowrap"><input class="inp" id="healthPaste" placeholder="Paste here: fridge:steps=…"><button class="btn sm" data-act="health-apply">Use</button></div>` : ""}
+    <div><label class="lbl" for="activeIn">⌚ Active calories from Apple Health (optional)</label><input class="inp" id="activeIn" type="number" inputmode="numeric" placeholder="Most accurate if you wear an Apple Watch" value="${a.active ?? ""}"></div>
+    ${(a.workouts || []).length ? `<div class="list">${a.workouts.map(w => { const m = WK[w.type] || ["", "💪", "Workout"]; const covered = steps > 0 && ["walk", "run", "hike"].includes(w.type) && a.active == null; return `<div class="li"><span style="font-size:20px">${m[1]}</span><div class="main"><b>${esc(m[2])} · ${w.min} min</b><small>${a.active != null && a.active !== "" ? "included in Apple active calories" : covered ? "already counted in your steps" : nn ? "" : `≈ ${num(workoutKcal(w))} kcal`}</small></div><button class="x-btn" data-act="wk-del" data-id="${esc(w.id)}" aria-label="Remove">${icon("x")}</button></div>`; }).join("")}</div>` : ""}
+    <div class="mini-lbl">Add a workout</div><div class="cats">${WORKOUTS.map(w => `<button class="${(C.wtype || "walk") === w[0] ? "on" : ""}" data-act="wk-type" data-v="${w[0]}">${w[1]} ${w[2]}</button>`).join("")}</div>
+    <div class="row" style="justify-content:space-between"><div class="stepper"><button data-act="wk-min" data-d="-5" aria-label="5 minutes less">−</button><output>${C.wmin || 30} min</output><button data-act="wk-min" data-d="5" aria-label="5 minutes more">+</button></div><button class="btn soft sm" data-act="wk-add">Add ${esc((WK[C.wtype || "walk"] || [])[2] || "")}${bodyReady() && !nn ? ` · ≈ ${num(workoutKcal({ type: C.wtype || "walk", min: C.wmin || 30 }))} kcal` : ""}</button></div>
+    <details class="tiny muted"><summary style="cursor:pointer;font-weight:700">Get steps from Apple Health in one tap (2-minute setup)</summary><ol class="howto">
+      <li>Open the <b>Shortcuts</b> app → <b>+</b> → name it <b>Fridge steps</b>.</li>
+      <li>Add <b>Find Health Samples</b>: Type <b>Steps</b>, Start Date <b>is today</b>. Then add <b>Calculate Statistics</b> → <b>Sum</b>.</li>
+      <li>Add another <b>Find Health Samples</b>: Type <b>Active Energy</b>, today, then <b>Calculate Statistics</b> → <b>Sum</b> (skip if you don't wear a Watch).</li>
+      <li>Add <b>Text</b> and type <code>fridge:steps=</code> then insert the first Statistics result, then <code>;active=</code> and the second.</li>
+      <li>Add <b>Copy to Clipboard</b>. Allow Health access when asked.</li>
+      <li>Run it (add it to your Home Screen or Back Tap), open Fridge, tap <b>Paste from Health</b>.</li></ol></details>
+  </div>`;
+}
+function stepsChart() {
+  const T = todayId(), ids = Array.from({ length: 14 }, (_, i) => addDays(T, i - 13)), vals = ids.map(id => +actOf(id).steps || 0), g = stepGoal();
+  const W = 330, H = 140, top = 16, bot = 22, L = 6, R = 6, max = Math.max(g * 1.25, ...vals, 1000), y = v => top + (H - top - bot) * (1 - v / max), bw = 15, gap = (W - L - R - bw * 14) / 13;
+  let s = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Steps, last 14 days">`;
+  ids.forEach((id, i) => { const x = L + i * (bw + gap), v = vals[i]; s += v ? `<rect class="s-bar ${v >= g ? "hit" : ""} ${id === T ? "today" : ""}" x="${x}" y="${y(v)}" width="${bw}" height="${H - bot - y(v)}" rx="4"><title>${num(v)} steps</title></rect>` : `<circle cx="${x + bw / 2}" cy="${H - bot - 2}" r="2" fill="var(--line)"/>`; if (i % 2 === 1 || id === T) s += `<text x="${x + bw / 2}" y="${H - 6}" text-anchor="middle">${parseId(id).getDate()}</text>`; });
+  return s + `<line class="c-target" x1="2" x2="${W - 2}" y1="${y(g)}" y2="${y(g)}"/><text x="${W - 2}" y="${y(g) - 5}" text-anchor="end">${num(g)}</text></svg>`;
+}
+function vFitness() {
+  const T = todayId(), F = fit(), C = SH.cal || (SH.cal = {}), tab = C.ftab || "today", nn = S.settings.noNumbers;
+  const steps = +actOf(T).steps || 0, wk = weekWorkouts(T), m = wkMinutes(T);
+  let h = `<div class="stack"><div class="seg">${[["today", "Today"], ["goals", "Goals"], ["history", "History"]].map(([k, l]) => `<button class="${tab === k ? "on" : ""}" data-act="fit-tab" data-v="${k}">${l}</button>`).join("")}</div>`;
+  if (tab === "today") {
+    h += `<div class="rings-card">${ringsSvg(T, 118)}<div class="rings-legend">
+      <div><i class="r-steps"></i><b>${num(steps)}</b><span>of ${num(stepGoal())} steps</span></div>
+      <div><i class="r-move"></i><b>${m} min</b><span>of ${F.activeMin} min workout</span></div>
+      <div><i class="r-week"></i><b>${wk.length}</b><span>of ${F.weekWorkouts} workouts this week</span></div></div></div>`;
+    const typeGoals = Object.entries(F.types || {}).filter(([, n]) => n > 0);
+    if (typeGoals.length) h += `<div class="chipset">${typeGoals.map(([t, n]) => { const done = wk.filter(w => w.type === t).length; return `<span class="goal-chip ${done >= n ? "done" : ""}">${(WK[t] || [])[1] || "💪"} ${esc((WK[t] || [])[2] || t)} ${done}/${n}</span>`; }).join("")}</div>`;
+    h += activityBlock(T, C, nn);
+    if (bodyReady() && !nn) { const b = burnFor(T); h += `<div class="card tiny" style="font-weight:600">Activity adds about <b>${num(b.move)} kcal</b> to your burn today (${num(b.total)} total). <button class="linkish" data-act="open" data-sheet="calories">See calories →</button></div>`; }
+    h += `<button class="btn soft block" data-act="open" data-sheet="summary">🌙 See today's summary</button>`;
+  }
+  if (tab === "goals") {
+    const us = (S.settings.units || "us") === "us", b = body(), cur = b?.weightKg, goalKg = F.weightGoalKg, ad = avgDeficit(), wgDisp = goalKg ? (us ? Math.round(kgToLb(goalKg)) : Math.round(goalKg * 10) / 10) : "";
+    h += `<div class="card stack" style="gap:12px">
+      <div class="grid2"><div><label class="lbl" for="stepGoalIn">Steps a day</label><input class="inp" id="stepGoalIn" type="number" inputmode="numeric" value="${stepGoal()}"></div><div><label class="lbl" for="fitMinIn">Workout minutes a day</label><input class="inp" id="fitMinIn" type="number" inputmode="numeric" value="${F.activeMin}"></div></div>
+      <div><label class="lbl">Workouts a week</label><div class="stepper"><button data-act="fit-week" data-d="-1" aria-label="Fewer">−</button><output>${F.weekWorkouts}</output><button data-act="fit-week" data-d="1" aria-label="More">+</button></div></div>
+      <div><div class="mini-lbl">Weekly goals by type (optional)</div><div class="type-goals">${WORKOUTS.map(w => { const n = +(F.types || {})[w[0]] || 0; return `<div class="tg ${n ? "on" : ""}"><span>${w[1]} ${w[2]}</span><div class="stepper sm"><button data-act="fit-type" data-t="${w[0]}" data-d="-1" aria-label="Less">−</button><output>${n || "–"}</output><button data-act="fit-type" data-t="${w[0]}" data-d="1" aria-label="More">+</button></div></div>`; }).join("")}</div></div></div>`;
+    h += `<div class="section-t">Weight goal</div><div class="card stack" style="gap:10px">${b ? `<div class="grid2"><div><label class="lbl">Now</label><div class="big-num">${fmtW(cur)}</div></div><div><label class="lbl" for="wGoalIn">Goal (${us ? "lb" : "kg"})</label><input class="inp" id="wGoalIn" type="number" inputmode="decimal" value="${wgDisp}" placeholder="optional"></div></div>
+      ${goalKg && cur > goalKg ? (ad && ad > 50 ? `<div class="tiny" style="font-weight:600">At your recent average deficit of ${num(ad)} kcal/day, that's about <b>${Math.ceil((cur - goalKg) * 7700 / ad / 7)} weeks</b> away (around ${fmtShort(addDays(todayId(), Math.ceil((cur - goalKg) * 7700 / ad)))}). Estimates; your weekly weigh-in is the real check.</div>` : `<div class="tiny muted">Log meals for a few days and it'll estimate when you'll get there.</div>`) : goalKg ? `<div class="tiny" style="font-weight:600">You're at or past your goal. Consider switching to maintenance (Calories → Your goal → Gentle).</div>` : ""}
+      <div class="tiny muted">Update your weight any time by typing “weight 127” in the bar.</div>` : `<div class="tiny muted">Add your body stats first.</div><button class="btn soft sm" data-act="open" data-sheet="calories">Set up body stats</button>`}</div>`;
+    h += `<div class="section-t">Daily summary</div><div class="card stack" style="gap:10px"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div><b>Show my day summary</b><div class="muted tiny">Opens once each evening${Native?.LN ? ", with a reminder" : ""}. If you miss it, you'll see it the next morning.</div></div><button class="switch ${F.summaryOn !== false ? "on" : ""}" data-act="fit-sumtoggle" role="switch" aria-checked="${F.summaryOn !== false}" aria-label="Day summary"></button></div>
+      ${F.summaryOn !== false ? `<div><label class="lbl" for="sumTimeIn">Time</label><input class="inp" id="sumTimeIn" type="time" value="${esc(F.summaryTime)}"></div>` : ""}</div>`;
+  }
+  if (tab === "history") {
+    const days14 = Array.from({ length: 14 }, (_, i) => addDays(T, -i)), wkAll = days14.flatMap(d => workoutsOn(d).map(w => ({ ...w, day: d })));
+    const wSteps = weekIds(T).reduce((s, d) => s + (+actOf(d).steps || 0), 0), wMin = wk.reduce((s, w) => s + (+w.min || 0), 0), streak = stepStreak();
+    h += `<div class="kpi"><div class="card"><b>${num(wSteps)}</b><span>steps this week · ${kmFromSteps(wSteps).toFixed(1)} km</span></div><div class="card"><b>${wk.length}</b><span>workouts this week · ${wMin} min</span></div><div class="card"><b>${streak}</b><span>day${streak === 1 ? "" : "s"} in a row at your step goal</span></div><div class="card"><b>${num(Math.round(days14.reduce((s, d) => s + (+actOf(d).steps || 0), 0) / 14))}</b><span>average steps, 2 weeks</span></div></div>
+      <div class="section-t">Steps, last 14 days</div>${stepsChart()}
+      <div class="section-t">Workouts</div>${wkAll.length ? `<div class="list">${wkAll.map(w => { const m2 = WK[w.type] || ["", "💪", "Workout"]; return `<div class="li"><span style="font-size:20px">${m2[1]}</span><div class="main"><b>${esc(m2[2])} · ${w.min} min</b><small>${fmtDay(w.day)}</small></div>${bodyReady() && !nn ? `<span class="num">${num(workoutKcal(w))}</span>` : ""}</div>`; }).join("")}</div>` : `<p class="muted tiny" style="margin:0">No workouts in the last 2 weeks. Type “30 min walk” in the bar to log one.</p>`}`;
+  }
+  return h + `</div>`;
+}
+
+/* ---------- end-of-day summary ---------- */
+function daySummary(id) {
+  const F = fit(), eaten = kcalOf(id), b = bodyReady() ? burnFor(id) : null, goal = goalFor(id), gd = +S.settings.deficit || 500;
+  const steps = +actOf(id).steps || 0, wks = workoutsOn(id), m = wkMinutes(id), p = proteinOf(id), pg = +S.settings.protein || 100;
+  const hs = allHabits(), hDone = hs.filter(h => habitDone(h, id)).length;
+  const used = S.items.filter(i => i.status === "used" && i.closedAt === id), tossed = S.items.filter(i => i.status === "tossed" && i.closedAt === id);
+  const def = b ? b.total - eaten : null, meals = dayOf(id).meals || [];
+  const checks = [];
+  if (meals.length) checks.push(b && S.settings.goalMode !== "fixed" ? { ok: def >= gd, t: def >= 0 ? `${num(def)} kcal deficit` : `${num(-def)} kcal over`, g: `goal ${num(gd)} deficit` } : { ok: eaten <= goal * 1.03, t: `${num(eaten)} kcal eaten`, g: `goal ${num(goal)}` });
+  checks.push({ ok: steps >= stepGoal(), t: `${num(steps)} steps`, g: `goal ${num(stepGoal())}` });
+  checks.push({ ok: m >= F.activeMin, t: m ? `${m} min workout${wks.length ? ` (${wks.map(w => (WK[w.type] || [])[2] || "workout").join(", ").toLowerCase()})` : ""}` : "No workout", g: `goal ${F.activeMin} min` });
+  if (meals.length) checks.push({ ok: p >= pg * 0.9, t: `${num(p)} g protein`, g: `goal ${num(pg)} g` });
+  checks.push({ ok: hDone >= Math.ceil(hs.length * 0.7), t: `${hDone} of ${hs.length} habits`, g: "" });
+  const hit = checks.filter(c => c.ok).length;
+  const verdict = hit === checks.length ? "You hit every goal today. 🎉" : hit >= checks.length - 1 ? "Strong day. Almost everything on target." : hit >= Math.ceil(checks.length / 2) ? "Solid day, with a couple of things to nudge tomorrow." : "A lighter day. Tomorrow's a fresh start.";
+  const tips = [];
+  if (meals.length && b && def < gd) tips.push(def < 0 ? "Plan a lighter dinner tomorrow, or add a 30-minute walk." : `Close the gap with about ${num(Math.ceil((gd - def) / kcalPerStep() / 500) * 500)} more steps tomorrow.`);
+  if (steps < stepGoal()) tips.push(`Fit in a ${Math.max(10, Math.round((stepGoal() - steps) / 100 / 5) * 5)}-minute walk earlier in the day.`);
+  if (meals.length && p < pg * 0.9) { const hi = mealLibrary().filter(e => e.protein >= 25).sort((a, b2) => b2.count - a.count)[0]; tips.push(`Add protein at breakfast${hi ? `, like your ${hi.name.toLowerCase()} (${hi.protein} g)` : " (Greek yogurt or eggs)"}.`); }
+  const wkLeft = F.weekWorkouts - weekWorkouts(id).length; if (wkLeft > 0 && id === todayId()) tips.push(`${wkLeft} workout${wkLeft === 1 ? "" : "s"} left to hit your weekly goal.`);
+  if (!meals.length) tips.push("Log meals tomorrow so the calorie numbers are real. Your usual meals are one tap.");
+  const eatFirst = active().filter(i => diffDays(addDays(id, 1), i.expiresAt) <= 1 && diffDays(addDays(id, 1), i.expiresAt) >= 0).slice(0, 4);
+  return { id, eaten, b, def, gd, steps, wks, m, p, pg, hDone, hTotal: hs.length, used, tossed, checks, hit, verdict, tips: tips.slice(0, 2), eatFirst, meals };
+}
+function vSummary() {
+  const id = SH.day || todayId(), D = daySummary(id), nn = S.settings.noNumbers, isToday = id === todayId();
+  let h = `<div class="stack"><div class="sum-hero"><div class="sum-date">${isToday ? "Today" : id === addDays(todayId(), -1) ? "Yesterday" : fmtDay(id)} · ${fmtShort(id)}</div><h3>${esc(D.verdict)}</h3>
+    <div class="sum-top">${ringsSvg(id, 92)}<div class="sum-score"><b>${D.hit}/${D.checks.length}</b><span>goals hit</span></div></div></div>`;
+  h += `<div class="list">${D.checks.filter(c => !nn || !/kcal|protein/.test(c.t)).map(c => `<div class="li"><span class="sum-ic ${c.ok ? "ok" : ""}">${c.ok ? icon("check") : "·"}</span><div class="main"><b>${esc(c.t)}</b>${c.g ? `<small>${esc(c.g)}</small>` : ""}</div></div>`).join("")}</div>`;
+  if (!nn && D.b && D.meals.length) h += `<div class="e3 card"><div><span>Eaten</span><b>${num(D.eaten)}</b></div><div><span>Burned</span><b>${num(D.b.total)}</b></div><div class="${D.def >= D.gd ? "t-ok" : D.def < 0 ? "t-bad" : ""}"><span>${D.def >= 0 ? "Deficit" : "Over"}</span><b>${num(Math.abs(D.def))}</b></div></div>`;
+  if (D.meals.length) h += `<div class="section-t">What you ate</div><div class="tiny" style="font-weight:600;line-height:1.5">${D.meals.map(m => `${esc(m.name)}${nn ? "" : ` <span class="muted">${num(m.kcal)}</span>`}`).join(" · ")}</div>`;
+  if (D.used.length || D.tossed.length) h += `<div class="section-t">Your fridge</div><div class="tiny" style="font-weight:600">${D.used.length ? `Used up ${D.used.map(i => esc(i.name.toLowerCase())).join(", ")}.` : ""} ${D.tossed.length ? `<span class="t-bad">Tossed ${D.tossed.map(i => esc(i.name.toLowerCase())).join(", ")}.</span>` : D.used.length ? "Nothing wasted. 🙌" : ""}</div>`;
+  if (D.tips.length) h += `<div class="section-t">For tomorrow</div><div class="list">${D.tips.map(t => `<div class="li"><span>💡</span><div class="main"><b style="font-weight:600">${esc(t)}</b></div></div>`).join("")}</div>`;
+  if (D.eatFirst.length) h += `<div class="card tiny" style="font-weight:600">Eat first ${isToday ? "tomorrow" : "today"}: ${D.eatFirst.map(i => esc(i.name)).join(", ")}.</div>`;
+  h += `<div class="grid2"><button class="btn soft" data-act="sum-copy" data-id="${id}">Copy summary</button><button class="btn" data-act="close-sheet">Done</button></div>`;
+  return h + `</div>`;
+}
+function summaryText(id) {
+  const D = daySummary(id), nn = S.settings.noNumbers;
+  return [`${fmtDay(id)}: ${D.verdict}`, ...D.checks.filter(c => !nn || !/kcal|protein/.test(c.t)).map(c => `${c.ok ? "✓" : "✗"} ${c.t}${c.g ? ` (${c.g})` : ""}`), D.tips.length ? `Tomorrow: ${D.tips.join(" ")}` : ""].filter(Boolean).join("\n");
+}
+const dayHasData = id => (dayOf(id).meals || []).length || +actOf(id).steps || workoutsOn(id).length;
+function maybeSummary() {
+  const F = fit(); if (F.summaryOn === false || !S.ready || !UI.setLoaded || SH || !S.settings.onboarded) return;
+  const T = todayId(), Y = addDays(T, -1), seen = S.settings.lastSummary || "", now = new Date();
+  const [hh, mm] = String(F.summaryTime || "20:30").split(":").map(Number), due = now.getHours() * 60 + now.getMinutes() >= (Number.isFinite(hh) ? hh : 20) * 60 + (Number.isFinite(mm) ? mm : 30);
+  let day = null;
+  if (due && seen < T && dayHasData(T)) day = T;
+  else if (!due && now.getHours() < 14 && seen < Y && dayHasData(Y)) day = Y;
+  if (!day) return;
+  S.settings = { ...S.settings, lastSummary: day }; putSettings();
+  setTimeout(() => { if (!SH) openSheet("summary", { day }); }, 900);
+}
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") { renderAll(); maybeSummary(); } });
 
 /* ---------- home: fridge, magnets, food ---------- */
 const MAG_DEFAULT = { eat: [11, 4], cal: [60, 4], habits: [58, 38], cook: [20.5, 53], scan: [20.5, 76], shop: [58, 70], score: [72, 14], lab: [47, 20] };
@@ -1824,7 +1988,9 @@ function renderMagnets() {
   const w = wasteStats();
   $("#mag-score").innerHTML = `<b>${w.rate == null ? "–" : w.rate + "%"}</b><small>eaten,<br>not tossed</small>`;
   const fz = act.filter(i => i.zone === "freezer").length;
-  $("#mag-lab").innerHTML = `<span class="emo">🧊</span><small>${fz} frozen</small>`;
+  { const st = +actOf(T).steps || 0, F = fit(), evening = (() => { const [hh, mm] = String(F.summaryTime || "20:30").split(":").map(Number); const n = new Date(); return n.getHours() * 60 + n.getMinutes() >= hh * 60 + mm; })();
+    $("#mag-lab").innerHTML = `<span class="move-ring">${ringsSvg(T, 44)}</span><b>${evening && F.summaryOn !== false ? "Your day" : st ? (st >= 1000 ? (st / 1000).toFixed(1) + "k" : st) : "Move"}</b><small>${evening && F.summaryOn !== false ? "summary ✨" : st ? "steps" : "log activity"}</small>`;
+    $("#mag-lab").dataset.sheet = evening && F.summaryOn !== false ? "summary" : "fitness"; }
 }
 function renderDock() {
   const slot = slotNow(), top = S.ready ? suggestMeals(slot, 1)[0] : null;
@@ -1943,7 +2109,7 @@ function showHint() {
 }
 function dismissHint() { const h = $("#hint"); if (h) { h.remove(); try { localStorage.setItem("fridge.hint", "1"); } catch (_) {} } }
 /* ---------- sheets ---------- */
-const TITLES = { scan: "Scan", item: "Food", add: "Add food", recipes: "Cook tonight", calories: "Calories & activity", log: "Log a meal", habits: "Habits", shopping: "Shopping", insights: "Your progress", settings: "Settings", pantry: "Pantry", check: "Fridge check", welcome: "Welcome", quick: "Add or ask" };
+const TITLES = { scan: "Scan", item: "Food", add: "Add food", recipes: "Cook tonight", calories: "Calories & activity", log: "Log a meal", habits: "Habits", shopping: "Shopping", insights: "Your progress", settings: "Settings", pantry: "Pantry", check: "Fridge check", welcome: "Welcome", quick: "Add or ask", fitness: "Fitness", summary: "Your day" };
 function openSheet(kind, opts = {}, src) {
   const go = () => {
     SH = { kind, ...opts };
@@ -1953,7 +2119,8 @@ function openSheet(kind, opts = {}, src) {
     if (kind === "log") SH.log = { slot: opts.slot || slotNow(), portion: 1, q: opts.q || "", status: "idle", est: null, logged: {}, file: null, url: null, manual: false, mName: "", mKcal: "", mProt: "", t0: Date.now() };
     if (kind === "shopping") SH.shop = { q: "" };
     if (kind === "quick") SH.q = { text: opts.text || "", items: [], status: "idle", answer: "", err: "" };
-    if (kind === "calories") SH.cal = {};
+    if (kind === "calories" || kind === "fitness") SH.cal = { ftab: opts.tab };
+    if (kind === "summary") SH.day = opts.day || todayId();
     if (kind === "check") SH.check = { ids: needsCheck().map(i => i.id), i: 0 };
     if (kind === "insights") SH.tab = opts.tab || "week";
     if (kind === "welcome") SH.ob = { step: 0, goals: { waste: true, rebuy: true, deficit: true, habits: false }, kcal: S.settings.kcal || 1600, protein: S.settings.protein || 100, noNumbers: false, nudge: true };
@@ -1984,8 +2151,8 @@ function renderSheet(reset) {
   let t = TITLES[SH.kind];
   if (SH.kind === "item") { const it = S.items.find(x => x.id === SH.id); t = it ? it.name : "Food"; }
   $("#sheetTitle").textContent = t;
-  $("#sheetEmo").textContent = SH.kind === "item" ? (S.items.find(x => x.id === SH.id)?.emoji || "🥫") : ({ scan: "📸", add: "🛒", recipes: "🍲", calories: "🔥", log: "🍽️", habits: "✅", shopping: "📝", insights: "✨", settings: "⚙️", pantry: "🧺", check: "🔎", welcome: "👋", quick: "✍️" })[SH.kind] || "";
-  body.innerHTML = ({ scan: vScan, item: vItem, add: vAdd, recipes: vRecipes, calories: vCalories, log: vLog, habits: vHabits, shopping: vShopping, insights: vInsights, settings: vSettings, pantry: vPantry, check: vCheck, welcome: vWelcome, quick: vQuick })[SH.kind]();
+  $("#sheetEmo").textContent = SH.kind === "item" ? (S.items.find(x => x.id === SH.id)?.emoji || "🥫") : ({ scan: "📸", add: "🛒", recipes: "🍲", calories: "🔥", log: "🍽️", habits: "✅", shopping: "📝", insights: "✨", settings: "⚙️", pantry: "🧺", check: "🔎", welcome: "👋", quick: "✍️", fitness: "🏃", summary: "🌙" })[SH.kind] || "";
+  body.innerHTML = ({ scan: vScan, item: vItem, add: vAdd, recipes: vRecipes, calories: vCalories, log: vLog, habits: vHabits, shopping: vShopping, insights: vInsights, settings: vSettings, pantry: vPantry, check: vCheck, welcome: vWelcome, quick: vQuick, fitness: vFitness, summary: vSummary })[SH.kind]();
   body.scrollTop = reset ? 0 : top;
   if (SH.kind === "shopping") renderHave();
   if (SH.kind === "log") { if (reset && SH.log.q && !SH.log.build) { const qq = SH.log.q, br = /naya/i.test(qq) ? "naya" : /chipotle/i.test(qq) ? "chipotle" : ""; if (br) SH.log.build = newBuild(br, br === "naya" && /kid/i.test(qq) ? "kids" : br === "naya" && /roll|wrap/i.test(qq) ? "roll" : /burrito/i.test(qq) ? "burrito" : /salad/i.test(qq) ? "salad" : undefined); } renderLogMatches(); }
@@ -2516,6 +2683,11 @@ document.addEventListener("click", e => {
     case "goal-mode": S.settings = { ...S.settings, goalMode: el.dataset.v }; putSettings(); renderAll(); renderSheet(); break;
     case "def-set": S.settings = { ...S.settings, deficit: +el.dataset.v }; putSettings(); renderAll(); renderSheet(); break;
     case "q-intent": runIntent(SH.q.intent); break;
+    case "fit-tab": SH.cal.ftab = el.dataset.v; renderSheet(true); break;
+    case "fit-week": setFit({ weekWorkouts: clamp(fit().weekWorkouts + Number(el.dataset.d), 1, 14) }); renderSheet(); break;
+    case "fit-type": { const F = fit(), t = el.dataset.t, n = clamp((+(F.types || {})[t] || 0) + Number(el.dataset.d), 0, 14); setFit({ types: { ...(F.types || {}), [t]: n } }); renderSheet(); break; }
+    case "fit-sumtoggle": setFit({ summaryOn: fit().summaryOn === false }); scheduleNudges(); renderSheet(); break;
+    case "sum-copy": { const txt = summaryText(el.dataset.id || todayId()); let pr; try { pr = navigator.clipboard.writeText(txt); } catch (_) { pr = Promise.reject(); } pr.then(() => toast("Summary copied."), () => toast("Couldn't copy on this device.")); break; }
     case "q-suggest": SH.q.text = el.dataset.t; { const q = $("#quickIn"); if (q) q.value = SH.q.text; } quickAsk(); break;
     case "q-again": { const q = $("#quickIn"); SH.q.text = (SH.q.text.trim() ? SH.q.text.trim().replace(/,$/, "") + ", " : "") + el.dataset.t; if (q) { q.value = SH.q.text; autoGrow(q); } renderQuick(); break; }
     case "q-zone": { const it = SH.q.items[+el.dataset.i]; if (it) { it.zone = el.dataset.z; it.touched = true; } renderQuick(); break; }
@@ -2621,6 +2793,9 @@ document.addEventListener("change", e => {
   if (t.id === "restoreFile" && t.files?.[0] && SH?.set) { t.files[0].text().then(txt => { const d = parseBackup(txt); if (!d) { toast("That file isn't a Fridge backup."); return; } SH.set.pending = d; renderSheet(); }); return; }
   if (t.id === "stepsIn") { const v = Math.round(+t.value); if (t.value === "" || v >= 0) setSteps(v || 0); return; }
   if (t.id === "activeIn") { editAct(todayId(), a => { if (t.value === "") delete a.active; else a.active = Math.max(0, Math.round(+t.value)); }); return; }
+  if (t.id === "fitMinIn") { const v = Math.round(+t.value); if (v >= 5) setFit({ activeMin: v }); return; }
+  if (t.id === "wGoalIn") { const v = +t.value; setFit({ weightGoalKg: v > 0 ? Math.round(((S.settings.units || "us") === "us" ? lbToKg(v) : v) * 10) / 10 : null }); if (SH?.kind === "fitness") setTimeout(() => renderSheet(), 0); return; }
+  if (t.id === "sumTimeIn" && t.value) { setFit({ summaryTime: t.value }); scheduleNudges(); return; }
   if (t.id === "stepGoalIn") { const v = Math.round(+t.value); if (v >= 1000) { S.settings = { ...S.settings, stepGoal: v }; putSettings(); renderAll(); } return; }
   if (t.id === "setNudgeT" && t.value) { S.settings = { ...S.settings, nudgeTime: t.value }; putSettings(); scheduleNudges(); return; }
   if (t.id === "plateFile" && t.files?.[0] && SH?.log) { logAI(t.files[0]); return; }
