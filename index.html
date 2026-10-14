@@ -192,7 +192,8 @@ svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .banner button{border:0;background:none;text-decoration:underline;font-weight:900;padding:0;color:inherit}
 
 /* dock */
-.dock{display:flex;gap:8px;padding:10px 0 12px;align-items:stretch;position:relative;z-index:2}
+.dock{display:flex;flex-direction:column;gap:8px;padding:10px 0 12px;position:relative;z-index:2}
+.dock-row{display:flex;gap:8px;align-items:stretch;min-width:0}
 .usual{flex:1;min-width:0;border:0;border-radius:20px;background:var(--tile);padding:9px 10px 9px 12px;text-align:left;box-shadow:0 3px 0 var(--shadow-2),0 8px 16px -10px var(--shadow);display:flex;align-items:center;gap:10px;transition:transform .2s cubic-bezier(.3,1.6,.5,1)}
 .usual:active{transform:scale(.97)}
 .usual .u-e{font-size:24px;flex:none}
@@ -415,6 +416,37 @@ label.lbl{display:block;font-size:12.5px;font-weight:800;color:var(--ink-2);marg
 .lr>span:first-child,.lr code{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lr>span:last-child{text-align:right;overflow-wrap:anywhere}
 .lr code{font:600 11.5px ui-monospace,Menlo,monospace;color:var(--ink-2)}
+
+/* quick add / ask */
+.askbar{flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:0;border-radius:18px;background:var(--tile);color:var(--ink-2);padding:12px 14px;font-size:15px;font-weight:600;text-align:left;box-shadow:0 3px 0 var(--shadow-2),0 8px 16px -10px var(--shadow)}
+.askbar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.askbar.inline{box-shadow:none;background:var(--soft);font-size:13.5px;padding:11px 12px}
+.qcam{width:48px;flex:none;border-radius:18px;background:var(--tile);display:grid;place-items:center;color:var(--ink);cursor:pointer;box-shadow:0 3px 0 var(--shadow-2),0 8px 16px -10px var(--shadow)}
+.qcam svg.i{width:21px;height:21px}
+.qbar{display:flex;gap:8px;align-items:stretch}
+.qbar .qcam{box-shadow:none;background:var(--soft);width:50px}
+.qinput{flex:1;min-width:0;box-sizing:border-box;border:2px solid var(--line);border-radius:16px;padding:12px 14px;background:var(--field);font:600 16px/1.35 var(--f);color:var(--ink);resize:none;overflow:hidden;min-height:50px}
+.qinput:focus{outline:none;border-color:var(--accent)}
+#qBody{display:flex;flex-direction:column;gap:12px}
+.qlist{display:flex;flex-direction:column;gap:8px}
+.qitem{background:var(--soft);border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.qtop{display:flex;align-items:center;gap:8px;min-width:0}
+.qtop b{font-weight:800;font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qemo{font-size:22px;flex:none}
+.cats{display:flex;flex-wrap:wrap;gap:6px}
+.cats::-webkit-scrollbar{display:none}
+.cats button{flex:none;border:0;border-radius:999px;background:var(--tile);color:var(--ink);padding:6px 10px;font-weight:700;font-size:12.5px;white-space:nowrap;transition:background .15s,transform .15s}
+.cats button:active{transform:scale(.95)}
+.cats button.on{background:var(--ink);color:var(--sheet)}
+.cats.wide{grid-column:1 / -1}
+.parse-row .cats button{background:var(--soft)}
+.parse-row .cats button.on{background:var(--ink);color:var(--sheet)}
+.thumbs{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.thumbs img{height:150px;width:auto;max-width:none;border-radius:12px;background:var(--soft);flex:none}
+.answer{background:var(--c-violet);border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.answer .q-asked{font-size:12.5px;font-weight:800;color:var(--c-violet-i)}
+.answer p{margin:0;font-weight:600;font-size:14.5px;line-height:1.45}
+.answer small{color:var(--ink-2);font-weight:600;font-size:12px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -466,7 +498,7 @@ label.lbl{display:block;font-size:12.5px;font-weight:800;color:var(--ink-2);marg
             <div class="magnet gloss" id="mag-cal" data-mag="cal" data-act="open" data-sheet="calories" role="button" tabindex="0" aria-label="Calories today"></div>
             <div class="magnet paper lined" id="mag-habits" data-mag="habits" data-act="open" data-sheet="habits" role="button" tabindex="0" aria-label="Today's habits"></div>
             <div class="magnet gloss badge" id="mag-cook" data-mag="cook" data-act="open" data-sheet="recipes" role="button" tabindex="0" aria-label="Cook tonight"></div>
-            <div class="magnet gloss badge" id="mag-scan" data-mag="scan" data-act="open" data-sheet="scan" role="button" tabindex="0" aria-label="Scan a receipt or fridge photo"><div class="cam"></div><b>Scan</b><small>receipt</small></div>
+            <div class="magnet gloss badge" id="mag-scan" data-mag="scan" data-act="open" data-sheet="scan" role="button" tabindex="0" aria-label="Scan a receipt or fridge photo"><div class="cam"></div><b>Scan</b><small>receipt · order</small></div>
             <div class="magnet paper" id="mag-shop" data-mag="shop" data-act="open" data-sheet="shopping" role="button" tabindex="0" aria-label="Shopping list"></div>
           </div>
           <div class="face back"></div>
@@ -984,14 +1016,17 @@ async function toCanvas(file, maxW) {
     c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); return c;
   } finally { URL.revokeObjectURL(url); }
 }
-function enhance(c) {
+function enhance(c, shot) {
   const x = c.getContext("2d"), d = x.getImageData(0, 0, c.width, c.height), p = d.data, hist = new Uint32Array(256);
-  for (let i = 0; i < p.length; i += 4) { const g = (p[i] * 299 + p[i + 1] * 587 + p[i + 2] * 114) / 1000 | 0; p[i] = g; hist[g]++; }
+  let sum = 0;
+  for (let i = 0; i < p.length; i += 4) { const g = (p[i] * 299 + p[i + 1] * 587 + p[i + 2] * 114) / 1000 | 0; p[i] = g; sum += g; }
+  if (sum / (p.length / 4) < 110) for (let i = 0; i < p.length; i += 4) p[i] = 255 - p[i];
+  for (let i = 0; i < p.length; i += 4) hist[p[i]]++;
   const n = p.length / 4; let lo = 0, hi = 255, acc = 0;
   for (let v = 0; v < 256; v++) { acc += hist[v]; if (acc > n * 0.02) { lo = v; break; } }
   acc = 0; for (let v = 255; v >= 0; v--) { acc += hist[v]; if (acc > n * 0.3) { hi = v; break; } }
   const span = Math.max(30, hi - lo);
-  for (let i = 0; i < p.length; i += 4) { const v = clamp(Math.round((p[i] - lo) * 255 / span), 0, 255); p[i] = p[i + 1] = p[i + 2] = v; }
+  for (let i = 0; i < p.length; i += 4) { let v = clamp(Math.round((p[i] - lo) * 255 / span), 0, 255); if (shot && v < 225) v = Math.round(v * 0.4); p[i] = p[i + 1] = p[i + 2] = v; }
   x.putImageData(d, 0, 0); return c;
 }
 function loadScript(src) { return new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = () => rej(new Error("load " + src)); document.head.appendChild(s); }); }
@@ -1001,7 +1036,7 @@ function groupRows(obs) {
   for (const b of o) { const r = rows.find(r => Math.abs(r.cy - b.cy) < hMed * 0.55); if (r) { r.items.push(b); r.cy = (r.cy * (r.items.length - 1) + b.cy) / r.items.length; } else rows.push({ cy: b.cy, items: [b] }); }
   return rows.sort((a, b) => a.cy - b.cy).map(r => r.items.sort((a, b) => a.x - b.x).map(b => b.text).join("   "));
 }
-async function ocrImage(file, onProg) {
+async function ocrImage(file, onProg, kind = "receipt") {
   const C = window.Capacitor;
   if (Native && C?.registerPlugin) {
     try {
@@ -1017,9 +1052,10 @@ async function ocrImage(file, onProg) {
     const base = new URL("tess/", location.href).href;
     OCR.worker = await Tesseract.createWorker("eng", 1, { workerPath: base + "worker.min.js", corePath: base, langPath: base, workerBlobURL: false, gzip: true,
       logger: m => { const p = m.progress || 0; OCR.onProg?.(m.status === "recognizing text" ? { stage: "Reading your receipt…", p: 0.35 + p * 0.65 } : { stage: "Getting the reader ready (first time only)…", p: 0.05 + p * 0.3 }); } });
-    await OCR.worker.setParameters({ tessedit_pageseg_mode: "6", preserve_interword_spaces: "1" });
   }
-  const c = enhance(await toCanvas(file, 1500));
+  const psm = kind === "shot" ? "4" : "6";
+  if (OCR.psm !== psm) { await OCR.worker.setParameters({ tessedit_pageseg_mode: psm, preserve_interword_spaces: "1" }); OCR.psm = psm; }
+  const c = enhance(await toCanvas(file, kind === "shot" ? 1300 : 1500), kind === "shot");
   const { data } = await OCR.worker.recognize(c);
   return { lines: String(data.text || "").split("\n"), engine: "on-device reader" };
 }
@@ -1086,7 +1122,7 @@ function buildRow(nameRaw, price) {
   const nonfood = NONFOOD_RE.test(U), staple = ["grains", "snacks"].includes(g.cat), unknown = g.cat === "other";
   const pl = personalLife(name);
   const r = { raw: nameRaw, key, learned: false, on: !nonfood && !staple, unsure: unknown && !nonfood, note: nonfood ? "Not food?" : staple ? "Pantry staple" : unknown ? "Check this one" : pl ? `Lasts ~${pl.days}d for you` : "",
-    name, qty: 1, zone: g.zone, days: pl ? pl.days : g.life, price, emoji: g.emoji, cat: g.cat };
+    name, qty: 1, zone: zoneFor(name), days: pl ? pl.days : g.life, price, emoji: g.emoji, cat: g.cat };
   r.init = { on: r.on, name: r.name, zone: r.zone, days: r.days };
   return r;
 }
@@ -1199,6 +1235,185 @@ function restoreData(d) {
   saveLocal(); renderAll();
 }
 
+/* ---------- one simple bar: type what you bought, or ask a question ---------- */
+const CATS_UI = [["crisper", "🥬", "Fruit & veg"], ["top", "🥛", "Dairy & eggs"], ["bottom", "🍗", "Meat & fish"], ["middle", "🍱", "Ready to eat"], ["door", "🧃", "Sauces & drinks"], ["freezer", "🧊", "Freezer"]];
+function zoneFor(name) { const z = LRN.data.zones?.[canon(name)]; return z && ZONE_SHORT[z] ? z : guess(name).zone; }
+function rememberZone(name, zone) { const k = canon(name); if (!k) return; if (zone === guess(name).zone) { if (LRN.data.zones?.[k]) { delete LRN.data.zones[k]; saveLearn(); } return; } LRN.data.zones = { ...(LRN.data.zones || {}), [k]: zone }; saveLearn(); }
+const NUMW = { a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, dozen: 12, couple: 2 };
+function parseQuick(text) {
+  return String(text || "").split(/\s*(?:,|\n|;|\+|&|\band\b)\s*/i).map(s => s.trim()).filter(s => /[a-z]/i.test(s)).slice(0, 40).map(s => {
+    let qty = 1, t = s.replace(/^[-•*\s]+/, "");
+    let m = t.match(/^(\d{1,3})\s*(?:x|×)?\s+(.+)$/i); if (m) { qty = +m[1]; t = m[2]; }
+    else if ((m = t.match(/^(.+?)\s*(?:x|×)\s*(\d{1,3})$/i))) { t = m[1]; qty = +m[2]; }
+    else if ((m = t.match(/^(a|an|one|two|three|four|five|six|seven|eight|nine|ten|dozen|couple)\s+(?:of\s+)?(.+)$/i))) { qty = NUMW[m[1].toLowerCase()]; t = m[2]; }
+    t = t.replace(/^(a|some|of)\s+/i, "").replace(/\s+/g, " ").trim();
+    const name = t.charAt(0).toUpperCase() + t.slice(1), g = guess(name);
+    return { name, qty: Math.max(1, Math.min(99, qty)), zone: zoneFor(name), emoji: g.emoji, cat: g.cat };
+  });
+}
+const isQuestion = t => /\?\s*$/.test(t) || /^\s*(what|whats|what's|how|show|give|can|could|should|suggest|recipes?|any|which|is|are|do|does|make|i have|i've got|ideas?|help|find|tell|plan|cook|quick|healthy|high|low|dinner|lunch|breakfast|snack)\b/i.test(t) || /\brecipe|\bcook\b|\bmake with\b|\bwhat can i\b/i.test(t);
+function buyAgain() {
+  const act = active(), cnt = {};
+  S.items.forEach(i => { const k = canon(i.name); if (!k || act.some(a => canon(a.name) === k)) return; (cnt[k] = cnt[k] || { name: i.name, n: 0 }).n++; });
+  return Object.values(cnt).sort((a, b) => b.n - a.n).slice(0, 8);
+}
+function vQuick() {
+  const Q = SH.q;
+  return `<div class="stack"><div class="qbar"><textarea class="qinput" id="quickIn" rows="1" enterkeyhint="send" placeholder="milk, 2 avocados, spinach… or ask a question" data-qf="text">${esc(Q.text)}</textarea>
+    <label class="qcam" for="qPhotos" aria-label="Add from receipt or order screenshots">${icon("camera")}<input type="file" id="qPhotos" accept="image/*" multiple hidden></label></div><div id="qBody">${qBody()}</div></div>`;
+}
+function qBody() {
+  const Q = SH.q, t = Q.text.trim();
+  let h = "";
+  if (Q.status === "asking") h += `<div class="status"><span class="spinner"></span>Thinking about what's in your fridge…</div>`;
+  if (Q.answer) h += `<div class="answer"><div class="q-asked">“${esc(Q.asked)}”</div><p>${esc(Q.answer)}</p>${Q.offline ? `<small>Offline ideas from the built-in recipe book. ${window.claude ? "" : "Add an AI key in Settings for custom answers."}</small>` : ""}</div>` + (SH.rec?.list?.length ? SH.rec.list.map((r, i) => recipeCard(r, i)).join("") : "");
+  if (Q.err) h += `<div class="err">${esc(Q.err)}</div>`;
+  if (!t && !Q.answer && Q.status !== "asking") {
+    h += `<div class="section-t">Ask</div><div class="chipset">${["What can I make tonight?", "High-protein dinner with what I have", "What's about to go bad?", "Quick breakfast ideas"].map(x => `<button data-act="q-suggest" data-t="${esc(x)}">${esc(x)}</button>`).join("")}</div>`;
+    const ba = buyAgain();
+    if (ba.length) h += `<div class="section-t">Bought before</div><div class="chipset">${ba.map(b => `<button data-act="q-again" data-t="${esc(b.name)}">+ ${esc(b.name)}</button>`).join("")}</div>`;
+    h += `<p class="muted tiny" style="margin:0">Type several things separated by commas, like “2 avocados, milk, chicken”. Tap the camera to add from a receipt or screenshots of a grocery-app order.</p>`;
+    return h;
+  }
+  if (!t) return h;
+  if (isQuestion(t) && !Q.force) return h + `<button class="btn accent block" data-act="q-ask">${icon("spark")}Ask</button><button class="btn soft sm" data-act="q-forceadd" style="align-self:flex-start">Add these as food instead</button>`;
+  Q.items = parseQuick(t).map((it, i) => { const prev = Q.items?.find(p => p.name === it.name); return prev && prev.touched ? { ...it, zone: prev.zone, touched: true } : SH.zone ? { ...it, zone: SH.zone } : it; });
+  h += `<div class="qlist">${Q.items.map((it, i) => `<div class="qitem"><div class="qtop"><span class="qemo">${esc(it.emoji)}</span><b>${esc(it.name)}</b>${it.qty > 1 ? `<span class="pill muted">×${it.qty}</span>` : ""}<span class="muted tiny" style="margin-left:auto">${shelfLifeFor(it.name)}d</span></div>
+    <div class="cats">${CATS_UI.map(([z, e, l]) => `<button class="${it.zone === z ? "on" : ""}" data-act="q-zone" data-i="${i}" data-z="${z}">${e} ${l}</button>`).join("")}</div></div>`).join("")}</div>
+    <button class="btn good block" data-act="q-add">Add ${Q.items.length} to fridge</button><button class="btn soft sm" data-act="q-ask" style="align-self:flex-start">Ask about this instead</button>`;
+  return h;
+}
+function qListOnly() { return qBody(); }
+function renderQuick() { const b = $("#qBody"); if (b && SH?.q) b.innerHTML = qBody(); }
+function quickAdd() {
+  const Q = SH.q, T = todayId(); if (!Q.items?.length) return;
+  for (const it of Q.items) {
+    if (it.touched) rememberZone(it.name, it.zone);
+    putItem({ id: uid(), name: it.name, emoji: it.emoji, cat: it.cat, zone: it.zone, qty: it.qty, unit: "pc", price: null, boughtAt: T, expiresAt: addDays(T, shelfLifeFor(it.name)), status: "fresh", source: "typed" });
+  }
+  track("quickAdds", Q.items.length);
+  if ((S.shopping.items || []).length) { S.shopping = { ...S.shopping, items: S.shopping.items.map(x => !x.done && Q.items.some(r => nameMatch(r.name, x.name)) ? { ...x, done: true } : x) }; putShopping(); }
+  const n = Q.items.length; Q.text = ""; Q.items = []; renderAll();
+  const el = $("#quickIn"); if (el) { el.value = ""; el.focus(); }
+  renderQuick(); toast(`Added ${n} item${n === 1 ? "" : "s"} to your fridge.`);
+}
+
+/* ---------- ask: answers with recipes built from your fridge ---------- */
+async function quickAsk() {
+  const Q = SH.q, q = Q.text.trim(); if (!q) return;
+  Q.asked = q; Q.answer = ""; Q.err = ""; Q.offline = false; Q.status = "asking"; SH.rec = { status: "idle", list: [], open: 0, cook: -1, sel: {}, servings: 1, src: "ask" }; renderQuick();
+  track("asks");
+  if (aiOn()) {
+    try {
+      const left = S.settings.kcal - kcalOf(todayId());
+      const fridge = active().sort((a, b) => daysLeft(a) - daysLeft(b)).slice(0, 50).map(i => `${i.name}${i.qty > 1 ? " x" + i.qty : ""} (${daysLeft(i) < 0 ? "past date" : daysLeft(i) + " days left"})`);
+      const likes = mealLibrary().sort((a, b) => b.count - a.count).slice(0, 10).map(e => e.name);
+      const res = await AI.fn.json(`You are a friendly home-cooking coach inside a fridge app. The person ${S.settings.noNumbers ? "does not want calorie numbers mentioned" : `eats in a moderate calorie deficit (${Math.max(0, left)} of ${S.settings.kcal} kcal left today, protein goal ${S.settings.protein} g)`}.
+Their question: ${JSON.stringify(q)}
+What is in their fridge (soonest to expire first):
+${fridge.join("\n") || "(empty)"}
+Dishes they eat often: ${JSON.stringify(likes)}
+Answer briefly and practically. If the question is about food to cook or eat, include up to 3 simple healthy recipes that use the food they have (soonest-expiring first) or the ingredients they named.
+Reply with ONLY JSON: {"answer": "1-3 short friendly sentences", "recipes": [{"name": string, "minutes": integer, "kcal": integer per serving, "protein": integer grams, "uses": [exact fridge names used], "extra": [things to buy, may be empty], "ingredients": [short strings with amounts], "steps": [3-6 short strings], "why": one short sentence}]}`, { signal: (Q.ctl = new AbortController()).signal });
+      if (SH?.q !== Q) return;
+      Q.answer = String(res?.answer || "Here's what I'd make.");
+      SH.rec.list = (Array.isArray(res?.recipes) ? res.recipes : []).filter(r => r && r.name).map(r => ({ name: String(r.name), minutes: +r.minutes || 15, kcal: +r.kcal || 0, protein: +r.protein || 0, useIds: matchPantry(Array.isArray(r.uses) ? r.uses : []).map(i => i.id), useNames: Array.isArray(r.uses) ? r.uses.map(String) : [], extra: Array.isArray(r.extra) ? r.extra.map(String).slice(0, 3) : [], ingredients: Array.isArray(r.ingredients) ? r.ingredients.map(String) : [], steps: Array.isArray(r.steps) ? r.steps.map(String) : [], why: r.why ? String(r.why) : "" }));
+      Q.status = "done"; Q.text = ""; const el = $("#quickIn"); if (el) el.value = ""; renderQuick(); return;
+    } catch (e) { if (e?.code === "cancelled" || SH?.q !== Q) return; Q.err = aiErr(e) + " Showing offline ideas instead."; }
+  }
+  offlineAnswer(q);
+  Q.status = "done"; Q.text = ""; const el = $("#quickIn"); if (el) el.value = ""; renderQuick();
+}
+function offlineAnswer(q) {
+  const Q = SH.q, lq = q.toLowerCase();
+  if (/going bad|expir|use up|about to/.test(lq)) {
+    const soon = active().filter(i => daysLeft(i) <= 3).sort((a, b) => daysLeft(a) - daysLeft(b));
+    Q.answer = soon.length ? `Use these first: ${soon.slice(0, 6).map(i => `${i.name} (${lifeInfo(i).short})`).join(", ")}.` : "Nothing is about to go bad. Nice.";
+    SH.rec.list = basicRecipes(); Q.offline = true; return;
+  }
+  const words = lq.replace(/[^a-z ]/g, " ").split(/\s+/).filter(w => w.length > 2);
+  const named = words.filter(w => guess(w).cat !== "other" || active().some(i => canon(i.name).includes(sing(w))));
+  const want = /protein/.test(lq) ? "protein" : /breakfast/.test(lq) ? "breakfast" : /quick|fast|minute/.test(lq) ? "quick" : "";
+  const act = active();
+  const list = BASIC.map(r => {
+    const hitsNamed = named.filter(w => r.keys.some(k => k.includes(sing(w)) || sing(w).includes(k))).length;
+    const uses = act.filter(i => r.keys.some(k => i.name.toLowerCase().includes(k)));
+    let score = hitsNamed * 4 + uses.reduce((s, i) => s + (daysLeft(i) <= 2 ? 3 : 1), 0);
+    if (want === "protein") score += r.protein / 10; if (want === "breakfast" && r.breakfast) score += 6; if (want === "quick") score += (30 - r.minutes) / 5;
+    return { ...r, useIds: uses.map(i => i.id), extra: [], score, hitsNamed };
+  }).filter(r => r.score > 0 && (named.length ? r.hitsNamed > 0 || r.useIds.length : r.useIds.length)).sort((a, b) => b.score - a.score).slice(0, 4);
+  SH.rec.list = list; Q.offline = true;
+  Q.answer = list.length ? (named.length ? `Ideas with ${[...new Set(named)].slice(0, 4).join(", ")}${list.some(r => r.useIds.length) ? " and what's in your fridge" : ""}:` : "Here's what you can make with what you have:") : "I couldn't match that to a recipe offline. Try naming ingredients, like “I have eggs, spinach and bread”.";
+}
+
+/* ---------- saved recipes (kept in your learning data) ---------- */
+const savedRecipes = () => Array.isArray(LRN.data.saved) ? LRN.data.saved : [];
+const isSaved = r => savedRecipes().some(x => x.name.toLowerCase() === String(r.name).toLowerCase());
+function toggleSave(r) {
+  const list = savedRecipes();
+  if (isSaved(r)) LRN.data.saved = list.filter(x => x.name.toLowerCase() !== r.name.toLowerCase());
+  else {
+    const useNames = r.useNames?.length ? r.useNames : (r.useIds || []).map(id => S.items.find(i => i.id === id)?.name).filter(Boolean);
+    LRN.data.saved = [{ name: r.name, minutes: r.minutes, kcal: r.kcal, protein: r.protein, ingredients: r.ingredients || [], steps: r.steps || [], why: r.why || "", useNames, keys: r.keys || [], t: Date.now() }, ...list].slice(0, 60);
+  }
+  saveLearn();
+}
+function savedForView() {
+  const act = active();
+  return savedRecipes().map(s => {
+    const byName = matchPantry(s.useNames || []), byKey = s.keys?.length ? act.filter(i => s.keys.some(k => i.name.toLowerCase().includes(k))) : [];
+    const uses = [...new Map([...byName, ...byKey].map(i => [i.id, i])).values()];
+    return { ...s, useIds: uses.map(i => i.id), extra: [] };
+  }).sort((a, b) => b.useIds.length - a.useIds.length);
+}
+
+/* ---------- grocery-app order screenshots (Instacart, Amazon Fresh, Walmart…) ---------- */
+const SHOT_NOISE = /\b(DELIVERED|DELIVERY|ORDER(ED)?|REPLACED|REPLACEMENT|REFUND(ED)?|OUT OF STOCK|SUBSTITUT\w*|SUB ?TOTAL|TOTAL|TAX(ES)?|FEES?|TIP|SERVICE|CHECKOUT|CART|BUY IT AGAIN|BUY AGAIN|ADD TO|RATE|REVIEW|DETAILS|HELP|RECEIPT|VIEW|TRACK|ARRIV\w*|SHOPPER|DRIVER|PAYMENT|VISA|MASTERCARD|SAVINGS|YOU SAVED|PROMO|COUPON|MEMBERSHIP|ESTIMATED|REQUEST|CONTACT|SUPPORT|SHARE|EDIT|SEARCH|ACCOUNT|SETTINGS|CHAT|PICKED|FOUND|NOT FOUND|SPECIAL INSTRUCTIONS|ADDRESS|APT|STREET)\b/i;
+const STORE_ONLY = /^(instacart|amazon( fresh)?|whole foods( market)?|walmart|target|costco|kroger|safeway|wegmans|trader joe'?s|fresh ?direct|gopuff|doordash|uber eats|stop ?& ?shop|aldi|h ?mart|patel brothers|key food|foodtown|publix|sprouts)\b.{0,20}$/i;
+function cleanProduct(t) {
+  let s = t.replace(/[•·▪●○✓✔☑️☐|]/g, " ").replace(/\([^)]*\)/g, " ");
+  const parts = s.split(/\s*,\s*/).filter(Boolean);
+  if (parts.length > 1) s = parts.find(p => guess(p).cat !== "other") || parts.sort((a, b) => b.length - a.length)[0];
+  s = s.replace(/\b\d+(\.\d+)?\s*(fl\.?\s*oz|oz|lbs?|lb|ct|count|pk|pack|g|kg|ml|l|gal|qt|pt|each|ea)\b\.?/gi, " ").replace(/\b(about|approx\.?|per|each|by)\b\s*$/i, " ").replace(/\s+/g, " ").trim();
+  return s;
+}
+function parseOrderShot(lines) {
+  const L = lines.map(l => String(l || "").replace(/\s+/g, " ").trim()).filter(Boolean), rows = [];
+  let lastAt = -9;
+  const PRICE_ONLY = /^(?:[~≈]?\$\s?\d{1,4}[.,]\d{2})(?:\s*(?:\/|ea|each|lb).*)?$/i, ANYPRICE = /\$\s?(\d{1,4})[.,](\d{2})/;
+  for (let i = 0; i < L.length; i++) {
+    let t = L[i];
+    const qOnly = t.match(/^(?:qty|quantity)\s*[:.]?\s*(\d{1,2})\b|^(\d{1,2})\s*[x×]$|^[x×]\s*(\d{1,2})$/i);
+    if (qOnly) { const r = rows[rows.length - 1]; if (r) r.qty = +(qOnly[1] || qOnly[2] || qOnly[3]); continue; }
+    if (PRICE_ONLY.test(t)) { const r = rows[rows.length - 1], m = t.match(ANYPRICE); if (r && r.price == null && m) r.price = +(m[1] + "." + m[2]); continue; }
+    const wc = t.split(/\s+/).length, nm = t.match(SHOT_NOISE);
+    if (STORE_ONLY.test(t) || (nm && (wc <= 4 || nm.index < 3)) || /\d{1,2}:\d{2}/.test(t)) continue;
+    let qty = 1, price = null, m;
+    if ((m = t.match(/(?:qty|quantity)\s*[:.]?\s*(\d{1,2})/i))) { qty = +m[1]; t = t.replace(m[0], " "); }
+    if ((m = t.match(/^(\d{1,2})\s*[x×]\s+/i))) { qty = +m[1]; t = t.slice(m[0].length); }
+    if ((m = t.match(/\s[x×]\s?(\d{1,2})\b/i))) { qty = +m[1]; t = t.replace(m[0], " "); }
+    if ((m = t.match(ANYPRICE))) { price = +(m[1] + "." + m[2]); t = t.replace(/[~≈]?\$\s?\d{1,4}[.,]\d{2}.*$/, " "); }
+    const name = cleanProduct(t);
+    const words = name.split(/\s+/).filter(w => /[a-z]{2}/i.test(w));
+    if ((name.match(/[a-z]/gi) || []).length < 3) { const r = rows[rows.length - 1]; if (r) { if (qty > 1) r.qty = qty; if (r.price == null && price != null) r.price = price; } continue; }
+    if (words.length > 9) continue;
+    const prevRow = rows[rows.length - 1];
+    if (prevRow && lastAt === i - 1 && price == null && words.length <= 3 && prevRow.cat === "other" && !prevRow.learned) {
+      // product name wrapped onto a second line, e.g. "Fage Total 2% Greek" + "Yogurt"
+      const merged = buildRow(prevRow.raw + " " + name, prevRow.price); merged.qty = prevRow.qty; rows[rows.length - 1] = merged; lastAt = i; continue;
+    }
+    const known = guess(name).cat !== "other" || !!LRN.data.receipt[rawKey(name)];
+    const nextPrice = i + 1 < L.length && (PRICE_ONLY.test(L[i + 1]) || /^(?:qty|quantity)/i.test(L[i + 1]));
+    if (!known && price == null && !nextPrice) continue;
+    const row = buildRow(name, price); row.qty = qty; lastAt = i;
+    if (!known) { row.on = false; row.note = "Check this one"; row.init.on = false; }
+    rows.push(row);
+  }
+  const merged = [];
+  for (const r of rows) { const x = merged.find(m => m.name.toLowerCase() === r.name.toLowerCase()); if (x) { x.qty = Math.max(x.qty, r.qty); if (x.price == null) x.price = r.price; } else merged.push(r); }
+  return { rows: merged, store: (L.slice(0, 8).find(l => STORE_ONLY.test(l)) || "").replace(/\s{2,}.*/, "") || "Grocery order", total: null };
+}
+
 /* ---------- home: fridge, magnets, food ---------- */
 const MAG_DEFAULT = { eat: [11, 4], cal: [60, 4], habits: [58, 38], cook: [20.5, 53], scan: [20.5, 76], shop: [58, 70], score: [72, 14], lab: [47, 20] };
 function renderAll() { renderMagnets(); renderDock(); renderInside("main"); renderInside("freezer"); placeMagnets(); scheduleNudges(); }
@@ -1241,8 +1456,8 @@ function renderMagnets() {
 }
 function renderDock() {
   const slot = slotNow(), top = S.ready ? suggestMeals(slot, 1)[0] : null;
-  $("#dock").innerHTML = (top ? `<button class="usual" data-act="quick-log" data-key="${esc(top.key)}" data-slot="${slot}" aria-label="Log ${esc(top.name)}"><span class="u-e">${esc(dishEmoji(top.name))}</span><div class="u-txt"><small>${esc(top.why || "Your usual " + slot)}</small><b>${esc(top.name)}</b></div>${S.settings.noNumbers ? "" : `<span class="u-k">${num(top.kcal)}</span>`}<span class="u-plus">${icon("plus")}</span></button>` : "")
-    + `<button class="log-btn" data-act="open" data-sheet="log" style="${top ? "" : "flex:1;justify-content:center;padding:15px"}">${icon("plus")}Log meal</button>`;
+  $("#dock").innerHTML = `<div class="dock-row"><button class="askbar" data-act="open" data-sheet="quick">${icon("search")}<span>Add food or ask anything…</span></button><label class="qcam big" for="homePhotos" aria-label="Add from a receipt or order screenshots">${icon("camera")}<input type="file" id="homePhotos" accept="image/*" multiple hidden></label></div><div class="dock-row">` + (top ? `<button class="usual" data-act="quick-log" data-key="${esc(top.key)}" data-slot="${slot}" aria-label="Log ${esc(top.name)}"><span class="u-e">${esc(dishEmoji(top.name))}</span><div class="u-txt"><small>${esc(top.why || "Your usual " + slot)}</small><b>${esc(top.name)}</b></div>${S.settings.noNumbers ? "" : `<span class="u-k">${num(top.kcal)}</span>`}<span class="u-plus">${icon("plus")}</span></button>` : "")
+    + `<button class="log-btn" data-act="open" data-sheet="log" style="${top ? "" : "flex:1;justify-content:center;padding:13px"}">${icon("plus")}Log meal</button></div>`;
 }
 function dishEmoji(n) {
   const s = String(n).toLowerCase();
@@ -1260,7 +1475,7 @@ function renderInside(comp) {
   const list = active().filter(i => zones.includes(i.zone)).sort((a, b) => daysLeft(a) - daysLeft(b));
   const TAGS = { top: "Dairy & eggs", middle: "Ready to eat", bottom: "Meat & fish", crisper: "Crisper · fruit & veg", door: "Door", freezer: "Frozen" };
   let h = `<div class="in-head"><h2>${comp === "freezer" ? "Freezer" : "Fridge"}<small>${list.length} item${list.length === 1 ? "" : "s"}</small></h2>
-    <button class="btn sm soft" style="background:#fff;color:#2c2838" data-act="open" data-sheet="add" data-zone="${comp === "freezer" ? "freezer" : ""}">${icon("plus")}Add</button><button class="btn sm" style="background:#2c2838;color:#fff" data-act="toggle" data-comp="${comp}">Close</button></div>`;
+    <button class="btn sm soft" style="background:#fff;color:#2c2838" data-act="open" data-sheet="quick" data-zone="${comp === "freezer" ? "freezer" : ""}">${icon("plus")}Add</button><button class="btn sm" style="background:#2c2838;color:#fff" data-act="toggle" data-comp="${comp}">Close</button></div>`;
   if (list.length) h += `<div class="swipe-hint"><span>Swipe food <b>→ ate it</b></span><span><i>← tossed</i></span></div>`;
   if (comp === "main" && S.items.some(i => i.example)) h += `<div class="banner">This is example food. <button data-act="clear-examples">Clear examples</button></div>`;
   for (const z of zones) {
@@ -1356,15 +1571,16 @@ function showHint() {
 }
 function dismissHint() { const h = $("#hint"); if (h) { h.remove(); try { localStorage.setItem("fridge.hint", "1"); } catch (_) {} } }
 /* ---------- sheets ---------- */
-const TITLES = { scan: "Scan", item: "Food", add: "Add food", recipes: "Cook tonight", calories: "Calories", log: "Log a meal", habits: "Habits", shopping: "Shopping", insights: "Your progress", settings: "Settings", pantry: "Pantry", check: "Fridge check", welcome: "Welcome" };
+const TITLES = { scan: "Scan", item: "Food", add: "Add food", recipes: "Cook tonight", calories: "Calories", log: "Log a meal", habits: "Habits", shopping: "Shopping", insights: "Your progress", settings: "Settings", pantry: "Pantry", check: "Fridge check", welcome: "Welcome", quick: "Add or ask" };
 function openSheet(kind, opts = {}, src) {
   const go = () => {
     SH = { kind, ...opts };
-    if (kind === "scan") SH.scan = { mode: "receipt", file: null, url: null, status: "idle", rows: [], seen: [], missing: [], meta: {} };
+    if (kind === "scan") { SH.scan = { mode: "receipt", file: null, url: null, files: [], urls: [], status: "idle", rows: [], seen: [], missing: [], meta: {} }; if (opts.files?.length) { setScanFiles(SH.scan, opts.files); setTimeout(() => { if (SH?.scan?.files.length) scanRead(); }, 50); } }
     if (kind === "add") SH.add = { name: "", zone: opts.zone || "", days: "", qty: 1, price: "", touchedZone: !!opts.zone };
     if (kind === "recipes") SH.rec = { status: "idle", list: basicRecipes(), src: "basic", open: 0, cook: -1, pref: "", sel: {}, servings: 1 };
     if (kind === "log") SH.log = { slot: opts.slot || slotNow(), portion: 1, q: "", status: "idle", est: null, logged: {}, file: null, url: null, manual: false, mName: "", mKcal: "", mProt: "", t0: Date.now() };
     if (kind === "shopping") SH.shop = { q: "" };
+    if (kind === "quick") SH.q = { text: opts.text || "", items: [], status: "idle", answer: "", err: "" };
     if (kind === "check") SH.check = { ids: needsCheck().map(i => i.id), i: 0 };
     if (kind === "insights") SH.tab = opts.tab || "week";
     if (kind === "welcome") SH.ob = { step: 0, goals: { waste: true, rebuy: true, deficit: true, habits: false }, kcal: S.settings.kcal || 1600, protein: S.settings.protein || 100, noNumbers: false, nudge: true };
@@ -1375,10 +1591,12 @@ function openSheet(kind, opts = {}, src) {
   };
   if (src && src.classList.contains("magnet")) { src.classList.remove("pop"); void src.offsetWidth; src.classList.add("pop"); setTimeout(go, 170); } else go();
 }
+function autoGrow(t) { t.style.height = "auto"; t.style.height = Math.min(140, t.scrollHeight) + "px"; }
 function closeSheet() {
+  SH?.q?.ctl?.abort?.();
   if (SH?.kind === "welcome" && !S.settings.onboarded) { S.settings = { ...S.settings, onboarded: true }; putSettings(); }
   [SH?.scan?.ctl, SH?.rec?.ctl, SH?.log?.ctl].forEach(c => c?.abort());
-  if (SH?.scan?.url) URL.revokeObjectURL(SH.scan.url); if (SH?.log?.url) URL.revokeObjectURL(SH.log.url);
+  (SH?.scan?.urls || []).forEach(u => URL.revokeObjectURL(u)); if (SH?.log?.url) URL.revokeObjectURL(SH.log.url);
   SH = null; $("#backdrop").classList.remove("show"); $("#sheet").classList.remove("show");
 }
 function refreshSheet() {
@@ -1393,11 +1611,12 @@ function renderSheet(reset) {
   let t = TITLES[SH.kind];
   if (SH.kind === "item") { const it = S.items.find(x => x.id === SH.id); t = it ? it.name : "Food"; }
   $("#sheetTitle").textContent = t;
-  $("#sheetEmo").textContent = SH.kind === "item" ? (S.items.find(x => x.id === SH.id)?.emoji || "🥫") : ({ scan: "📸", add: "🛒", recipes: "🍲", calories: "🔥", log: "🍽️", habits: "✅", shopping: "📝", insights: "✨", settings: "⚙️", pantry: "🧺", check: "🔎", welcome: "👋" })[SH.kind] || "";
-  body.innerHTML = ({ scan: vScan, item: vItem, add: vAdd, recipes: vRecipes, calories: vCalories, log: vLog, habits: vHabits, shopping: vShopping, insights: vInsights, settings: vSettings, pantry: vPantry, check: vCheck, welcome: vWelcome })[SH.kind]();
+  $("#sheetEmo").textContent = SH.kind === "item" ? (S.items.find(x => x.id === SH.id)?.emoji || "🥫") : ({ scan: "📸", add: "🛒", recipes: "🍲", calories: "🔥", log: "🍽️", habits: "✅", shopping: "📝", insights: "✨", settings: "⚙️", pantry: "🧺", check: "🔎", welcome: "👋", quick: "✍️" })[SH.kind] || "";
+  body.innerHTML = ({ scan: vScan, item: vItem, add: vAdd, recipes: vRecipes, calories: vCalories, log: vLog, habits: vHabits, shopping: vShopping, insights: vInsights, settings: vSettings, pantry: vPantry, check: vCheck, welcome: vWelcome, quick: vQuick })[SH.kind]();
   body.scrollTop = reset ? 0 : top;
   if (SH.kind === "shopping") renderHave();
   if (SH.kind === "log") renderLogMatches();
+  if (SH.kind === "quick" && reset) setTimeout(() => { const q = $("#quickIn"); if (q) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); autoGrow(q); } }, 380);
 }
 
 /* ----- log a meal (pattern-first) ----- */
@@ -1507,27 +1726,25 @@ function vCalories() {
 function vScan() {
   const sc = SH.scan, receipt = sc.mode === "receipt";
   const aiPhoto = photoOn() || (!AI.ready && !AI.off && window.claude);
-  let h = `<div class="stack"><div class="seg"><button class="${receipt ? "on" : ""}" data-act="scan-mode" data-mode="receipt">Receipt</button><button class="${!receipt ? "on" : ""}" data-act="scan-mode" data-mode="photo">Fridge photo</button></div>
-  <p class="muted tiny" style="margin:0">${receipt ? "Reads your receipt right on your phone, no AI. It decodes store abbreviations and remembers every line you fix, so each scan gets smarter." : "Photograph the inside of your fridge once a week. New food gets added, and anything missing from the photo can be marked as used up. Uses Claude."}</p>`;
-  if (!receipt && !aiPhoto) return h + (window.claude ? `<div class="note-box">Fridge photos need Claude, which isn't available in this view. Receipt scanning still works.</div>` : `<div class="note-box">Fridge photos need an Anthropic API key (Settings). Receipt scanning works without it.</div>`) + `<button class="btn accent block" data-act="scan-mode" data-mode="receipt">Scan a receipt instead</button></div>`;
-  if (!sc.file) return h + `<label class="drop" for="scanFile"><input type="file" id="scanFile" accept="image/*">${icon("camera")}<b>Take or choose a photo</b><span class="muted tiny">${receipt ? "Lay the receipt flat in good light, whole thing in frame." : "Uses your iPhone camera or photo library."}</span></label><button class="btn soft block" data-act="open" data-sheet="add">Add food by hand instead</button></div>`;
-  if (sc.status !== "done") h += `<img class="preview" src="${sc.url}" alt="Your photo">`;
+  let h = `<div class="stack"><div class="seg"><button class="${receipt ? "on" : ""}" data-act="scan-mode" data-mode="receipt">Receipt or order</button><button class="${!receipt ? "on" : ""}" data-act="scan-mode" data-mode="photo">Fridge photo</button></div>
+  <p class="muted tiny" style="margin:0">${receipt ? "Snap a paper receipt, or upload screenshots of your Instacart, Amazon Fresh, Walmart or any grocery-app order. Pick several screenshots at once for a long order. It's read on your phone, no AI, and it remembers every line you fix." : "Photograph the inside of your fridge once a week. New food gets added, and anything missing from the photo can be marked as used up. Uses Claude."}</p>`;
+  if (!receipt && !aiPhoto) return h + (window.claude ? `<div class="note-box">Fridge photos need Claude, which isn't available in this view. Receipts and screenshots still work.</div>` : `<div class="note-box">Fridge photos need an AI key (Settings). Receipts and screenshots work without it.</div>`) + `<button class="btn accent block" data-act="scan-mode" data-mode="receipt">Scan a receipt or screenshots instead</button></div>`;
+  if (!sc.files.length) return h + `<label class="drop" for="scanFile"><input type="file" id="scanFile" accept="image/*" ${receipt ? "multiple" : ""}>${icon("camera")}<b>${receipt ? "Choose photos or screenshots" : "Take or choose a photo"}</b><span class="muted tiny">${receipt ? "Screenshots: select all of them at once." : "Uses your iPhone camera or photo library."}</span></label><button class="btn soft block" data-act="open" data-sheet="quick">Type what you bought instead</button></div>`;
+  if (sc.status !== "done") h += `<div class="thumbs">${sc.urls.map(u => `<img src="${u}" alt="">`).join("")}</div>`;
   if (sc.status === "reading") h += receipt ? `<div class="stack" style="gap:6px"><div class="status"><span class="spinner"></span><span id="ocrStage">${esc(sc.stage || "Reading…")}</span></div><div class="bar"><span id="ocrBar" style="width:${Math.round((sc.prog || 0) * 100)}%;background:var(--accent);transition:width .3s"></span></div></div>` : `<div class="status"><span class="spinner"></span>Looking at your fridge… this can take up to a minute.</div><button class="btn soft sm" data-act="scan-stop">Stop</button>`;
-  else if (sc.status !== "done") h += `<div class="row"><button class="btn accent" data-act="scan-read">Read it</button><label class="btn soft" for="scanFile">Choose another<input type="file" id="scanFile" accept="image/*" hidden></label></div>`;
+  else if (sc.status !== "done") h += `<div class="row"><button class="btn accent" data-act="scan-read">Read ${sc.files.length > 1 ? `all ${sc.files.length}` : "it"}</button><label class="btn soft" for="scanFile">Choose again<input type="file" id="scanFile" accept="image/*" ${receipt ? "multiple" : ""} hidden></label></div>`;
   if (sc.status === "error") h += `<div class="err">${esc(sc.err)}</div>`;
   if (sc.status === "done") {
     const on = sc.rows.filter(r => r.on).length, miss = sc.missing.filter(m => m.on).length, learned = sc.rows.filter(r => r.learned).length;
     h += `<div class="row" style="justify-content:space-between"><span class="muted tiny" style="font-weight:700">${esc(sc.meta.store || "Receipt")}${sc.meta.total ? " · total " + money(sc.meta.total) : ""}</span>${sc.meta.engine ? `<span class="pill muted">${esc(sc.meta.engine)}</span>` : ""}</div>`;
     if (learned) h += `<div class="card tiny" style="font-weight:700">🧠 Recognised ${learned} line${learned === 1 ? "" : "s"} from your past corrections.</div>`;
     if (!receipt && sc.seen.length) h += `<div class="section-t">Already tracked</div><div class="muted tiny">${sc.seen.map(esc).join(", ")}</div>`;
-    h += `<div class="section-t">${receipt ? "Found on the receipt" : "New in the photo"} · ${sc.rows.length}</div>`;
-    if (!sc.rows.length) h += `<p class="muted tiny" style="margin:0">${receipt ? "Couldn't find item lines. Try a sharper, flatter photo, or add lines by hand below." : "No new food found."}</p>`;
+    h += `<div class="section-t">${receipt ? "Found" : "New in the photo"} · ${sc.rows.length}</div>`;
+    if (!sc.rows.length) h += `<p class="muted tiny" style="margin:0">${receipt ? "Couldn't find any food. Try a sharper photo, or add lines below." : "No new food found."}</p>`;
     h += sc.rows.map((r, i) => `<div class="parse-row ${r.on ? "" : "off"}"><input class="tick" type="checkbox" ${r.on ? "checked" : ""} data-row="${i}" data-f="on" aria-label="Include ${esc(r.name)}">
       <div class="fields">${r.raw ? `<div class="raw-line"><code>${esc(r.raw)}</code>${r.learned ? `<span class="tag learn">learned</span>` : r.note ? `<span class="tag ${r.unsure || !r.on ? "warn" : "info"}">${esc(r.note)}</span>` : ""}</div>` : ""}
       <input class="inp" id="r-name-${i}" value="${esc(r.name)}" placeholder="Food name" data-row="${i}" data-f="name" aria-label="Name"><input class="inp" id="r-qty-${i}" type="number" min="1" inputmode="numeric" value="${esc(r.qty)}" data-row="${i}" data-f="qty" aria-label="Quantity">
-      <div class="sub"><div><div class="mini-lbl">Where</div><select class="inp" id="r-zone-${i}" data-row="${i}" data-f="zone">${Object.keys(ZONE_SHORT).map(z => `<option value="${z}" ${z === r.zone ? "selected" : ""}>${ZONE_SHORT[z]}</option>`).join("")}</select></div>
-      <div><div class="mini-lbl">Lasts (days)</div><input class="inp" id="r-days-${i}" type="number" min="0" inputmode="numeric" value="${esc(r.days)}" data-row="${i}" data-f="days"></div>
-      <div><div class="mini-lbl">Price</div><input class="inp" id="r-price-${i}" type="number" step="0.01" inputmode="decimal" value="${r.price ?? ""}" data-row="${i}" data-f="price"></div></div></div></div>`).join("");
+      <div class="cats wide">${CATS_UI.map(([z, e, l]) => `<button class="${r.zone === z ? "on" : ""}" data-act="row-zone" data-i="${i}" data-z="${z}">${e} ${l}</button>`).join("")}</div></div></div>`).join("");
     if (receipt) h += `<button class="btn soft sm" data-act="scan-addline" style="align-self:flex-start">${icon("plus")}Add a line it missed</button>`;
     if (!receipt && sc.missing.length) h += `<div class="section-t">Tracked but not in the photo</div>` + sc.missing.map((m, i) => `<label class="cb-row"><input type="checkbox" ${m.on ? "checked" : ""} data-miss="${i}"> ${esc(m.name)} <span class="muted tiny">· mark as used up</span></label>`).join("");
     h += `<button class="btn good block" data-act="scan-add" ${on + miss ? "" : "disabled"}>${on ? `Add ${on} item${on === 1 ? "" : "s"}` : "Update fridge"}${miss ? ` · mark ${miss} used` : ""}</button>`;
@@ -1535,19 +1752,28 @@ function vScan() {
   }
   return h + `</div>`;
 }
+function setScanFiles(sc, files) { (sc.urls || []).forEach(u => URL.revokeObjectURL(u)); sc.files = Array.from(files).slice(0, 12); sc.urls = sc.files.map(f => URL.createObjectURL(f)); sc.file = sc.files[0]; sc.url = sc.urls[0]; }
 async function scanReadOCR() {
-  const sc = SH.scan; if (!sc.file) return;
+  const sc = SH.scan; if (!sc.files.length) return;
   sc.status = "reading"; sc.err = ""; sc.prog = 0.02; sc.stage = "Starting…"; renderSheet();
-  const t0 = Date.now();
+  const t0 = Date.now(), all = [], lines = []; let engine = "", store = null, total = null, shots = 0;
   try {
-    const res = await ocrImage(sc.file, u => { if (SH?.scan !== sc) return; sc.stage = u.stage; sc.prog = u.p; const b = $("#ocrBar"), st = $("#ocrStage"); if (b) b.style.width = Math.round(u.p * 100) + "%"; if (st) st.textContent = u.stage; });
-    if (SH?.scan !== sc) return;
-    const parsed = parseReceipt(res.lines);
-    sc.rows = parsed.rows; sc.meta = { store: parsed.store, total: parsed.total, engine: res.engine }; sc.lines = res.lines.filter(l => String(l).trim()); sc.status = "done";
+    for (let k = 0; k < sc.files.length; k++) {
+      const f = sc.files[k], shot = /png/i.test(f.type) || /^IMG_\d+\.PNG$/i.test(f.name || "");
+      const pre = sc.files.length > 1 ? `Photo ${k + 1} of ${sc.files.length}: ` : "";
+      const res = await ocrImage(f, u => { if (SH?.scan !== sc) return; const p = (k + u.p) / sc.files.length; sc.stage = pre + u.stage; sc.prog = p; const b = $("#ocrBar"), st = $("#ocrStage"); if (b) b.style.width = Math.round(p * 100) + "%"; if (st) st.textContent = sc.stage; }, shot ? "shot" : "receipt");
+      if (SH?.scan !== sc) return;
+      engine = res.engine; lines.push(...res.lines.filter(l => String(l).trim()), "");
+      let parsed = shot ? parseOrderShot(res.lines) : parseReceipt(res.lines);
+      if (!parsed.rows.length) { const alt = shot ? parseReceipt(res.lines) : parseOrderShot(res.lines); if (alt.rows.length) parsed = alt; }
+      if (shot) shots++; store = store || parsed.store; total = total || parsed.total;
+      for (const r of parsed.rows) { const x = all.find(m => m.name.toLowerCase() === r.name.toLowerCase()); if (x) { x.qty = shot ? Math.max(x.qty, r.qty) : x.qty + r.qty; if (x.price == null) x.price = r.price; } else all.push(r); }
+    }
+    sc.rows = all; sc.meta = { store: shots === sc.files.length && store === "Grocery order" ? `${shots} order screenshot${shots === 1 ? "" : "s"}` : store, total, engine }; sc.lines = lines; sc.status = "done";
     track("ocrMs", Date.now() - t0);
   } catch (e) {
     console.warn(e); if (SH?.scan !== sc) return;
-    sc.status = "error"; sc.err = "Couldn't read that photo. Try again with the receipt flat, in good light, and the whole thing in frame.";
+    sc.status = "error"; sc.err = "Couldn't read that. Try a sharper photo or screenshot, with the whole list in frame.";
   }
   renderSheet();
 }
@@ -1597,6 +1823,7 @@ function scanAdd() {
   const miss = sc.missing.filter(m => m.on);
   for (const m of miss) { const it = S.items.find(x => x.id === m.id); if (it) putItem({ ...it, status: "used", closedAt: T }); }
   const learnedN = sc.mode === "receipt" ? learnFromScan(sc.rows) : 0;
+  sc.rows.filter(r => r.on && r.zoneTouched).forEach(r => rememberZone(r.name, r.zone));
   if (sc.mode === "receipt") { track("scans"); track("scanRows", sc.rows.length); track("scanFixed", sc.rows.filter(r => r.raw && (r.on !== r.init?.on || r.edited)).length); }
   // tick matching shopping list items as bought
   if (add.length && (S.shopping.items || []).length) { S.shopping = { ...S.shopping, items: S.shopping.items.map(x => !x.done && add.some(r => nameMatch(r.name, x.name)) ? { ...x, done: true } : x) }; putShopping(); }
@@ -1652,15 +1879,25 @@ function addSubmit() {
 
 /* ----- recipes ----- */
 const BASIC = [
-  { name: "Spinach & pepper egg scramble", minutes: 12, kcal: 320, protein: 22, keys: ["egg", "spinach", "pepper", "tomato", "onion", "cheddar"], ingredients: ["3 eggs", "2 handfuls spinach", "½ bell pepper, diced", "Salt, pepper, chili flakes"], steps: ["Soften pepper in a non-stick pan with a little oil.", "Add spinach until it wilts.", "Pour in beaten eggs and stir gently until just set."] },
+  { name: "Spinach & pepper egg scramble", breakfast: true, minutes: 12, kcal: 320, protein: 22, keys: ["egg", "spinach", "pepper", "tomato", "onion", "cheddar"], ingredients: ["3 eggs", "2 handfuls spinach", "½ bell pepper, diced", "Salt, pepper, chili flakes"], steps: ["Soften pepper in a non-stick pan with a little oil.", "Add spinach until it wilts.", "Pour in beaten eggs and stir gently until just set."] },
   { name: "Chicken & veggie stir-fry", minutes: 20, kcal: 450, protein: 42, keys: ["chicken", "pepper", "broccoli", "carrot", "onion", "rice"], ingredients: ["150 g chicken breast, sliced", "1 bell pepper", "1 cup broccoli or any veg", "1 tbsp soy sauce, garlic", "½ cup cooked rice"], steps: ["Sear chicken in a hot pan, 5–6 min.", "Add veg and a splash of water, cook 4 min.", "Toss with soy sauce and garlic; serve over a small scoop of rice."] },
-  { name: "Greek yogurt berry bowl", minutes: 5, kcal: 260, protein: 20, keys: ["yogurt", "strawberr", "berries", "oats", "honey", "banana"], ingredients: ["¾ cup Greek yogurt", "Handful of berries", "2 tbsp oats", "Drizzle of honey"], steps: ["Spoon yogurt into a bowl.", "Top with berries, oats and honey."] },
-  { name: "Masala omelette wrap", minutes: 10, kcal: 380, protein: 24, keys: ["egg", "onion", "tomato", "cilantro", "tortilla", "roti", "bread", "pepper"], ingredients: ["2 eggs", "Onion, tomato, chili, cilantro", "1 whole wheat roti or tortilla"], steps: ["Whisk eggs with chopped veg and a pinch of turmeric.", "Cook as a thin omelette.", "Roll up in a warm roti."] },
+  { name: "Greek yogurt berry bowl", breakfast: true, minutes: 5, kcal: 260, protein: 20, keys: ["yogurt", "strawberr", "berries", "oats", "honey", "banana"], ingredients: ["¾ cup Greek yogurt", "Handful of berries", "2 tbsp oats", "Drizzle of honey"], steps: ["Spoon yogurt into a bowl.", "Top with berries, oats and honey."] },
+  { name: "Masala omelette wrap", breakfast: true, minutes: 10, kcal: 380, protein: 24, keys: ["egg", "onion", "tomato", "cilantro", "tortilla", "roti", "bread", "pepper"], ingredients: ["2 eggs", "Onion, tomato, chili, cilantro", "1 whole wheat roti or tortilla"], steps: ["Whisk eggs with chopped veg and a pinch of turmeric.", "Cook as a thin omelette.", "Roll up in a warm roti."] },
   { name: "Chickpea & cucumber chaat", minutes: 10, kcal: 340, protein: 14, keys: ["chickpea", "chana", "cucumber", "tomato", "onion", "lemon", "yogurt"], ingredients: ["1 cup chickpeas", "Cucumber, tomato, onion", "Lemon juice, chaat masala", "Spoon of yogurt"], steps: ["Chop veg and mix with chickpeas.", "Season with lemon and chaat masala; top with yogurt."] },
   { name: "Dal & greens bowl", minutes: 10, kcal: 420, protein: 20, keys: ["dal", "lentil", "spinach", "rice"], ingredients: ["1 cup leftover dal", "A handful of spinach", "½ cup rice"], steps: ["Warm the dal and stir in spinach until wilted.", "Serve over a small portion of rice."] },
   { name: "Hummus & veggie wrap", minutes: 8, kcal: 360, protein: 18, keys: ["hummus", "pepper", "spinach", "cucumber", "chicken", "bread", "tortilla"], ingredients: ["1 wrap or 2 slices bread", "3 tbsp hummus", "Spinach, sliced pepper", "Optional: sliced chicken"], steps: ["Spread hummus on the wrap.", "Fill with greens and pepper, roll and slice."] },
-  { name: "Overnight oats", minutes: 5, kcal: 330, protein: 16, keys: ["oats", "milk", "yogurt", "berries", "banana"], ingredients: ["½ cup oats", "½ cup milk", "¼ cup yogurt", "Berries or banana"], steps: ["Stir oats, milk and yogurt in a jar.", "Top with fruit and refrigerate overnight."] },
-  { name: "Pea & paneer bhurji", minutes: 15, kcal: 400, protein: 26, keys: ["paneer", "peas", "onion", "tomato", "roti"], ingredients: ["100 g paneer, crumbled", "½ cup peas", "Onion, tomato, spices"], steps: ["Cook onion and tomato with cumin and turmeric.", "Add peas, then crumbled paneer; cook 3 min."] }
+  { name: "Overnight oats", breakfast: true, minutes: 5, kcal: 330, protein: 16, keys: ["oats", "milk", "yogurt", "berries", "banana"], ingredients: ["½ cup oats", "½ cup milk", "¼ cup yogurt", "Berries or banana"], steps: ["Stir oats, milk and yogurt in a jar.", "Top with fruit and refrigerate overnight."] },
+  { name: "Pea & paneer bhurji", minutes: 15, kcal: 400, protein: 26, keys: ["paneer", "peas", "onion", "tomato", "roti"], ingredients: ["100 g paneer, crumbled", "½ cup peas", "Onion, tomato, spices"], steps: ["Cook onion and tomato with cumin and turmeric.", "Add peas, then crumbled paneer; cook 3 min."] },
+  { name: "Chickpea spinach curry", minutes: 20, kcal: 410, protein: 17, keys: ["chickpea", "chana", "spinach", "tomato", "onion", "garlic", "ginger"], ingredients: ["1 can chickpeas", "2 handfuls spinach", "1 tomato, 1 onion", "Garlic, ginger, garam masala"], steps: ["Cook onion, garlic and ginger until soft.", "Add chopped tomato and spices, cook 5 min.", "Add chickpeas and a splash of water, simmer 8 min.", "Stir in spinach until wilted."] },
+  { name: "Light egg fried rice", minutes: 15, kcal: 430, protein: 20, keys: ["rice", "egg", "peas", "carrot", "pepper", "onion", "spinach"], ingredients: ["1 cup cooked rice (day-old is best)", "2 eggs", "1 cup mixed veg", "1 tbsp soy sauce"], steps: ["Scramble eggs in a hot pan, set aside.", "Stir-fry veg 3 min.", "Add rice and soy sauce, toss 3 min, fold eggs back in."] },
+  { name: "Tomato basil pasta with chicken", minutes: 25, kcal: 520, protein: 38, keys: ["pasta", "tomato", "basil", "chicken", "garlic", "spinach", "parmesan"], ingredients: ["70 g pasta", "120 g chicken breast", "1 cup cherry tomatoes", "Garlic, basil, parmesan"], steps: ["Boil pasta.", "Sear sliced chicken 6 min.", "Add garlic and tomatoes, cook until they burst.", "Toss with pasta, basil and a little parmesan."] },
+  { name: "Tofu veggie scramble", minutes: 12, kcal: 300, protein: 22, keys: ["tofu", "spinach", "pepper", "onion", "tomato", "mushroom"], ingredients: ["150 g firm tofu", "Handful spinach", "½ pepper, few mushrooms", "Turmeric, salt, pepper"], steps: ["Crumble tofu into a hot pan with a little oil.", "Add veg and turmeric, cook 6–8 min.", "Season and serve with toast."], breakfast: true },
+  { name: "Shrimp tacos with slaw", minutes: 15, kcal: 420, protein: 30, keys: ["shrimp", "prawn", "tortilla", "cabbage", "lime", "lemon", "avocado", "yogurt"], ingredients: ["150 g shrimp", "3 small tortillas", "Shredded cabbage", "Lime, Greek yogurt, chili"], steps: ["Season shrimp with chili and cook 2 min a side.", "Mix cabbage with lime and a spoon of yogurt.", "Fill warm tortillas."] },
+  { name: "Banana oat pancakes", minutes: 15, kcal: 350, protein: 18, keys: ["banana", "oats", "egg", "milk", "yogurt", "berries"], ingredients: ["1 ripe banana", "2 eggs", "⅓ cup oats", "Berries or yogurt to top"], steps: ["Blend banana, eggs and oats.", "Cook small pancakes 2 min a side.", "Top with yogurt and berries."], breakfast: true },
+  { name: "Paneer tikka bowl", minutes: 20, kcal: 480, protein: 30, keys: ["paneer", "pepper", "onion", "yogurt", "rice", "cucumber"], ingredients: ["120 g paneer", "1 pepper, ½ onion", "2 tbsp yogurt, tikka spices", "½ cup rice, cucumber"], steps: ["Coat paneer and veg in yogurt and spices.", "Grill or pan-roast 8–10 min.", "Serve over rice with cucumber."] },
+  { name: "Caprese chicken salad", minutes: 15, kcal: 400, protein: 40, keys: ["chicken", "tomato", "mozzarella", "basil", "lettuce", "spinach", "avocado"], ingredients: ["120 g chicken breast", "Tomato, fresh mozzarella", "Greens, basil", "Balsamic, olive oil"], steps: ["Cook and slice the chicken.", "Layer greens, tomato, mozzarella and chicken.", "Dress with balsamic and a little oil."] },
+  { name: "Moong dal chilla", minutes: 20, kcal: 330, protein: 19, keys: ["moong", "dal", "lentil", "onion", "tomato", "cilantro", "yogurt"], ingredients: ["½ cup soaked moong dal", "Onion, tomato, cilantro", "Green chili, cumin", "Yogurt on the side"], steps: ["Blend dal into a batter with chili and cumin.", "Stir in chopped veg.", "Cook thin pancakes 2 min a side; serve with yogurt."], breakfast: true },
+  { name: "Salmon rice bowl", minutes: 20, kcal: 520, protein: 34, keys: ["salmon", "rice", "cucumber", "avocado", "spinach", "carrot"], ingredients: ["1 salmon fillet", "½ cup rice", "Cucumber, avocado, carrot", "Soy sauce, sesame"], steps: ["Bake or pan-sear salmon 10 min.", "Slice veg.", "Build the bowl and drizzle with soy and sesame."] }
 ];
 function matchPantry(names) { const act = active(), used = []; for (const n of names) { const m = act.find(i => nameMatch(i.name, n) && !used.includes(i)); if (m) used.push(m); } return used; }
 function basicRecipes() {
@@ -1672,9 +1909,13 @@ function basicRecipes() {
   }).filter(r => r.useIds.length).sort((a, b) => b.score - a.score).slice(0, 4);
 }
 function vRecipes() {
-  const R = SH.rec, left = S.settings.kcal - kcalOf(todayId());
+  const R = SH.rec, left = S.settings.kcal - kcalOf(todayId()), nSaved = savedRecipes().length;
+  const tabs = `<div class="seg"><button class="${R.tab !== "saved" ? "on" : ""}" data-act="rec-tab" data-t="tonight">For tonight</button><button class="${R.tab === "saved" ? "on" : ""}" data-act="rec-tab" data-t="saved">Saved${nSaved ? ` (${nSaved})` : ""}</button></div>`;
+  const askBtn = `<button class="askbar inline" data-act="open" data-sheet="quick" data-text="I have ">${icon("search")}<span>Ask: “I have eggs and spinach, what can I make?”</span></button>`;
+  if (R.tab === "saved") { R.list = savedForView(); return `<div class="stack">${tabs}${R.list.length ? `<p class="muted tiny" style="margin:0">Sorted by how much you can make with what's in your fridge right now.</p>` + R.list.map((r, i) => recipeCard(r, i)).join("") : `<p class="muted tiny" style="margin:0">Tap “Save” on any recipe and it lives here, updated with what you have.</p>`}</div>`; }
+  if (!R.tonight || R.src !== "ai") R.tonight = R.list;
   const exp = active().filter(i => i.zone !== "pantry" && daysLeft(i) <= 3).sort((a, b) => daysLeft(a) - daysLeft(b));
-  let h = `<div class="stack"><div class="card"><b>${S.settings.noNumbers ? "Something light and filling" : left > 0 ? `About ${num(left)} kcal left today` : "You're at today's goal"}</b>
+  let h = `<div class="stack">${tabs}${askBtn}<div class="card"><b>${S.settings.noNumbers ? "Something light and filling" : left > 0 ? `About ${num(left)} kcal left today` : "You're at today's goal"}</b>
     ${exp.length ? `<div class="uses" style="margin-top:8px">${exp.slice(0, 6).map(i => `<span class="soon">${esc(i.name)} · ${lifeInfo(i).short}</span>`).join("")}</div>` : `<div class="muted tiny" style="margin-top:4px">Nothing urgent in the fridge.</div>`}</div>`;
   const mine = myDishesNow();
   if (mine.length) h += `<div class="section-t">Your own dishes you can make now</div><div class="list">${mine.map(d => `<div class="li"><span style="font-size:24px">${esc(dishEmoji(d.name))}</span><div class="main"><b>${esc(d.name)}</b><small>You have ${esc(d.have.map(x => x.name).join(", "))}${d.miss.length ? ` · missing ${esc(d.miss.map(x => x.name).join(", "))}` : ""}${S.settings.noNumbers ? "" : ` · ${num(d.kcal)} kcal`}</small></div><button class="btn good sm" data-act="make-dish" data-key="${esc(d.key)}">Made it</button></div>`).join("")}</div>`;
@@ -1692,7 +1933,7 @@ function vRecipes() {
 }
 function recipeCard(r, idx) {
   const R = SH.rec, uses = (r.useIds || []).map(id => S.items.find(i => i.id === id)).filter(Boolean), open = R.open === idx, nn = S.settings.noNumbers;
-  let h = `<article class="recipe"><button class="r-top" data-act="rec-open" data-i="${idx}" aria-expanded="${open}"><h3>${esc(r.name)}</h3>
+  let h = `<article class="recipe"><button class="r-top" data-act="rec-open" data-i="${idx}" aria-expanded="${open}"><h3>${isSaved(r) ? "★ " : ""}${esc(r.name)}</h3>
     <div class="meta"><span>${esc(r.minutes || 15)} min</span>${nn ? "" : `<span>${num(r.kcal)} kcal</span><span>${num(r.protein)} g protein</span>`}</div>
     <div class="uses">${uses.map(i => `<span class="${daysLeft(i) <= 3 ? "soon" : ""}">${esc(i.name)}</span>`).join("")}${(r.extra || []).map(x => `<span class="buy">+ ${esc(x)}</span>`).join("")}</div></button>`;
   if (open) {
@@ -1700,7 +1941,7 @@ function recipeCard(r, idx) {
     if (R.cook === idx) h += `<div class="cook-box"><b>What did you use?</b>${uses.map(i => `<label class="cb-row"><input type="checkbox" data-cooksel="${esc(i.id)}" ${R.sel[i.id] !== false ? "checked" : ""}> ${esc(i.name)} <span class="muted tiny">${(i.qty || 1) > 1 ? "· takes one" : "· finishes it"}</span></label>`).join("") || `<span class="muted tiny">Nothing matched in your fridge.</span>`}
         <div class="row" style="justify-content:space-between"><span class="tiny muted">Servings you ate</span><div class="stepper"><button data-act="rec-serv" data-d="-0.5" aria-label="Less">−</button><output>${R.servings}</output><button data-act="rec-serv" data-d="0.5" aria-label="More">+</button></div></div>
         <button class="btn good block" data-act="rec-log" data-i="${idx}">Log ${nn ? "meal" : num(r.kcal * R.servings) + " kcal"} & update fridge</button></div>`;
-    else h += `<button class="btn good block" data-act="rec-cook" data-i="${idx}">I cooked this</button>`;
+    else h += `<div class="grid2"><button class="btn good" data-act="rec-cook" data-i="${idx}">I cooked this</button><button class="btn soft" data-act="rec-save" data-i="${idx}">${isSaved(r) ? "★ Saved" : "☆ Save recipe"}</button></div>`;
     h += `</div>`;
   }
   return h + `</article>`;
@@ -1896,7 +2137,7 @@ document.addEventListener("click", e => {
   const a = el.dataset.act;
   switch (a) {
     case "toggle": toggleComp(el.dataset.comp); break;
-    case "open": { const k = el.dataset.sheet, opts = el.dataset.zone ? { zone: el.dataset.zone } : {}; if (SH) { closeSheet(); setTimeout(() => openSheet(k, opts), 200); } else openSheet(k, opts, el); break; }
+    case "open": { const k = el.dataset.sheet, opts = el.dataset.zone ? { zone: el.dataset.zone } : {}; if (el.dataset.text) opts.text = el.dataset.text; if (SH) { closeSheet(); setTimeout(() => openSheet(k, opts), 200); } else openSheet(k, opts, el); break; }
     case "close-sheet": closeSheet(); break;
     case "item": openSheet("item", { id: el.dataset.id }); break;
     case "habit-tap": habitStep(el.dataset.id, 1); break;
@@ -1905,6 +2146,15 @@ document.addEventListener("click", e => {
     case "ins-tab": SH.tab = el.dataset.t; renderSheet(true); break;
     case "copy-study": { const txt = studyMetrics().text; let pr; try { pr = navigator.clipboard.writeText(txt); } catch (_) { pr = Promise.reject(); } pr.then(() => toast("Copied. Paste it into your case study doc."), () => toast("Couldn't copy on this device.")); break; }
     case "check": checkResolve(el.dataset.r); break;
+    case "q-suggest": SH.q.text = el.dataset.t; { const q = $("#quickIn"); if (q) q.value = SH.q.text; } quickAsk(); break;
+    case "q-again": { const q = $("#quickIn"); SH.q.text = (SH.q.text.trim() ? SH.q.text.trim().replace(/,$/, "") + ", " : "") + el.dataset.t; if (q) { q.value = SH.q.text; autoGrow(q); } renderQuick(); break; }
+    case "q-zone": { const it = SH.q.items[+el.dataset.i]; if (it) { it.zone = el.dataset.z; it.touched = true; } renderQuick(); break; }
+    case "q-add": quickAdd(); break;
+    case "q-ask": quickAsk(); break;
+    case "q-forceadd": SH.q.force = true; SH.q.items = parseQuick(SH.q.text); { const b = $("#qBody"); if (b) b.innerHTML = qListOnly(); } break;
+    case "row-zone": { const r = SH.scan.rows[+el.dataset.i]; if (r) { r.zone = el.dataset.z; r.zoneTouched = true; r.edited = true; if (!r.on) r.on = true; } renderSheet(); break; }
+    case "rec-tab": { const R = SH.rec; if (el.dataset.t === "saved") { R.tonight = R.tonight || R.list; R.tab = "saved"; } else { R.tab = "tonight"; R.list = R.tonight || basicRecipes(); } R.open = 0; R.cook = -1; renderSheet(true); break; }
+    case "rec-save": { const r = SH.rec.list[+el.dataset.i]; if (r) { const was = isSaved(r); toggleSave(r); toast(was ? "Removed from saved." : "Saved. Find it under Cook → Saved."); } if (SH.kind === "quick") renderQuick(); else renderSheet(); break; }
     case "used-tog": { const P = SH.log.used, c = el.dataset.c; P.sel[c] = !P.sel[c]; renderSheet(); break; }
     case "used-ok": { const used = confirmUsed(SH.log.used); SH.log.used = null; renderSheet(); toast(used.length ? `Took ${used.map(i => i.name.toLowerCase()).join(", ")} off the shelf.` : "Nothing matched in your fridge."); break; }
     case "used-skip": { const P = SH.log.used; editDay(P.date, d => { const m = d.meals.find(x => x.id === P.mealId); if (m) m.uses = []; }); SH.log.used = null; renderSheet(); break; }
@@ -1938,7 +2188,7 @@ document.addEventListener("click", e => {
     case "log-manual": { const L = SH.log; if (!L.mName.trim()) { toast("Give the dish a name."); break; } logEntry(L.mName, L.mKcal, L.mProt, L.slot, 1); L.mName = L.mKcal = L.mProt = ""; L.manual = false; L.q = ""; renderSheet(); break; }
     case "meal-del": { const T = todayId(), m = (dayOf(T).meals || []).find(x => x.id === el.dataset.id); editDay(T, d => { d.meals = d.meals.filter(x => x.id !== el.dataset.id); }); renderAll(); renderSheet(); if (m) toast(`Removed ${m.name}.`, () => { editDay(T, d => d.meals.push(m)); renderAll(); refreshSheet(); }); break; }
     // scan
-    case "scan-mode": SH.scan = { mode: el.dataset.mode, file: null, url: null, status: "idle", rows: [], seen: [], missing: [], meta: {} }; renderSheet(); break;
+    case "scan-mode": (SH.scan.urls || []).forEach(u => URL.revokeObjectURL(u)); SH.scan = { mode: el.dataset.mode, file: null, url: null, files: [], urls: [], status: "idle", rows: [], seen: [], missing: [], meta: {} }; renderSheet(); break;
     case "scan-read": scanRead(); break;
     case "scan-stop": SH.scan.ctl?.abort(); break;
     case "scan-add": scanAdd(); break;
@@ -1952,9 +2202,9 @@ document.addEventListener("click", e => {
     // recipes
     case "rec-ai": recAI(); break;
     case "rec-stop": SH.rec.ctl?.abort(); break;
-    case "rec-open": SH.rec.open = SH.rec.open === Number(el.dataset.i) ? -1 : Number(el.dataset.i); SH.rec.cook = -1; renderSheet(); break;
-    case "rec-cook": SH.rec.cook = Number(el.dataset.i); SH.rec.sel = {}; SH.rec.servings = 1; renderSheet(); break;
-    case "rec-serv": SH.rec.servings = clamp(SH.rec.servings + Number(el.dataset.d), 0.5, 4); renderSheet(); break;
+    case "rec-open": SH.rec.open = SH.rec.open === Number(el.dataset.i) ? -1 : Number(el.dataset.i); SH.rec.cook = -1; (SH.kind === "quick" ? renderQuick() : renderSheet()); break;
+    case "rec-cook": SH.rec.cook = Number(el.dataset.i); SH.rec.sel = {}; SH.rec.servings = 1; (SH.kind === "quick" ? renderQuick() : renderSheet()); break;
+    case "rec-serv": SH.rec.servings = clamp(SH.rec.servings + Number(el.dataset.d), 0.5, 4); (SH.kind === "quick" ? renderQuick() : renderSheet()); break;
     case "rec-log": recLog(Number(el.dataset.i)); break;
     // shopping
     case "shop-add": shopAdd(SH.shop.q); SH.shop.q = ""; renderSheet(); break;
@@ -1976,6 +2226,7 @@ document.addEventListener("keydown", e => {
   if ((e.key === "Enter" || e.key === " ") && e.target.matches('[role="button"][data-act]')) { e.preventDefault(); e.target.click(); }
   if (e.key === "Enter" && e.target.id === "shopQ") { e.preventDefault(); shopAdd(SH.shop.q); SH.shop.q = ""; renderSheet(); setTimeout(() => $("#shopQ")?.focus(), 20); }
   if (e.key === "Enter" && e.target.id === "logQ") { e.preventDefault(); const L = SH.log, q = normName(L.q), hit = mealLibrary().find(x => x.key === q); if (hit) { logFromLibrary(hit.key, L.slot, L.portion); L.q = ""; renderSheet(); } else if (aiOn()) logAI(null); else { L.manual = true; L.mName = L.q; renderSheet(); } }
+  if (e.key === "Enter" && !e.shiftKey && e.target.id === "quickIn") { e.preventDefault(); const t = SH.q.text.trim(); if (!t) return; if (isQuestion(t) && !SH.q.force) quickAsk(); else { if (!SH.q.items?.length) SH.q.items = parseQuick(t); quickAdd(); } return; }
   if (e.key === "Enter" && e.target.id === "recPref") { e.preventDefault(); recAI(); }
 });
 document.addEventListener("submit", e => { if (e.target.id === "addForm") { e.preventDefault(); addSubmit(); } });
@@ -1984,6 +2235,7 @@ document.addEventListener("input", e => {
   if (d.row !== undefined && SH?.scan) { const r = SH.scan.rows[Number(d.row)]; if (!r) return; if (d.f === "on") { r.on = t.checked; renderSheet(); } else { r[d.f] = t.value; r.edited = true; } return; }
   if (d.addf && SH?.add) { const a = SH.add; a[d.addf] = t.value; if (d.addf === "zone") a.touchedZone = true; if (d.addf === "name") { $("#addHint").innerHTML = addHint(a); const g = guess(a.name); if (!a.touchedZone) $("#addZone").value = g.zone; if (a.days === "") $("#addDays").value = shelfLifeFor(a.name); } if (d.addf === "days") a.days = t.value; return; }
   if (d.recf && SH?.rec) { SH.rec[d.recf] = t.value; return; }
+  if (d.qf && SH?.q) { SH.q.text = t.value; SH.q.force = false; autoGrow(t); if (SH.q.answer && t.value.trim()) { SH.q.answer = ""; SH.q.err = ""; SH.rec = null; } renderQuick(); return; }
   if (d.obf && SH?.ob) { SH.ob[d.obf] = t.value; return; }
   if (d.logf && SH?.log) { SH.log[d.logf] = t.value; if (d.logf === "q") renderLogMatches(); return; }
   if (d.estf && SH?.log?.est) { SH.log.est[d.estf] = t.value; return; }
@@ -1992,7 +2244,9 @@ document.addEventListener("input", e => {
 });
 document.addEventListener("change", e => {
   const t = e.target, d = t.dataset;
-  if (t.id === "scanFile" && t.files?.[0] && SH?.scan) { const sc = SH.scan; if (sc.url) URL.revokeObjectURL(sc.url); sc.file = t.files[0]; sc.url = URL.createObjectURL(sc.file); sc.status = "idle"; sc.rows = []; renderSheet(); return; }
+  if (t.id === "scanFile" && t.files?.length && SH?.scan) { setScanFiles(SH.scan, t.files); SH.scan.status = "idle"; SH.scan.rows = []; renderSheet(); return; }
+  if (t.id === "qPhotos" && t.files?.length) { const fs = Array.from(t.files); closeSheet(); setTimeout(() => openSheet("scan", { files: fs }), 200); return; }
+  if (t.id === "homePhotos" && t.files?.length) { const fs = Array.from(t.files); t.value = ""; if (SH) closeSheet(); setTimeout(() => openSheet("scan", { files: fs }), SH ? 200 : 0); return; }
   if (t.id === "restoreFile" && t.files?.[0] && SH?.set) { t.files[0].text().then(txt => { const d = parseBackup(txt); if (!d) { toast("That file isn't a Fridge backup."); return; } SH.set.pending = d; renderSheet(); }); return; }
   if (t.id === "setNudgeT" && t.value) { S.settings = { ...S.settings, nudgeTime: t.value }; putSettings(); scheduleNudges(); return; }
   if (t.id === "plateFile" && t.files?.[0] && SH?.log) { logAI(t.files[0]); return; }
