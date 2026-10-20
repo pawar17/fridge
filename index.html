@@ -2956,15 +2956,15 @@ function vSettings() {
   const st = S.settings, s = SH.set;
   let h = `<div class="stack">`;
   if (!window.claude) {
-    const on = AI.via === "gemini" || AI.via === "api", t = SH.set.keyTest, cur = readKey(KEYS.g) || readKey(KEYS.a);
+    const on = ["gemini", "api", "groq", "openrouter"].includes(AI.via), t = SH.set.keyTest, cur = readKey(KEYS.o) || readKey(KEYS.g) || readKey(KEYS.a);
     h += `<div class="section-t">AI</div><div class="card stack" style="gap:10px">
-      <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b>AI key</b><span class="pill ${on ? "ok" : "muted"}">${on ? (AI.via === "gemini" ? "Gemini on" : "Claude on") : "Off"}</span></div>
-      <div class="muted tiny">Reads your chat messages into meals, recipes, workouts and groceries with calories for every ingredient. Works with a Google Gemini key or an Anthropic key.</div>
-      ${on ? "" : `<ol class="tiny" style="margin:0;padding-left:18px;line-height:1.6"><li>Open <b>aistudio.google.com</b> and sign in with Google.</li><li>Tap <b>Get API key</b> → <b>Create API key</b>, then copy it.</li><li>Paste it below (or straight into the chat) and tap Save.</li></ol>`}
+      <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b>AI key</b><span class="pill ${on ? "ok" : "muted"}">${on ? ({ gemini: "Gemini", groq: "Groq", openrouter: "OpenRouter" }[AI.via] || "Claude") + " on" : "Off"}</span></div>
+      <div class="muted tiny">Reads your chat messages into meals, recipes, workouts and groceries with calories for every ingredient. Works with a free Groq key, or a Gemini, OpenRouter or Anthropic key.</div>
+      ${on ? "" : `<ol class="tiny" style="margin:0;padding-left:18px;line-height:1.6"><li>Free, no card: open <b>console.groq.com</b> and sign in with Google.</li><li>Tap <b>API Keys</b> → <b>Create API key</b>, then copy it (it starts with gsk_).</li><li>Paste it below (or straight into the chat) and tap Save.</li></ol>`}
       <input class="inp" id="setKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste key" value="${esc(cur)}">
       <div class="row"><button class="btn sm" data-act="set-key">${cur ? "Update" : "Save"}</button>${on ? `<button class="btn soft sm" data-act="test-key" ${t === "…" ? "disabled" : ""}>${t === "…" ? "Testing…" : "Test"}</button><button class="btn soft sm" data-act="clear-key">Remove</button>` : ""}</div>
       ${t && t !== "…" ? `<div class="tiny ${t === "ok" ? "t-ok" : ""}" style="font-weight:600;${t === "ok" ? "" : "color:var(--c-red-i)"}">${t === "ok" ? "Working. AI is on." : esc(t)}</div>` : ""}
-      <div class="muted tiny">Stored only on this phone and sent only to ${AI.via === "api" ? "Anthropic" : "Google"}. It's never part of the app's code.</div></div>`;
+      <div class="muted tiny">Stored only on this phone and sent only to ${{ api: "Anthropic", groq: "Groq", openrouter: "OpenRouter" }[AI.via] || "Google"}. It's never part of the app's code.</div></div>`;
   }
   h += `<div class="section-t">Goals</div><div class="grid2"><div><label class="lbl" for="setK">Daily calories</label><input class="inp" id="setK" type="number" inputmode="numeric" value="${esc(st.kcal)}" data-setf="kcal"></div><div><label class="lbl" for="setP">Protein (g)</label><input class="inp" id="setP" type="number" inputmode="numeric" value="${esc(st.protein)}" data-setf="protein"></div></div>
     <div class="card row" style="justify-content:space-between;flex-wrap:nowrap"><div><b>Hide numbers</b><div class="muted tiny">Log meals without seeing calorie counts.</div></div><button class="switch ${st.noNumbers ? "on" : ""}" data-act="set-nonum" role="switch" aria-checked="${!!st.noNumbers}" aria-label="Hide numbers"></button></div>
@@ -3083,7 +3083,7 @@ document.addEventListener("click", e => {
     case "clear-key": { saveAnyKey(""); SH.set.keyTest = ""; renderSheet(); toast("Key removed."); break; }
     case "test-key": {
       if (!AI.fn) break; SH.set.keyTest = "…"; renderSheet();
-      AI.fn("Reply with the single word: ok", { modelTier: "quick" }).then(() => { SH.set.keyTest = "ok"; }).catch(e => { SH.set.keyTest = AI.via === "gemini" ? keyErrText(e) : e?.code === "bad_key" ? "That key was rejected. Copy it again from console.anthropic.com." : e?.code === "no_credits" ? "The key works, but the account has no credits." : "Couldn't reach Anthropic. Check your connection."; }).finally(() => refreshSheet());
+      AI.fn("Reply with the single word: ok", { modelTier: "quick" }).then(() => { SH.set.keyTest = "ok"; }).catch(e => { SH.set.keyTest = AI.via !== "api" ? keyErrText(e) : e?.code === "bad_key" ? "That key was rejected. Copy it again from console.anthropic.com." : e?.code === "no_credits" ? "The key works, but the account has no credits." : "Couldn't reach Anthropic. Check your connection."; }).finally(() => refreshSheet());
       break;
     }
     case "set-key": { SH.set.keyTest = ""; const v = ($("#setKey")?.value || "").trim(); saveAnyKey(v); renderSheet(); toast(v ? "Key saved on this phone." : "Key removed."); break; }
@@ -3218,15 +3218,14 @@ function doo(name) { return `<svg class="doo" viewBox="0 0 24 24" aria-hidden="t
 
 /* ===================== Chat-first home ===================== */
 /* Keys live only in this phone's storage. They are never part of the code. */
-const KEYS = { g: "fridge.gkey", a: "fridge.apikey" };
+const KEYS = { g: "fridge.gkey", a: "fridge.apikey", o: "fridge.okey" };
 const readKey = k => { try { return localStorage.getItem(k) || ""; } catch (_) { return ""; } };
 const writeKey = (k, v) => { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (_) {} };
-const KEY_RE = /^(AIza[\w-]{30,}|AQ\.[\w.-]{30,}|sk-ant-[\w-]{20,})$/;
+const KEY_RE = /^(AIza[\w-]{30,}|AQ\.[\w.-]{30,}|sk-ant-[\w-]{20,}|gsk_[\w]{20,}|sk-or-[\w-]{20,})$/;
 function saveAnyKey(v) {
   v = String(v || "").trim();
-  if (!v) { writeKey(KEYS.g, ""); writeKey(KEYS.a, ""); }
-  else if (/^sk-ant-/.test(v)) writeKey(KEYS.a, v);
-  else writeKey(KEYS.g, v);
+  if (!v) { writeKey(KEYS.g, ""); writeKey(KEYS.a, ""); writeKey(KEYS.o, ""); }
+  else { writeKey(KEYS.g, ""); writeKey(KEYS.a, ""); writeKey(KEYS.o, ""); writeKey(/^sk-ant-/.test(v) ? KEYS.a : /^(gsk_|sk-or-)/.test(v) ? KEYS.o : KEYS.g, v); }
   initApiAI();
 }
 
@@ -3299,9 +3298,51 @@ function geminiSampler(key) {
   fn.limits = async () => ({ images: { maxCount: 5 } });
   return fn;
 }
+/* ---------- free option: Groq or OpenRouter (OpenAI-style API) ---------- */
+function openSampler(key) {
+  const groq = /^gsk_/.test(key), base = groq ? "https://api.groq.com/openai/v1" : "https://openrouter.ai/api/v1";
+  const PREF = groq ? [/llama-4-maverick/, /llama-4-scout/, /gpt-oss-120b/, /llama-3\.3-70b/, /qwen/] : [/gemini.*:free/, /llama-4-maverick.*:free/, /llama-4-scout.*:free/, /qwen.*vl.*:free/, /deepseek.*:free/, /:free$/];
+  const VISION = /llama-4|vision|vl|gemini|gemma-3|pixtral/;
+  let models = null;
+  async function pick(signal) {
+    if (models) return models;
+    try {
+      const r = await fetch(base + "/models", { signal, headers: { authorization: "Bearer " + key } });
+      if (r.status === 401 || r.status === 403) throw { code: "bad_key", message: (await r.text()).slice(0, 200) };
+      const ids = ((await r.json()).data || []).map(m => m.id).filter(id => groq || /:free$/.test(id)).filter(id => !/whisper|tts|guard|embed|audio|compound/i.test(id));
+      models = []; for (const re of PREF) ids.filter(id => re.test(id) && !models.includes(id)).forEach(id => models.push(id));
+    } catch (e) { if (e?.code === "bad_key") throw e; models = []; }
+    if (!models.length) models = groq ? ["meta-llama/llama-4-maverick-17b-128e-instruct", "meta-llama/llama-4-scout-17b-16e-instruct", "llama-3.3-70b-versatile"] : ["openrouter/free"];
+    return models;
+  }
+  async function call(input, o = {}) {
+    const imgs = o.images ? (o.images instanceof Blob ? [o.images] : Array.from(o.images)) : [];
+    const content = [{ type: "text", text: String(input) }];
+    for (const f of imgs) content.push({ type: "image_url", image_url: { url: "data:image/jpeg;base64," + await toJpeg(f) } });
+    let list = await pick(o.signal); if (imgs.length) list = [...list.filter(m => VISION.test(m)), ...list.filter(m => !VISION.test(m))];
+    let last = null;
+    for (const model of list.slice(0, 4)) {
+      let res;
+      try { res = await fetch(base + "/chat/completions", { method: "POST", signal: o.signal, headers: { "content-type": "application/json", authorization: "Bearer " + key, ...(groq ? {} : { "x-title": "Fridge" }) }, body: JSON.stringify({ model, temperature: 0.2, max_tokens: 4000, messages: [{ role: "user", content: imgs.length ? content : String(input) }], ...(o.json ? { response_format: { type: "json_object" } } : {}) }) }); }
+      catch (e) { throw { code: e?.name === "AbortError" ? "cancelled" : "network", message: String(e) }; }
+      const txt = await res.text(); let j = null; try { j = JSON.parse(txt); } catch (_) {}
+      if (res.ok) return { text: j?.choices?.[0]?.message?.content || "", truncated: j?.choices?.[0]?.finish_reason === "length" };
+      const msg = String(j?.error?.message || txt).slice(0, 300);
+      last = { code: res.status === 401 || res.status === 403 && /key|auth/i.test(msg) ? "bad_key" : res.status === 429 ? "rate_limited" : "upstream_error", status: res.status, message: msg, detail: msg };
+      if (last.code === "bad_key" || last.code === "rate_limited") throw last;
+      if (o.json && res.status === 400 && /response_format|json/i.test(msg)) return call(input, { ...o, json: false });
+    }
+    throw last || { code: "upstream_error" };
+  }
+  const fn = (i, o) => call(i, o);
+  fn.json = async (i, o = {}) => { const { text } = await call(i + "\n\nReply with only the JSON value and nothing else.", { ...o, json: true }); const v = parseLoose(text); if (v === undefined) throw { code: "invalid_json", text }; return v; };
+  fn.limits = async () => ({ images: { maxCount: 4 } });
+  return fn;
+}
 function initApiAI() {
-  const g = readKey(KEYS.g), a = readKey(KEYS.a);
-  if (g) { AI.fn = geminiSampler(g); AI.via = "gemini"; }
+  const g = readKey(KEYS.g), a = readKey(KEYS.a), ok = readKey(KEYS.o);
+  if (ok) { AI.fn = openSampler(ok); AI.via = /^gsk_/.test(ok) ? "groq" : "openrouter"; }
+  else if (g) { AI.fn = geminiSampler(g); AI.via = "gemini"; }
   else if (a) { AI.fn = apiSampler(a); AI.via = "api"; }
   else { AI.fn = null; AI.via = "none"; }
   AI.images = !!AI.fn; AI.off = false; AI.ready = true; refreshSheet(); if (typeof renderAll === "function" && S.ready) renderAll();
@@ -3597,7 +3638,7 @@ async function chatSend(textArg) {
   if (KEY_RE.test(text) && window.claude) { CH.draft = ""; pushMsg({ who: "app", text: "This version already uses Claude, so it doesn't need a key. I didn't save it. Paste it in the home-screen app instead." }); return; }
   if (KEY_RE.test(text)) {
     CH.draft = ""; saveAnyKey(text);
-    pushMsg({ who: "app", text: `Key saved on this phone only. ${AI.via === "gemini" ? "Gemini" : "Claude"} is on. Checking it works…` });
+    pushMsg({ who: "app", text: `Key saved on this phone only. ${{ gemini: "Gemini", groq: "Groq", openrouter: "OpenRouter" }[AI.via] || "Claude"} is on. Checking it works…` });
     try { await AI.fn("Reply with the single word: ok", { modelTier: "quick" }); pushMsg({ who: "app", text: "It works. Tell me what you ate, cooked, bought or did today." }); }
     catch (e) { pushMsg({ who: "app", text: keyErrText(e) }); }
     return;
@@ -3613,7 +3654,7 @@ async function chatSend(textArg) {
       if (res && Array.isArray(res.meals) && res.meals.some(m => (m?.items || []).some(x => x?.needs_lookup))) await lookUpItems(res.meals, CH.ctl.signal);
     } catch (e) {
       if (e?.code === "cancelled") { CH.busy = false; pushMsg({ who: "app", text: "Stopped." }); return; }
-      err = AI.via === "gemini" && ["bad_key", "network", "upstream_error", "no_model"].includes(e?.code) ? keyErrText(e) : aiErr(e);
+      err = ["gemini", "groq", "openrouter"].includes(AI.via) && ["bad_key", "network", "upstream_error", "no_model"].includes(e?.code) ? keyErrText(e) : aiErr(e);
     }
   }
   if (!res || typeof res !== "object") {
@@ -3630,6 +3671,13 @@ async function chatSend(textArg) {
 function keyErrText(e) {
   const c = e?.code, m = String(e?.detail || e?.message || "");
   const why = m ? `\n\nGoogle said: ${m.slice(0, 320)}` : "";
+  if (AI.via === "groq" || AI.via === "openrouter") {
+    const who = AI.via === "groq" ? "Groq" : "OpenRouter", said = m ? `\n\n${who} said: ${m.slice(0, 280)}` : "";
+    if (c === "bad_key") return `${who} rejected that key. Copy it again from ${AI.via === "groq" ? "console.groq.com → API Keys" : "openrouter.ai → Keys"} and paste it here.` + said;
+    if (c === "rate_limited") return "The key works, but you've hit the free limit for now. Try again in a minute." + said;
+    if (c === "network") return `Couldn't reach ${who} from this phone. Check your connection and try again.`;
+    return `Couldn't check the key right now.` + said;
+  }
   if (/SERVICE_DISABLED|has not been used|is disabled|not been enabled/i.test(m)) return "Google accepted the key, but the Gemini API isn't switched on for its project. In Google Cloud console → APIs & Services → Library, enable “Generative Language API” (and “Vertex AI API” if you made the key in Vertex), wait a minute, then paste the key again." + why;
   if (/referer|referrer|blocked|restrict/i.test(m)) return "The key has a restriction that blocks this app. In Google Cloud console → Credentials → your key, set Website restrictions to include pawar17.github.io/* (or remove the restriction), then try again." + why;
   if (/billing|FAILED_PRECONDITION|free tier is not available/i.test(m)) return "Google needs billing or a supported region for this key's project. Easiest fix: make a fresh key at aistudio.google.com → Get API key → Create API key (it starts with AIza) and paste that here." + why;
@@ -3744,7 +3792,7 @@ function paneChat() {
   let h = `<div class="feed">`;
   if (!msgs.length) {
     h += `<div class="hello"><div class="hello-stk"><span class="sticker big c-butter">${doo("chat")}</span><span class="sticker big c-mint">${doo("carrot")}</span><span class="sticker big c-pink">${doo("dumbbell")}</span></div><h2>Just tell me.</h2><p>What you ate (grams and brands help), a recipe to save, a workout, or groceries you bought. I'll do the tracking.</p>
-      ${aiOn() ? "" : `<p class="keynote">For exact numbers per ingredient, paste your Gemini API key here as a message. It stays on this phone.</p>`}
+      ${aiOn() ? "" : `<p class="keynote">For exact numbers per ingredient, paste a free Groq key (console.groq.com → API Keys) here as a message. It stays on this phone.</p>`}
       <div class="ex">${EXAMPLES.map(([t, e], i) => `<button data-act="ch-example" data-t="${esc(t)}" style="--c:var(--m-${PAL[i % PAL.length]})"><span class="sticker sm">${doo(e)}</span>${esc(t)}</button>`).join("")}</div></div>`;
   }
   if (msgs.length) h += `<div class="chat-tools"><button class="clearbtn" data-act="ch-clear">${icon("x")}Clear chat</button></div>`;
