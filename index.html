@@ -2024,7 +2024,7 @@ function detectIntent(t) {
 function intentCard(it) {
   const nn = S.settings.noNumbers;
   if (it.kind === "summary") return `<button class="intent" data-act="q-intent"><span>🌙</span><div><b>See today's summary</b><small>Calories, steps, workouts and goals</small></div>${icon("check")}</button>`;
-  if (it.kind === "steps") return `<button class="intent" data-act="q-intent"><span>👟</span><div><b>Set today's steps to ${num(it.v)}</b><small>${bodyReady() && !nn ? `≈ ${num(Math.max(0, it.v - 2500) * kcalPerStep())} kcal on top of your everyday burn` : "Counts toward your step goal"}</small></div>${icon("check")}</button>`;
+  if (it.kind === "steps") return `<button class="intent" data-act="q-intent"><span>👟</span><div><b>Set today's steps to ${num(it.v)}</b><small>${bodyReady() && !nn ? `≈ ${num(it.v * kcalPerStep())} kcal on top of your everyday burn` : "Counts toward your step goal"}</small></div>${icon("check")}</button>`;
   if (it.kind === "active") return `<button class="intent" data-act="q-intent"><span>⌚</span><div><b>${num(it.v)} active calories today</b><small>From Apple Health. Replaces the step estimate.</small></div>${icon("check")}</button>`;
   if (it.kind === "workout") { const w = WK[it.type]; return `<button class="intent" data-act="q-intent"><span>${w[1]}</span><div><b>Log ${w[2].toLowerCase()} · ${it.min} min</b><small>${bodyReady() && !nn ? `≈ ${num(workoutKcal({ type: it.type, min: it.min }))} kcal` : "Adds to today's activity"}</small></div>${icon("check")}</button>`; }
   if (it.kind === "weight") return `<button class="intent" data-act="q-intent"><span>⚖️</span><div><b>Update weight to ${it.v} ${it.unit}</b><small>Keeps your calorie burn accurate</small></div>${icon("check")}</button>`;
@@ -2161,7 +2161,7 @@ function parseOrderShot(lines) {
 /* ---------- body, activity & energy balance ---------- */
 // Burn = resting burn (Mifflin-St Jeor BMR)
 //      + Apple Health active energy if you paste it (base ×1.1 for digestion),
-//        otherwise base ×1.2 for everyday life + steps beyond 2,500 × your per-step cost + workouts (MET).
+//        otherwise everyday life (base ×1.2 less ~2,500 steps) + every step × your per-step cost + workouts (MET).
 const WORKOUTS = [["walk", "🚶", "Walk", 3.5], ["run", "🏃", "Run", 9.8], ["gym", "🏋️", "Weights", 5.0], ["yoga", "🧘", "Yoga", 2.5], ["pilates", "🤸", "Pilates", 3.0], ["cycle", "🚴", "Cycling", 7.5], ["hiit", "🔥", "HIIT", 8.0], ["dance", "💃", "Dance", 5.5], ["swim", "🏊", "Swim", 7.0], ["hike", "🥾", "Hike", 6.0], ["sport", "🎾", "Sports", 7.0], ["other", "💪", "Workout", 4.0]];
 const WK = Object.fromEntries(WORKOUTS.map(w => [w[0], w]));
 const body = () => S.settings.body || null;
@@ -2174,8 +2174,8 @@ function burnFor(id) {
   const B = bmr(); if (B == null) return null;
   const a = actOf(id);
   if (a.active != null && a.active !== "") { const base = Math.round(B * 1.1); return { base, move: Math.round(+a.active), steps: 0, work: 0, total: base + Math.round(+a.active), src: "health" }; }
-  // everyday-life baseline (×1.2) already covers ~2,500 steps, so only steps beyond that are added
-  const base = Math.round(B * 1.2), steps = Math.round(Math.max(0, (+a.steps || 0) - 2500) * kcalPerStep());
+  // everyday life = resting ×1.2, minus the ~2,500 steps that figure assumes — those steps are counted on their own, so every step you take shows up
+  const base = Math.round(B * 1.2 - 2500 * kcalPerStep()), steps = Math.round((+a.steps || 0) * kcalPerStep());
   // walks, runs and hikes are already partly counted in your steps: only add what they burn on top of those steps
   const work = (a.workouts || []).reduce((s, w) => s + (+a.steps > 0 && ["walk", "run", "hike"].includes(w.type) ? Math.max(0, workoutKcal(w) - Math.round((+w.min || 0) * (w.type === "run" ? 160 : 105) * kcalPerStep())) : workoutKcal(w)), 0);
   return { base, move: steps + work, steps, work, total: base + steps + work, src: "est" };
@@ -2183,7 +2183,7 @@ function burnFor(id) {
 const FLOOR = () => (body()?.sex === "m" ? 1500 : 1200);
 function goalFor(id) {
   const st = S.settings;
-  if (st.goalMode === "auto" && bodyReady()) { const b = burnFor(id); /* plan on your burn goal until you actually burn more, so mornings aren't punished */ const planned = Math.max(b.total, +st.burnGoal || expectedBurn()); return Math.max(FLOOR(), Math.round(planned - (+st.deficit || 500))); }
+  if (st.goalMode === "auto" && bodyReady()) { /* start from your planned day (step goal + usual workouts), then earn extra for steps past your goal and workouts past your usual */ const planned = +st.burnGoal || expectedBurn(); return Math.max(FLOOR(), Math.round(planned - (+st.deficit || 500) + moveBonus(id))); }
   return +st.kcal || 1600;
 }
 const macroOf = (id, k) => (dayOf(id).meals || []).reduce((s, m) => s + (+m[k] || 0), 0);
@@ -2425,10 +2425,8 @@ function vCalories() {
   h += `<button class="act-row" data-act="open" data-sheet="fitness"><span class="act-rings">${ringsSvg(T, 46)}</span><div><b>${num(steps)} steps${wks.length ? ` · ${wks.map(w => `${(WK[w.type] || [])[1] || "💪"} ${w.min}m`).join(" ")}` : ""}</b><small>${b && !nn ? `Activity adds ${num(b.move)} kcal today · ` : ""}Log steps & workouts in Fitness</small></div>${icon("plus")}</button>`;
   if (b && !nn) h += `<details class="tiny muted"><summary style="cursor:pointer;font-weight:700">How your burn is calculated</summary><div class="calc">
     <div class="lr"><span>Resting burn (${body().sex === "f" ? "female" : "male"}, ${body().age}, ${fmtW(body().weightKg)})</span><span>${num(bmr())}</span></div>
-    ${b.src === "health" ? `<div class="lr"><span>+10% digestion</span><span>${num(b.base - bmr())}</span></div><div class="lr"><span>Apple Health active calories</span><span>${num(b.move)}</span></div>` : `<div class="lr"><span>+20% digestion & everyday life (covers ~2,500 steps)</span><span>${num(b.base - bmr())}</span></div><div class="lr"><span>Steps beyond 2,500 (${num(Math.max(0, steps - 2500))} × ${kcalPerStep().toFixed(3)} kcal)</span><span>${num(b.steps)}</span></div><div class="lr"><span>Workouts (MET-based)</span><span>${num(b.work)}</span></div>`}
+    ${b.src === "health" ? `<div class="lr"><span>+10% digestion</span><span>${num(b.base - bmr())}</span></div><div class="lr"><span>Apple Health active calories</span><span>${num(b.move)}</span></div>` : `<div class="lr"><span>Digestion & everyday life (not steps)</span><span>${num(b.base - bmr())}</span></div><div class="lr"><span>Steps (${num(steps)} × ${kcalPerStep().toFixed(3)} kcal)</span><span>${num(b.steps)}</span></div><div class="lr"><span>Workouts (MET-based)</span><span>${num(b.work)}</span></div>`}
     <div class="lr"><b>Total burn</b><b>${num(b.total)}</b></div><p style="margin:6px 0 0">Every number here is an estimate, usually within about 10%. Your weight trend over a few weeks is the real check.</p></div></details>`;
-  h += `<button class="btn accent block" data-act="open" data-sheet="log">${icon("plus")}Log a meal</button>`;
-  h += `<div class="section-t">Eaten today</div>` + ((d.meals || []).length ? `<div class="list">${SLOTS.flatMap(sl => (d.meals || []).filter(m => (m.slot || "snack") === sl).map(m => `<div class="li"><div class="main"><b>${esc(m.name)}</b><small>${cap(sl)}${m.src ? ` · ${esc(m.src)}` : ""}</small></div>${nn ? "" : `<span class="num">${num(m.kcal)}</span>`}<button class="x-btn" data-act="meal-del" data-id="${esc(m.id)}" aria-label="Remove ${esc(m.name)}">${icon("x")}</button></div>`)).join("")}</div>` : `<p class="muted tiny" style="margin:0">Nothing logged yet today.</p>`);
   if (!nn) {
     const ids = Array.from({ length: 7 }, (_, i) => addDays(T, i - 6)), logged = ids.filter(id => kcalOf(id) > 0);
     h += `<div class="section-t">${bodyReady() ? "Deficit, last 7 days" : "Calories, last 7 days"}</div>${energyChart()}`;
@@ -4240,7 +4238,7 @@ function blockHtml(b, m) {
       <div class="macros"><span>${b.servings} serving${b.servings === 1 ? "" : "s"}</span>${nn ? "" : `<span class="mp">${num(b.per.protein)} g protein each</span><span>${num(b.total.kcal)} kcal total</span>`}</div>
       ${m.undone ? "" : `<div class="bact"><button class="pillbtn" data-act="rec-log1" data-id="${esc(b.id)}">Log a serving</button><button class="linkbtn" data-act="rec-view" data-id="${esc(b.id)}">See recipe</button></div>`}`);
     case "workout": return wrap(`<div class="bh"><span class="btag">Workout${b.via ? ` <em class="via">via ${esc(b.via)}</em>` : ""}</span><b>${esc(b.name)} · ${b.min} min</b>${nn ? "" : `<strong>${num(b.kcal)}<small> kcal</small></strong>`}</div>${b.details ? `<p class="bnote">${esc(b.details)}</p>` : ""}${b.est && !nn ? `<p class="bnote">Add your weight (tap the calorie card) for an exact burn.</p>` : ""}`, ["run", "walk", "hike"].includes(b.type) ? "shoe" : emo0);
-    case "steps": return wrap(`<div class="bh"><span class="btag">Steps</span><b>${num(b.v)} steps</b>${nn || !bodyReady() ? "" : `<strong>${num(Math.max(0, b.v - 2500) * kcalPerStep())}<small> kcal</small></strong>`}</div>`);
+    case "steps": return wrap(`<div class="bh"><span class="btag">Steps</span><b>${num(b.v)} steps</b>${nn || !bodyReady() ? "" : `<strong>${num(b.v * kcalPerStep())}<small> kcal</small></strong>`}</div>`);
     case "active": return wrap(`<div class="bh"><span class="btag">Apple Health</span><b>${num(b.v)} active kcal</b></div>`);
     case "weight": return wrap(`<div class="bh"><span class="btag">Weight</span><b>${b.v} ${esc(b.unit)}</b></div>`);
   }
@@ -4887,7 +4885,7 @@ function showWin(d) {
 
 /* ---------- auto targets: tell it your goal, it works out calories, protein, fiber, fat and burn ----------
    All maths is done here, never guessed by the AI:
-   - resting burn: Mifflin–St Jeor; daily burn = resting × 1.2 + steps above 2,500 + your planned workouts
+   - resting burn: Mifflin–St Jeor; daily burn = resting × 1.2 + steps above 2,500 + your planned workouts; budget earns extra for steps past your goal and workouts past your usual
    - deficit: fat loss = pace × 7,700 kcal per kg ÷ 7 (capped at 25% of burn); recomp = 20% of burn; build = +250
    - protein: 1.8 g per kg of goal weight (1.6 to maintain); fiber: 14 g per 1,000 kcal (25 g minimum);
      fat: about 30% of calories, never under 0.8 g per kg */
@@ -4898,6 +4896,14 @@ function expectedBurn() {
   if (!bodyReady()) return 0;
   const kg = body().weightKg, steps = stepGoal() || 8000, wk = +fit().weekWorkouts || 3;
   return r50(bmr() * 1.2 + Math.max(0, steps - 2500) * kcalPerStep() + wk * (5 - 1) * kg * 0.75 / 7);
+}
+const plannedWorkPerDay = () => bodyReady() ? (+fit().weekWorkouts || 3) * (5 - 1) * body().weightKg * 0.75 / 7 : 0;
+// Extra calories you've earned today beyond the plan: steps past your step goal + workout burn past your usual daily share.
+function moveBonus(T) {
+  const b = burnFor(T); if (!b) return 0;
+  if (b.src === "health") return Math.max(0, b.total - (+S.settings.burnGoal || expectedBurn()));
+  const sg = stepGoal() || 8000, st = +actOf(T).steps || 0;
+  return Math.round(Math.max(0, st - sg) * kcalPerStep() + Math.max(0, b.work - plannedWorkPerDay()));
 }
 const r5 = x => Math.round(x / 5) * 5, r50 = x => Math.round(x / 50) * 50;
 function computePlan(a = aim()) {
@@ -5060,9 +5066,9 @@ function ledgerCard(T) {
       h += row("Digestion", num(b.base - bmr()), "", "+10% for breaking down food");
       h += row("Apple Health active energy", num(b.move), "", "Everything you did that moved you");
     } else {
-      h += row("Digestion & everyday life", num(b.base - bmr()), "", "+20%: eating, standing, the first ~2,500 steps");
+      h += row("Digestion & everyday life", num(b.base - bmr()), "", "Eating, standing, moving around (not steps)");
       const st = +a.steps || 0;
-      h += row(`👟 Steps · ${num(st)}`, num(b.steps), "", st > 2500 ? `${num(st - 2500)} steps beyond everyday` : "Not past everyday steps yet");
+      const sg = stepGoal() || 8000, extra = Math.max(0, st - sg); h += row(`👟 Steps · ${num(st)}`, num(b.steps), "", st >= sg ? `Goal ${num(sg)} hit · +${num(Math.round(extra * kcalPerStep()))} kcal added to what you can eat` : `${num(sg - st)} to your ${num(sg)} goal · ~${Math.round(kcalPerStep() * 1000)} kcal per 1,000 steps`);
       for (const w of workoutBurnParts(T)) h += `<div class="lg-wrow">${row(w.label, num(w.kcal), "", w.note)}<button class="lg-x" data-act="lg-wdel" data-id="${esc(w.id)}" aria-label="Remove ${esc(w.label)}">Remove</button></div>`;
       if (!(a.workouts || []).length) h += `<p class="lg-empty">No workouts logged yet.</p>`;
     }
