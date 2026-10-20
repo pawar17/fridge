@@ -3502,7 +3502,7 @@ const DOO = {
   bolt: '<path d="M13.5 2.5L5 13.5h6l-1.5 8 8.5-11h-6z" fill="#ffb48a"/>',
   pot: '<path d="M4.5 10h15v6a4 4 0 0 1-4 4h-7a4 4 0 0 1-4-4z" fill="#ff9ccb"/><path d="M2.5 10h19M9 6.5c0-1.3 1.3-2 3-2s3 .7 3 2v3.5"/>'
 };
-const EMO = { bowl: "🥗", dumbbell: "🏋️‍♀️", shoe: "👟", watch: "⌚️", scale: "⚖️", bag: "🛍️", fridge: "🧊", note: "📝", check: "✅", bin: "🗑️", undo: "↩️", star: "⭐️", drop: "💧", book: "📖", hearts: "💕", receipt: "🧾", camera: "📸", phone: "📱", chat: "💬", carrot: "🥕", cart: "🛒", sparkle: "✨", trophy: "🏆", chart: "📈", leaf: "🥬", muscle: "💪", apple: "🍎", heart: "❤️", bolt: "⚡️", pot: "🍲" };
+const EMO = { bowl: "🥗", dumbbell: "🏋️‍♀️", shoe: "👟", watch: "⌚️", scale: "⚖️", bag: "🛍️", fridge: "🏠", note: "📝", check: "✅", bin: "🗑️", undo: "↩️", star: "⭐️", drop: "💧", book: "📖", hearts: "💕", receipt: "🧾", camera: "📸", phone: "📱", chat: "💬", carrot: "🥕", cart: "🛒", sparkle: "✨", trophy: "🏆", chart: "📈", leaf: "🥬", muscle: "💪", apple: "🍎", heart: "❤️", bolt: "⚡️", pot: "🍲" };
 function doo(name) { return `<span class="emo-i" aria-hidden="true">${EMO[name] || "🍽️"}</span>`; }
 
 /* ===================== Chat-first home ===================== */
@@ -4011,7 +4011,7 @@ function renderHome() {
   const T = todayId();
   const tabs = $("#tabbar"); if (!tabs) return; document.body.dataset.tab = CH.tab;
   const need = (S.shopping.items || []).filter(x => !x.done).length;
-  tabs.innerHTML = TABS.map(([k, ic, l, col]) => `<button class="${CH.tab === k ? "on" : ""}" style="--tc:var(--m-${col})" data-act="tab" data-t="${k}" aria-label="${l}"${CH.tab === k ? ' aria-current="page"' : ""}><span class="tb-ic">${{ chat: "💬", fridge: "🧊", cart: "🛒", book: "📖", dumbbell: "🏋️‍♀️" }[ic] || icon(ic)}${k === "groceries" && need ? `<i>${need}</i>` : ""}</span><span>${l}</span></button>`).join("");
+  tabs.innerHTML = TABS.map(([k, ic, l, col]) => `<button class="${CH.tab === k ? "on" : ""}" style="--tc:var(--m-${col})" data-act="tab" data-t="${k}" aria-label="${l}"${CH.tab === k ? ' aria-current="page"' : ""}><span class="tb-ic">${{ chat: "💬", fridge: "🏠", cart: "🛒", book: "📖", dumbbell: "🏋️‍♀️" }[ic] || icon(ic)}${k === "groceries" && need ? `<i>${need}</i>` : ""}</span><span>${l}</span></button>`).join("");
   const bs = $("#budgetStrip"); bs.hidden = CH.tab !== "chat"; bs.innerHTML = CH.tab === "chat" ? stripHtml(T) + syncRow(T) + goalsRow(T) : "";
   if (!CH.printed) { $("#budgetStrip .receipt")?.classList.add("fresh"); CH.printed = true; }
   countUp();
