@@ -1139,6 +1139,25 @@ body[data-tab=chat] .rc-bar i{background:var(--ink)}
 .statscard{display:flex;flex-direction:column;gap:10px}
 .statscard .linkbtn{background:none;border:0;font:600 14px var(--f);padding:0}
 .btn.good{background:var(--ink);color:#fff}
+/* itemised receipt */
+.receipt.ledger{padding:12px 16px 16px;margin-bottom:14px;border-radius:0;cursor:default}
+.ledger p{margin:0;display:flex;align-items:baseline;gap:6px;font-size:13.5px;padding:3px 0}
+.ledger p>span{display:flex;flex-direction:column;min-width:0}
+.ledger p small{color:var(--ink-2);font-size:11.5px;font-weight:400}
+.ledger p i{flex:1;border-bottom:1.5px dotted var(--line);transform:translateY(-4px);min-width:12px}
+.ledger p b{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lg-h{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 4px;padding-bottom:4px;border-bottom:1.5px solid var(--ink)}
+.lg-h b{font-family:var(--fa);font-weight:400;font-size:19px;letter-spacing:-.02em}.lg-h span{font-weight:600;font-size:14px}
+.lg-meal{padding:4px 0 6px;border-bottom:1.5px dashed var(--dash)}
+.lg-mrow em{font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-t);margin-right:4px}
+.lg-item{padding-left:12px!important;font-size:12.5px!important;color:var(--ink-2)}.lg-item b{font-weight:500!important}
+.lg-empty{color:var(--ink-2);font-size:13px!important}
+.lg-total{margin-top:12px;padding-top:8px;border-top:1.5px solid var(--ink)}
+.lg-total small{display:block;color:var(--ink-2);font-size:12.5px;margin-top:6px}
+.lg-net{font-size:16px!important;padding-top:6px!important}.lg-net span{font-family:var(--fa);font-size:20px}.lg-net b{font-size:18px}
+.lg-net.ok b{color:#1f8a4c}.lg-net.over b{color:var(--red-t)}
+.lg-slot{display:block;font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-t);margin-top:4px}
+.ledger .lg-mrow{padding-top:0}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -2369,7 +2388,7 @@ const kcalChart = energyChart;
 function vCalories() {
   const T = todayId(), d = dayOf(T), eaten = kcalOf(T), nn = S.settings.noNumbers, C = SH.cal || (SH.cal = {});
   const a = actOf(T), steps = +a.steps || 0, sg = +S.settings.stepGoal || 8000, auto = bodyReady() && S.settings.goalMode !== "fixed";
-  let h = `<div class="stack">`;
+  let h = `<div class="stack">` + ledgerCard(T);
   if (!bodyReady() || C.editProf) {
     const P = C.prof || (C.prof = profDraft()), us = P.units === "us";
     h += `<div class="card stack" style="gap:10px"><div><b>Set up accurate calories</b><div class="muted tiny">Your burn is worked out from your body (Mifflin-St Jeor, the formula dietitians use) plus your steps and workouts. Stays on this device.</div></div>
@@ -4962,6 +4981,55 @@ document.addEventListener("input", e => {
   const f = e.target.dataset?.ob2; if (!f || SH?.kind !== "welcome") return;
   SH.ob[f] = e.target.value; const r = document.getElementById("obRes"); if (r) r.innerHTML = obResult(SH.ob);
 });
+
+/* ---------- the receipt, itemised: every calorie in and every calorie out today ---------- */
+function workoutBurnParts(T) {
+  const a = actOf(T), spc = kcalPerStep();
+  return (a.workouts || []).map(w => {
+    const full = workoutKcal(w), m = WK[w.type] || [];
+    // walks/runs/hikes are partly already in your steps, so only the extra counts (same rule as the burn maths)
+    const overlap = +a.steps > 0 && ["walk", "run", "hike"].includes(w.type) ? Math.round((+w.min || 0) * (w.type === "run" ? 160 : 105) * spc) : 0;
+    return { label: `${m[1] || "💪"} ${m[2] || w.type} · ${w.min} min`, kcal: Math.max(0, full - overlap), note: overlap ? "on top of its steps" : w.kcal != null ? "from your app" : "" };
+  });
+}
+function ledgerCard(T) {
+  if (S.settings.noNumbers) return "";
+  const meals = dayOf(T).meals || [], eaten = kcalOf(T), b = bodyReady() ? burnFor(T) : null, a = actOf(T);
+  const row = (l, v, cls = "", sub = "") => `<p class="${cls}"><span>${l}${sub ? `<small>${sub}</small>` : ""}</span><i></i><b>${v}</b></p>`;
+  const slotName = s => ({ breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner", snack: "Snack" })[s] || "Snack";
+  let h = `<div class="receipt ledger"><div class="rc-top"><span>TODAY'S RECEIPT</span><span>${esc(fmtShort(T).toUpperCase())}</span></div>`;
+  // IN
+  h += `<div class="lg-h"><b>In</b><span>${num(eaten)} kcal</span></div>`;
+  if (!meals.length) h += `<p class="lg-empty">Nothing eaten yet. Tell the chat what you had.</p>`;
+  for (const sl of SLOTS) for (const m of meals.filter(x => (x.slot || "snack") === sl)) {
+    h += `<div class="lg-meal"><em class="lg-slot">${slotName(sl)}</em>${row(esc(m.name), num(m.kcal), "lg-mrow", `${Math.round(+m.protein || 0)} g protein`)}`;
+    const items = (m.items || []).filter(x => x && x.name);
+    if (items.length > 1 || (items[0] && items[0].name !== m.name)) h += items.map(x => row(`${esc(x.name)}${x.g ? ` · ${num(x.g)} g` : x.amount ? ` · ${esc(x.amount)}` : ""}`, x.kcal != null ? num(x.kcal) : "–", "lg-item")).join("");
+    h += `</div>`;
+  }
+  // OUT
+  if (b) {
+    h += `<div class="lg-h"><b>Out</b><span>${num(b.total)} kcal</span></div>`;
+    h += row("Resting burn", num(bmr()), "", "Keeping you alive: breathing, heart, brain");
+    if (b.src === "health") {
+      h += row("Digestion", num(b.base - bmr()), "", "+10% for breaking down food");
+      h += row("Apple Health active energy", num(b.move), "", "Everything you did that moved you");
+    } else {
+      h += row("Digestion & everyday life", num(b.base - bmr()), "", "+20%: eating, standing, the first ~2,500 steps");
+      const st = +a.steps || 0;
+      h += row(`👟 Steps · ${num(st)}`, num(b.steps), "", st > 2500 ? `${num(st - 2500)} steps beyond everyday` : "Not past everyday steps yet");
+      for (const w of workoutBurnParts(T)) h += row(w.label, num(w.kcal), "", w.note);
+      if (!(a.workouts || []).length) h += `<p class="lg-empty">No workouts logged yet.</p>`;
+    }
+    const net = b.total - eaten, goal = goalFor(T), left = goal - eaten, dt = typeof deficitTarget === "function" ? deficitTarget() : +S.settings.deficit || 500;
+    h += `<div class="lg-total">${row("Burned", num(b.total))}${row("Eaten", "− " + num(eaten))}
+      <p class="lg-net ${net >= dt ? "ok" : net < 0 ? "over" : ""}"><span>${net >= 0 ? "Deficit" : "Surplus"}</span><b>${num(Math.abs(net))} kcal</b></p>
+      <small>${net >= dt ? `Deficit goal of ${num(dt)} hit ⭐️` : `Goal: ${num(dt)} kcal deficit.`} ${left >= 0 ? `You can still eat about ${num(left)} kcal.` : `${num(-left)} over today's budget.`}</small></div>`;
+  } else {
+    h += `<div class="lg-total"><small>Add your height, weight and age (Edit stats) to see what you burned.</small></div>`;
+  }
+  return h + `</div>`;
+}
 
 setInterval(() => { if (!SH) renderHome(); }, 10 * 60 * 1000);
 init();
