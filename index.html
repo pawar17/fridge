@@ -1,6 +1,6 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*,*::before,*::after{box-sizing:inherit}body{margin:0;font:14px system-ui,sans-serif;background:#fffdf2}@media (prefers-color-scheme: dark){body{background:#15130e}}img{max-width:100%}[hidden]{display:none!important}</style><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Fridge"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#d7141d"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#d7141d"></head><body>
 <title>What's In My Fridge</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Great+Vibes&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Great+Vibes&family=Instrument+Sans:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: a soft-shaded pastel fridge standing in a lilac kitchen. Doors bounce open onto glass shelves of little food; glossy magnets are dragged around the door and tapped to open paper-like sheets; a dock under the fridge logs your usual meal. */
 :root{
@@ -543,20 +543,15 @@ label.lbl{display:block;font-size:13px;font-weight:500;color:var(--ink-2);margin
   --red:#d7141d; --red-t:#d7141d; --hot:#ff4fa3; --pink:#ffd3e6; --yellow:#ffe23d; --green:#def3cf; --green-i:#2f7d32; --edge:#1c0b0d; --dash:#f3a3c4;
   --m-butter:#ffe23d; --m-pink:#ff9ccb; --m-mint:#bfe8a6; --m-peach:#ffb48a; --m-sky:#a9d4ff; --m-lilac:#d6c2ff; --m-tomato:#ff6b6b;
   --c-green-i:#2f7d32; --t-ok:#2f7d32;
-  --hs:3px 3px 0 var(--edge);
-  --fr:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
-  --fa:"Anton",Impact,"Arial Narrow Bold",sans-serif; --fs:"Great Vibes","Snell Roundhand",cursive; --fm:ui-monospace,"SF Mono",Menlo,monospace;
+  --hs:3px 3px 0 var(--edge); --on-wall:#1c0b0d; --on-wall-2:#6e5558; --wall-dot:color-mix(in srgb,#ff4fa3 16%,transparent); --ptitle:#d7141d;
+  --f:"Instrument Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif; --fr:var(--f);
+  --fa:"Anton",Impact,"Arial Narrow Bold",sans-serif; --fs:"Great Vibes","Snell Roundhand",cursive; --fm:"Instrument Sans",-apple-system,system-ui,sans-serif;
   --me:#d7141d; --me-ink:#c2127f; --spring:cubic-bezier(.34,1.56,.64,1);
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --wall-1:#1a0b0d; --wall-2:#1a0b0d; --ink:#fff1e6; --ink-2:#cfb0ac; --line:#4b2b2f; --soft:#2c1619; --tile:#251214; --sheet:#211012; --field:#251214; --paper:#2a1517;
-  --btn-bg:#ffe23d; --btn-fg:#1c0b0d; --edge:#f5d6c8; --dash:#7d3a55; --pink:#4a1f31; --green:#1f3a1d; --green-i:#9fe08f; --c-green-i:#9fe08f; --me-ink:#ff8ac6; --accent-soft:#4a1f31; --red-t:#ff6b70;
-}}
-:root[data-theme="dark"]{
-  --wall-1:#1a0b0d; --wall-2:#1a0b0d; --ink:#fff1e6; --ink-2:#cfb0ac; --line:#4b2b2f; --soft:#2c1619; --tile:#251214; --sheet:#211012; --field:#251214; --paper:#2a1517;
-  --btn-bg:#ffe23d; --btn-fg:#1c0b0d; --edge:#f5d6c8; --dash:#7d3a55; --pink:#4a1f31; --green:#1f3a1d; --green-i:#9fe08f; --c-green-i:#9fe08f; --me-ink:#ff8ac6; --accent-soft:#4a1f31; --red-t:#ff6b70;
-}
-body{background:var(--wall-1) radial-gradient(circle,color-mix(in srgb,var(--hot) 16%,transparent) 1px,transparent 1.5px) 0 0/18px 18px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--wall-1:#420b16; --wall-2:#420b16; --on-wall:#fff1e6; --on-wall-2:#f3b9c8; --wall-dot:rgba(255,79,163,.28); --dash:#f3a3c4; --ptitle:#ffe23d; color-scheme:light; --ink:#1c0b0d; --ink-2:#6e5558; --line:#efd9cd; --soft:#fde8e6; --tile:#fffdf8; --sheet:#fffaf2; --field:#fffdf8; --paper:#fffdf8; --btn-bg:#1c0b0d; --btn-fg:#fff8ee; --edge:#1c0b0d; --pink:#ffd3e6; --green:#def3cf; --green-i:#2f7d32; --c-green-i:#2f7d32; --me-ink:#c2127f; --accent-soft:#ffd6e3; --red-t:#d7141d; --c-red:#ffe1dc; --c-red-i:#d9483b; --c-amber:#fff0cc; --c-amber-i:#b37400; --c-green:#dcf5e8; --c-blue:#e1efff; --c-blue-i:#2f6fc0; --c-violet:#eee8ff; --c-violet-i:#6a4fc9; --c-pink:#ffe6f0; --c-pink-i:#c2457a; --shadow:rgba(60,10,20,.25); --shadow-2:rgba(60,10,20,.1);}}
+:root[data-theme="dark"]{--wall-1:#420b16; --wall-2:#420b16; --on-wall:#fff1e6; --on-wall-2:#f3b9c8; --wall-dot:rgba(255,79,163,.28); --dash:#f3a3c4; --ptitle:#ffe23d; color-scheme:light; --ink:#1c0b0d; --ink-2:#6e5558; --line:#efd9cd; --soft:#fde8e6; --tile:#fffdf8; --sheet:#fffaf2; --field:#fffdf8; --paper:#fffdf8; --btn-bg:#1c0b0d; --btn-fg:#fff8ee; --edge:#1c0b0d; --pink:#ffd3e6; --green:#def3cf; --green-i:#2f7d32; --c-green-i:#2f7d32; --me-ink:#c2127f; --accent-soft:#ffd6e3; --red-t:#d7141d; --c-red:#ffe1dc; --c-red-i:#d9483b; --c-amber:#fff0cc; --c-amber-i:#b37400; --c-green:#dcf5e8; --c-blue:#e1efff; --c-blue-i:#2f6fc0; --c-violet:#eee8ff; --c-violet-i:#6a4fc9; --c-pink:#ffe6f0; --c-pink-i:#c2457a; --shadow:rgba(60,10,20,.25); --shadow-2:rgba(60,10,20,.1);}
+body{background:var(--wall-1) radial-gradient(circle,var(--wall-dot) 1px,transparent 1.5px) 0 0/18px 18px;color:var(--on-wall);font-family:var(--f)}
+button,input,textarea,select{font-family:var(--f)}
 .app{padding-inline:0}
 .script{font-family:var(--fs);font-weight:400;letter-spacing:0}
 .t-ok{color:var(--green-i) !important}
@@ -609,7 +604,7 @@ body{background:var(--wall-1) radial-gradient(circle,color-mix(in srgb,var(--hot
 .receipt.plain .rc-main{padding:6px 0}
 
 /* goals row */
-.goalsrow{display:flex;align-items:center;gap:8px;border:0;background:none;padding:0;width:100%;text-align:left;color:var(--ink);min-width:0}
+.goalsrow{display:flex;align-items:center;gap:8px;border:0;background:none;padding:0;width:100%;text-align:left;color:var(--on-wall);min-width:0}
 .burst{flex:none;width:52px;height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--yellow);color:#1c0b0d;clip-path:polygon(50% 0,59% 12%,73% 5%,76% 20%,92% 18%,87% 33%,100% 42%,89% 52%,98% 66%,83% 70%,84% 86%,69% 82%,62% 97%,50% 88%,38% 97%,31% 82%,16% 86%,17% 70%,2% 66%,11% 52%,0 42%,13% 33%,8% 18%,24% 20%,27% 5%,41% 12%);animation:wig 6s ease-in-out infinite}
 .burst b{font-family:var(--fa);font-weight:400;font-size:17px;line-height:1}
 .burst small{font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
@@ -628,23 +623,25 @@ body{background:var(--wall-1) radial-gradient(circle,color-mix(in srgb,var(--hot
 @keyframes paneIn{from{opacity:0;transform:translateY(12px) rotate(-.6deg)}}
 
 /* stickers */
-.sticker{display:inline-grid;place-items:center;width:34px;height:34px;flex:none;border-radius:50%;background:var(--c,var(--m-butter));border:1.5px solid var(--edge);font-size:17px;line-height:1;transform:rotate(var(--rot,-6deg));box-shadow:2px 2px 0 var(--edge)}
+.sticker{display:inline-grid;place-items:center;width:36px;height:36px;flex:none;border-radius:50%;background:var(--c,var(--m-butter));border:1.5px solid var(--edge);color:#1c0b0d;line-height:1;transform:rotate(var(--rot,-6deg))}
+.sticker .doo{width:74%;height:74%}
+.chipbtn .doo{width:20px;height:20px;flex:none}
 .sticker.big{width:48px;height:48px;font-size:24px;border-radius:14px}
 .sticker.sm{width:28px;height:28px;font-size:14px}
 .c-peach{--c:var(--m-peach)}.c-sky{--c:var(--m-sky)}.c-mint{--c:var(--m-mint)}.c-pink{--c:var(--m-pink)}.c-butter{--c:var(--m-butter)}.c-lilac{--c:var(--m-lilac)}.c-tomato{--c:var(--m-tomato)}
 .sticker.c-peach,.sticker.c-sky,.sticker.c-mint,.sticker.c-pink,.sticker.c-butter,.sticker.c-lilac,.sticker.c-tomato{background:var(--c)}
-.k-workout .sticker,.k-goals .sticker,.k-dup .sticker{border-radius:0;border:0;box-shadow:none;width:40px;height:40px;clip-path:polygon(50% 0,61% 18%,82% 10%,80% 32%,100% 40%,85% 55%,96% 75%,74% 78%,68% 100%,50% 86%,32% 100%,26% 78%,4% 75%,15% 55%,0 40%,20% 32%,18% 10%,39% 18%)}
+.k-goals .sticker,.k-dup .sticker{border-radius:0;border:0;box-shadow:none;width:42px;height:42px;clip-path:polygon(50% 0,61% 18%,82% 10%,80% 32%,100% 40%,85% 55%,96% 75%,74% 78%,68% 100%,50% 86%,32% 100%,26% 78%,4% 75%,15% 55%,0 40%,20% 32%,18% 10%,39% 18%)}
 
 /* chat */
 .feed{display:flex;flex-direction:column;gap:12px;padding:4px 0 6px}
 .daysep{align-self:center;margin:6px 0 0}
-.daysep span{font-family:var(--fs);font-size:24px;color:var(--red-t);line-height:1}
+.daysep span{font-family:var(--fs);font-size:26px;color:var(--ptitle);line-height:1}
 .msg{display:flex}
 .msg.new{animation:msgIn .5s var(--spring) both}
 .msg.me.new{transform-origin:right bottom}.msg.bot.new{transform-origin:left bottom}
 @keyframes msgIn{from{opacity:0;transform:translateY(16px) scale(.9) rotate(-2deg)}}
 .msg.me{justify-content:flex-end}
-.msg .bub{max-width:82%;background:var(--me);color:#fff;padding:9px 14px;border-radius:20px 20px 4px 20px;border:2px solid var(--edge);box-shadow:var(--hs);font-size:15.5px;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere;-webkit-user-select:text;user-select:text}
+.msg .bub{max-width:82%;background:var(--me);color:#fff;padding:9px 14px;border-radius:20px 20px 4px 20px;font-size:15.5px;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere;-webkit-user-select:text;user-select:text}
 .imgtag{display:inline-flex;align-items:center;gap:4px;font-size:12px;opacity:.9;margin-right:6px}
 .imgtag svg.i{width:13px;height:13px}
 .msg.bot .card{width:92%;max-width:92%;box-sizing:border-box;background:var(--paper);border:2px solid var(--edge);border-radius:16px 16px 16px 4px;padding:12px 13px;display:flex;flex-direction:column;gap:10px;box-shadow:4px 4px 0 var(--hot)}
@@ -684,7 +681,7 @@ body{background:var(--wall-1) radial-gradient(circle,color-mix(in srgb,var(--hot
 .mfoot .left.over{color:var(--red-t)}
 .linkbtn{border:0;background:none;color:var(--me-ink);font-weight:700;font-size:13.5px;padding:2px 0}
 .linkbtn.danger{color:var(--red-t)}
-.pillbtn{border:2px solid var(--edge);background:var(--yellow);color:#1c0b0d;font-weight:700;font-size:13.5px;padding:6px 14px;border-radius:999px;box-shadow:2px 2px 0 var(--edge);transition:transform .2s var(--spring)}
+.pillbtn{border:1.5px solid var(--edge);background:var(--yellow);color:#1c0b0d;font-weight:700;font-size:13.5px;padding:6px 14px;border-radius:999px;transition:transform .2s var(--spring)}
 .pillbtn.sm{padding:4px 12px;font-size:12.5px;margin-top:6px;align-self:flex-start}
 .pillbtn:active,.chipbtn:active,.ex button:active,.qchips button:active{transform:scale(.94) rotate(-2deg)}
 .idea{flex-direction:column;gap:4px}
@@ -702,8 +699,8 @@ body{background:var(--wall-1) radial-gradient(circle,color-mix(in srgb,var(--hot
 .hello-stk{display:flex;gap:10px;margin-bottom:10px}
 .hello-stk .sticker:nth-child(1){--rot:-10deg}.hello-stk .sticker:nth-child(2){--rot:8deg}.hello-stk .sticker:nth-child(3){--rot:-4deg}
 .hello-stk .sticker{animation:stk .7s var(--spring) both}.hello-stk .sticker:nth-child(2){animation-delay:.1s}.hello-stk .sticker:nth-child(3){animation-delay:.2s}
-.hello h2{margin:0 0 6px;font-family:var(--fa);font-weight:400;font-size:34px;letter-spacing:.01em;text-transform:uppercase;color:var(--red-t);line-height:1}
-.hello p{margin:0 0 12px;color:var(--ink-2);font-size:15px;line-height:1.45}
+.hello h2{margin:0 0 6px;font-family:var(--fa);font-weight:400;font-size:34px;letter-spacing:.01em;text-transform:uppercase;color:var(--ptitle);line-height:1}
+.hello p{margin:0 0 12px;color:var(--on-wall-2);font-size:15px;line-height:1.45}
 .hello .keynote{background:var(--yellow);color:#1c0b0d;border:2px solid var(--edge);border-radius:14px;padding:10px 12px;font-size:14px;box-shadow:var(--hs)}
 .ex{display:flex;flex-direction:column;gap:9px}
 .ex button{display:flex;gap:10px;align-items:center;text-align:left;border:1.5px solid var(--edge);background:var(--tile);border-radius:14px;padding:9px 12px;font-size:14px;color:var(--ink);line-height:1.35;transition:transform .2s var(--spring)}
@@ -716,7 +713,7 @@ body{background:var(--wall-1) radial-gradient(circle,color-mix(in srgb,var(--hot
 .qchips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;align-items:center;padding:2px}
 .qchips[hidden]{display:none}
 .qchips::-webkit-scrollbar{display:none}
-.qchips .ql{font-family:var(--fs);font-size:20px;color:var(--red-t);white-space:nowrap;padding:0 2px}
+.qchips .ql{font-family:var(--fs);font-size:20px;color:var(--ptitle);white-space:nowrap;padding:0 2px}
 .qchips button{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;border:1.5px solid var(--edge);border-radius:999px;background:var(--c);color:#1c0b0d;font-size:13px;font-weight:700;padding:5px 12px 5px 8px;transition:transform .2s var(--spring)}
 .qchips button small{opacity:.7;font-weight:600}
 .cbar{display:flex;align-items:flex-end;gap:8px}
@@ -730,7 +727,7 @@ body{background:var(--wall-1) radial-gradient(circle,color-mix(in srgb,var(--hot
 .csend svg.i{width:19px;height:19px;stroke-width:2.8}
 .tray{display:flex;flex-direction:column;gap:7px}
 .tray[hidden]{display:none}
-.tray button,.tray label{display:flex;align-items:center;gap:12px;border:1.5px solid var(--edge);background:var(--paper);border-radius:14px;padding:9px 12px;text-align:left;color:var(--ink);cursor:pointer;animation:msgIn .35s var(--spring) both}
+.tray button,.tray label{display:flex;align-items:center;gap:12px;border:1.5px solid var(--edge);background:var(--paper);color:var(--ink);border-radius:14px;padding:9px 12px;text-align:left;color:var(--ink);cursor:pointer;animation:msgIn .35s var(--spring) both}
 .tray label:nth-of-type(1){animation-delay:.04s}.tray label:nth-of-type(2){animation-delay:.08s}
 .tray b{display:block;font-weight:700;font-size:14.5px}
 .tray small{display:block;color:var(--ink-2);font-size:12.5px}
@@ -741,29 +738,31 @@ body{background:var(--wall-1) radial-gradient(circle,color-mix(in srgb,var(--hot
 .attach button{position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--edge);background:var(--red);color:#fff;display:grid;place-items:center}
 .attach svg.i{width:12px;height:12px}
 .impnote{font-family:var(--fs);font-size:19px;color:var(--hot)}
+.gtitle.warn{color:var(--ptitle)}
 
 /* panes */
 .pane-in{display:flex;flex-direction:column;gap:13px;padding-top:10px}
 .phead{display:flex;gap:12px;align-items:center}
-.phead p{margin:3px 0 0;font-size:13.5px;color:var(--ink-2);line-height:1.35}
-.ptitle{margin:0;font-family:var(--fa);font-weight:400;font-size:32px;letter-spacing:.01em;text-transform:uppercase;color:var(--red-t);line-height:1}
+.phead p{margin:3px 0 0;font-size:13.5px;color:var(--on-wall-2);line-height:1.35}
+.ptitle{margin:0;font-family:var(--fa);font-weight:400;font-size:32px;letter-spacing:.01em;text-transform:uppercase;color:var(--ptitle);line-height:1}
 .addrow{display:flex;gap:8px}
 .addrow .inp{border:2px solid var(--edge);border-radius:999px;background:var(--tile);padding-inline:16px}
 .addrow .btn,.btn{border-radius:999px}
-.addrow .btn{border:2px solid var(--edge);box-shadow:2px 2px 0 var(--edge)}
+.addrow .btn{border:2px solid var(--edge)}
 .row2{display:flex;gap:8px}
-.chipbtn{flex:1;border:1.5px solid var(--edge);border-radius:999px;background:var(--c);color:#1c0b0d;font-weight:700;font-size:13.5px;padding:10px;box-shadow:2px 2px 0 var(--edge);transition:transform .2s var(--spring)}
+.chipbtn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1.5px solid var(--edge);border-radius:999px;background:var(--c);color:#1c0b0d;font-weight:700;font-size:13.5px;padding:9px 10px;transition:transform .2s var(--spring)}
 .chipbtn:nth-child(odd){transform:rotate(-1deg)}.chipbtn:nth-child(even){transform:rotate(1deg)}
 .chipbtn.wide{width:100%;text-align:left;padding:12px 16px;transform:none}
-.gtitle{font-family:var(--fa);font-weight:400;font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);display:flex;justify-content:space-between;align-items:center;margin:8px 2px -4px}
-.gtitle small{font-family:var(--fr);font-size:12px;font-weight:500;color:var(--ink-2);text-transform:none;letter-spacing:0}
+.gtitle{font-family:var(--fa);font-weight:400;font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:var(--on-wall);display:flex;justify-content:space-between;align-items:center;margin:8px 2px -4px}
+.gtitle small{font-family:var(--fr);font-size:12px;font-weight:500;color:var(--on-wall-2);text-transform:none;letter-spacing:0}
 .gtitle .linkbtn{font-family:var(--fr);text-transform:none;letter-spacing:0}
-.gtitle.warn{color:var(--red-t)}
-.group{background:var(--paper);border:2px solid var(--edge);border-radius:16px;overflow:hidden;box-shadow:var(--hs)}
+.gtitle.warn{color:var(--ptitle)}
+.group{background:var(--paper);color:var(--ink);border:1.5px solid var(--edge);border-radius:16px;overflow:hidden;box-shadow:0 8px 18px -12px rgba(60,10,20,.35)}
 .group.dim{opacity:.6;box-shadow:none}
 .row-i,.row-l{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;text-align:left;padding:10px 14px;color:var(--ink);border-top:1.5px dashed var(--dash);min-width:0}
 .group > :first-child,.paper-receipt .pr-top + .row-l{border-top:0}
-.row-i .emo{font-size:20px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--soft);border:1.5px solid var(--edge)}
+.row-i .emo{font-family:var(--fa);font-size:18px;color:#1c0b0d;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--soft);border:1.5px solid var(--edge);transform:rotate(-6deg)}
+.row-i:nth-child(even) .emo{transform:rotate(5deg)}
 .row-i .emo.f-ok{background:var(--m-mint)}
 .row-i .emo.f-warn{background:var(--m-butter)}
 .row-i .emo.f-bad{background:var(--m-pink)}
@@ -776,7 +775,7 @@ body{background:var(--wall-1) radial-gradient(circle,color-mix(in srgb,var(--hot
 .tickbtn:active{transform:scale(.8) rotate(-10deg)}
 .tickbtn.on{background:var(--yellow);color:#1c0b0d}
 .tickbtn svg.i{width:14px;height:14px;stroke-width:3}
-.hint,.empty{margin:0;font-size:12.5px;color:var(--ink-2);line-height:1.4}
+.hint,.empty{margin:0;font-size:12.5px;color:var(--on-wall-2);line-height:1.4}
 .chips2{display:flex;flex-wrap:wrap;gap:7px}
 .chips2 button,.chips2 span{border:1.5px solid var(--edge);background:var(--c,var(--m-mint));border-radius:999px;padding:6px 12px;font-size:13.5px;font-weight:700;color:#1c0b0d;transition:transform .2s var(--spring)}
 .chips2 > :nth-child(3n+1){transform:rotate(-1.5deg)}.chips2 > :nth-child(3n+2){transform:rotate(1deg)}
@@ -852,7 +851,7 @@ body{background:var(--wall-1) radial-gradient(circle,color-mix(in srgb,var(--hot
 .ghead{display:flex;justify-content:space-between;align-items:baseline}
 .ghead b{font-family:var(--fa);font-weight:400;font-size:24px;text-transform:uppercase;color:var(--red-t)}
 .ghead span{font-size:13.5px;color:var(--ink-2)}
-.glist{display:flex;flex-direction:column;background:var(--paper);border:2px solid var(--edge);border-radius:16px;overflow:hidden;box-shadow:var(--hs)}
+.glist{display:flex;flex-direction:column;background:var(--paper);border:1.5px solid var(--edge);border-radius:16px;overflow:hidden}
 .grow{display:flex;align-items:center;gap:12px;padding:11px 12px;border-top:1.5px dashed var(--dash)}
 .grow:first-child{border-top:0}
 .gmark{width:26px;height:26px;border-radius:6px;border:2px solid var(--edge);display:grid;place-items:center;flex:none;color:#1c0b0d;transition:transform .3s var(--spring)}
@@ -873,6 +872,21 @@ body{background:var(--wall-1) radial-gradient(circle,color-mix(in srgb,var(--hot
 .section-t{font-family:var(--fa);font-weight:400;font-size:14px;letter-spacing:.05em;color:var(--ink)}
 .toast{border:2px solid var(--edge)}
 @media (prefers-reduced-motion: reduce){.msg.new,.msg.new .blk .sticker,.hello-stk .sticker,#pane.enter > *,.tray button,.tray label,.csend.ready,.gc.pop,.star,.burst,.receipt{animation:none}.dots i{animation-duration:2s}}
+
+/* steps + workouts strip */
+.syncrow{display:grid;grid-template-columns:1.25fr 1fr;gap:8px}
+.sync{display:flex;align-items:center;gap:8px;border:1.5px solid var(--edge);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px 6px 6px;text-align:left;min-width:0;transition:transform .2s var(--spring)}
+.sync:active{transform:scale(.95) rotate(-1deg)}
+.sync .doo{width:30px;height:30px;flex:none;background:var(--m-sky);border-radius:50%;border:1.5px solid var(--edge);padding:3px;box-sizing:border-box;color:#1c0b0d}
+.sync.wk .doo{background:var(--m-pink)}
+.sync span{flex:1;min-width:0;font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sync span b{font-family:var(--fa);font-weight:400;font-size:18px;margin-right:3px}
+.sync small{display:block;font-size:11px;font-weight:500;color:var(--ink-2)}
+.sync em{font-style:normal;font-weight:800;font-size:16px;color:var(--red-t)}
+.howto{margin:0;padding-left:20px;font-size:13.5px;line-height:1.5}
+.howto code{background:var(--soft);border-radius:5px;padding:0 4px;font-size:12.5px}
+.card{color:var(--ink)}
+.sheet{color:var(--ink)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -3179,6 +3193,41 @@ document.addEventListener("change", e => {
   if (d.shopdone) { S.shopping = { ...S.shopping, items: S.shopping.items.map(x => x.id === d.shopdone ? { ...x, done: t.checked } : x) }; putShopping(); renderAll(); renderSheet(); return; }
   if (d.setf) { const v = Math.round(Number(t.value)); if (v > 0) { S.settings = { ...S.settings, [d.setf]: v }; putSettings(); renderAll(); } return; }
 });
+/* ---------- hand-drawn doodles instead of emoji ---------- */
+const DOO = {
+  bowl: '<path d="M3.5 11.5h17a8.5 7 0 0 1-17 0z" fill="#ff4fa3"/><path d="M8 20h8"/><path d="M9 8.5c-1-1.5 1-2.5 0-4M12.5 8.5c-1-1.5 1-2.5 0-4M16 8.5c-1-1.5 1-2.5 0-4"/>',
+  dumbbell: '<path d="M2.5 12h19"/><rect x="4.5" y="7.5" width="3" height="9" rx="1" fill="#ff4fa3"/><rect x="16.5" y="7.5" width="3" height="9" rx="1" fill="#ff4fa3"/><rect x="7.5" y="9" width="2" height="6" rx=".8" fill="#ffe23d"/><rect x="14.5" y="9" width="2" height="6" rx=".8" fill="#ffe23d"/>',
+  shoe: '<path d="M3 15.5c0-3 1-6.5 2.5-8l3 1.5c.5 1.5 2 2.5 4 2.8l5 .9c2 .4 3.5 1.5 3.5 3.3v1.5H3z" fill="#ffe23d"/><path d="M3 15.5h18M9.5 10l1.2-1.4M11.5 11.1l1.1-1.3"/>',
+  watch: '<rect x="6" y="6" width="12" height="12" rx="4" fill="#ffe23d"/><path d="M9 6V3h6v3M9 18v3h6v-3M12 9v3.5l2 1.5"/>',
+  scale: '<rect x="3.5" y="5" width="17" height="15" rx="4" fill="#ffb48a"/><path d="M8 10a4 4 0 0 1 8 0z" fill="#fffdf8"/><path d="M12 10l1.5-2.2"/>',
+  bag: '<path d="M5 8.5h14l-1.2 11.5H6.2z" fill="#ff4fa3"/><path d="M9 8.5V7a3 3 0 0 1 6 0v1.5"/><path d="M9.5 13.5l1.8 1.8 3.5-3.6"/>',
+  fridge: '<rect x="6" y="2.5" width="12" height="19" rx="2.5" fill="#bfe8a6"/><path d="M6 9.5h12M9 5.5v2M9 12.5v3.5"/>',
+  note: '<rect x="5" y="3" width="14" height="18" rx="2" fill="#fffdf8"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/><path d="M5 6h-1M5 10h-1M5 14h-1M5 18h-1"/>',
+  check: '<circle cx="12" cy="12" r="8.5" fill="#bfe8a6"/><path d="M8 12.3l2.8 2.8L16.2 9.5"/>',
+  bin: '<path d="M6 7.5h12l-1 13H7z" fill="#ff6b6b"/><path d="M4.5 7.5h15M9.5 7.5V5h5v2.5M10 11v6M14 11v6"/>',
+  undo: '<path d="M9 6L4.5 10.5 9 15" /><path d="M5 10.5h9a5 5 0 0 1 0 10h-3"/>',
+  star: '<path d="M12 2.8l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2L12 16.6l-5.6 3.2 1.3-6.2L3 9.3l6.3-.7z" fill="#ffe23d"/>',
+  drop: '<path d="M12 3c3 4 6 7.3 6 10.5a6 6 0 0 1-12 0C6 10.3 9 7 12 3z" fill="#a9d4ff"/><path d="M9.3 14a2.8 2.8 0 0 0 2.7 2.8"/>',
+  book: '<path d="M3.5 5.5c3-1 6-1 8.5 1v13c-2.5-2-5.5-2-8.5-1z" fill="#ffe23d"/><path d="M20.5 5.5c-3-1-6-1-8.5 1v13c2.5-2 5.5-2 8.5-1z" fill="#ff9ccb"/>',
+  hearts: '<path d="M8 19s-5-3.2-5-7a2.8 2.8 0 0 1 5-1.6A2.8 2.8 0 0 1 13 12c0 3.8-5 7-5 7z" fill="#ff4fa3"/><path d="M16 15s-4.5-2.8-4.5-6.2a2.5 2.5 0 0 1 4.5-1.5 2.5 2.5 0 0 1 4.5 1.5c0 3.4-4.5 6.2-4.5 6.2z" fill="#ffe23d"/>',
+  receipt: '<path d="M6 3h12v18l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4L6 21z" fill="#fffdf8"/><path d="M9 7.5h6M9 11h6M9 14.5h3.5"/>',
+  camera: '<rect x="3" y="7" width="18" height="12.5" rx="3" fill="#ffb48a"/><path d="M8.5 7l1.5-2.5h4L15.5 7"/><circle cx="12" cy="13.2" r="3.4" fill="#fffdf8"/>',
+  phone: '<rect x="6.5" y="2.5" width="11" height="19" rx="2.5" fill="#d6c2ff"/><path d="M10.5 5h3"/><path d="M12 9v6M9.5 12.5L12 15l2.5-2.5"/>',
+  chat: '<path d="M20 11.5a8 7 0 0 1-11.3 6.3L4 19l1.3-3.8A7 7 0 0 1 4 11.5a8 7 0 0 1 16 0z" fill="#ffe23d"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01" stroke-width="2.6"/>',
+  carrot: '<path d="M14.5 9.5L4 20.5c-.6.6.2 1.4.8.8L16 11z" fill="#ffb48a"/><path d="M14 10l6-6M15.5 8.5c1-3 3-4 5-4M15.5 8.5c3-1 4-3 4-5"/><path d="M9 14.5l1.2 1.2M6.8 17l1 1"/>',
+  cart: '<path d="M3 4.5h2.5l2.2 10.5h10l2-7.5H6.8" fill="none"/><path d="M7.7 15l-1-5.3 13 .3-2 5z" fill="#ff9ccb"/><circle cx="9.5" cy="19" r="1.6" fill="#fffdf8"/><circle cx="16.5" cy="19" r="1.6" fill="#fffdf8"/>',
+  sparkle: '<path d="M12 3c.6 4.5 2.5 6.4 7 7-4.5.6-6.4 2.5-7 7-.6-4.5-2.5-6.4-7-7 4.5-.6 6.4-2.5 7-7z" fill="#ffe23d"/><path d="M19 16v4M17 18h4"/>',
+  trophy: '<path d="M7 3.5h10v5a5 5 0 0 1-10 0z" fill="#ffe23d"/><path d="M7 5H4c0 3 1.5 4.5 3.3 4.7M17 5h3c0 3-1.5 4.5-3.3 4.7M12 13.5v3.5M8.5 20.5h7l-.8-3.5H9.3z"/>',
+  chart: '<path d="M4 20h16"/><path d="M4.5 16l4.5-4.5 3.5 3L19 7.5" /><path d="M14.5 7.5H19V12"/><rect x="5.5" y="17" width="2.5" height="3" fill="#ff6b6b"/>',
+  leaf: '<path d="M6 19c-1-8 4-13 13-13 0 9-5 13.5-13 13z" fill="#bfe8a6"/><path d="M6 19c3-4 6-7 9.5-9.5"/>',
+  muscle: '<path d="M5 18c-1.5-4 0-9 3-12l2.5 1.5-1 3c2.5-1.5 6.5-1 8.5 1.5 2.5 3 .5 7-3 7.5z" fill="#ff9ccb"/><path d="M10.5 13.5c1 1.2 2.6 1.6 4 1.2"/>',
+  apple: '<path d="M12 7.5c-2.5-1.5-7-1-7 4.5 0 4 3 8.5 5 8.5 1 0 1.3-.6 2-.6s1 .6 2 .6c2 0 5-4.5 5-8.5 0-5.5-4.5-6-7-4.5z" fill="#ff6b6b"/><path d="M12 7.5c0-2 1-3.5 3-4"/>',
+  heart: '<path d="M12 20s-7.5-4.6-7.5-10a4 4 0 0 1 7.5-2 4 4 0 0 1 7.5 2c0 5.4-7.5 10-7.5 10z" fill="#ff4fa3"/>',
+  bolt: '<path d="M13.5 2.5L5 13.5h6l-1.5 8 8.5-11h-6z" fill="#ffb48a"/>',
+  pot: '<path d="M4.5 10h15v6a4 4 0 0 1-4 4h-7a4 4 0 0 1-4-4z" fill="#ff9ccb"/><path d="M2.5 10h19M9 6.5c0-1.3 1.3-2 3-2s3 .7 3 2v3.5"/>'
+};
+function doo(name) { return `<svg class="doo" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${DOO[name] || DOO.bowl}</svg>`; }
+
 /* ===================== Chat-first home ===================== */
 /* Keys live only in this phone's storage. They are never part of the code. */
 const KEYS = { g: "fridge.gkey", a: "fridge.apikey" };
@@ -3400,7 +3449,7 @@ function applyActions(res) {
     if (dup && w.source) { blocks.push({ k: "dup", names: [`${dup.name || WK[type][2]} · ${dup.min} min`] }); continue; }
     const wo = { id: uid(), type, min, kcal, met, name: String(w.name || WK[type][2]).trim(), details: w.details ? String(w.details) : "", ...(w.source ? { via: String(w.source), src: "import" } : {}) };
     keepAct(); editDay(T, d => { d.act = { ...(d.act || {}), workouts: [...(d.act?.workouts || []), wo] }; }); U.workouts.push(wo.id);
-    blocks.push({ k: "workout", name: wo.name, emoji: WK[type][1], min, kcal, details: wo.details, est: !bodyReady(), via: wo.via || "" });
+    blocks.push({ k: "workout", type, name: wo.name, emoji: WK[type][1], min, kcal, details: wo.details, est: !bodyReady(), via: wo.via || "" });
   }
   if (+res.steps > 0) { keepAct(); editDay(T, d => { d.act = { ...(d.act || {}), steps: Math.round(+res.steps) }; }); blocks.push({ k: "steps", v: Math.round(+res.steps) }); }
   if (+res.active_kcal > 0) { keepAct(); editDay(T, d => { d.act = { ...(d.act || {}), active: Math.round(+res.active_kcal) }; }); blocks.push({ k: "active", v: Math.round(+res.active_kcal) }); }
@@ -3601,7 +3650,7 @@ function renderHome() {
   const tabs = $("#tabbar"); if (!tabs) return;
   const need = (S.shopping.items || []).filter(x => !x.done).length;
   tabs.innerHTML = TABS.map(([k, ic, l, col]) => `<button class="${CH.tab === k ? "on" : ""}" style="--tc:var(--m-${col})" data-act="tab" data-t="${k}" aria-label="${l}"${CH.tab === k ? ' aria-current="page"' : ""}><span class="tb-ic">${icon(ic)}${k === "groceries" && need ? `<i>${need}</i>` : ""}</span><span>${l}</span></button>`).join("");
-  const bs = $("#budgetStrip"); bs.hidden = CH.tab !== "chat"; bs.innerHTML = CH.tab === "chat" ? stripHtml(T) + goalsRow(T) : "";
+  const bs = $("#budgetStrip"); bs.hidden = CH.tab !== "chat"; bs.innerHTML = CH.tab === "chat" ? stripHtml(T) + syncRow(T) + goalsRow(T) : "";
   countUp();
   celebrateGoals(T);
   const pane = $("#pane"), stick = CH.tab === "chat" && (CH.stick || pane.scrollHeight - pane.scrollTop - pane.clientHeight < 80);
@@ -3648,9 +3697,8 @@ function renderComposer() {
   c.dataset.ready = "1";
   c.innerHTML = `<div class="qchips" id="qchips"></div>
     <div class="tray" id="tray" hidden>
-      <button data-act="ch-scan"><span class="sticker c-sky">🧾</span><span><b>Scan receipt or order</b><small>Paper receipt or grocery-app screenshots</small></span></button>
-      <label for="chImg"><span class="sticker c-peach">📸</span><span><b>Photo of my meal or groceries</b><small id="chImgNote">Needs the AI key</small></span><input type="file" id="chImg" accept="image/*" hidden></label>
-      <label for="chImp"><span class="sticker c-pink">📲</span><span><b>Import from Strava, Hevy, MyFitnessPal or Health</b><small>Pick screenshots. Duplicates are skipped.</small></span><input type="file" id="chImp" accept="image/*" multiple hidden></label>
+      <button data-act="ch-scan"><span class="sticker c-sky">${doo("receipt")}</span><span><b>Scan receipt or order</b><small>Paper receipt or grocery-app screenshots</small></span></button>
+      <label for="chImg"><span class="sticker c-peach">${doo("camera")}</span><span><b>Photo of my meal or groceries</b><small id="chImgNote">Needs the AI key</small></span><input type="file" id="chImg" accept="image/*" hidden></label>
     </div>
     <div class="attach" id="chAttach" hidden></div>
     <div class="cbar"><button class="cplus" data-act="ch-tray" aria-label="Scan or add a photo">${icon("plus")}</button>
@@ -3669,26 +3717,26 @@ function syncComposer() {
     const slot = slotNow(), sug = S.ready ? suggestMeals(slot, 4) : [];
     const show = sug.length && !CH.draft.trim() && !CH.tray && !CH.busy;
     q.hidden = !show;
-    if (show) q.innerHTML = `<span class="ql">Again?</span>` + sug.map((e, i) => `<button data-act="relog" data-key="${esc(e.key)}" style="--c:var(--m-${PAL[i % PAL.length]})"><span>${esc(dishEmoji(e.name))}</span>${esc(e.name)}${S.settings.noNumbers ? "" : `<small>${num(e.kcal)}</small>`}</button>`).join("");
+    if (show) q.innerHTML = `<span class="ql">Again?</span>` + sug.map((e, i) => `<button data-act="relog" data-key="${esc(e.key)}" style="--c:var(--m-${PAL[i % PAL.length]})">${esc(e.name)}${S.settings.noNumbers ? "" : `<small>${num(e.kcal)}</small>`}</button>`).join("");
   }
 }
 const EXAMPLES = [
-  ["Breakfast: 2 eggs, 1 slice Dave's Killer Bread, 10 g butter", "🍳"],
-  ["Recipe: chicken chili. 500 g chicken breast, 1 can black beans, 1 can tomatoes, 1 onion, 1 tbsp olive oil. Makes 4 servings", "📖"],
-  ["Had a serving of my chicken chili", "🥣"],
-  ["Ran 5 km in 30 min, then 20 min of weights", "🏃"],
-  ["Bought milk, eggs, spinach and 2 avocados", "🛍️"],
-  ["Add oat milk and lemons to my list", "📝"],
-  ["What can I make tonight?", "💡"]
+  ["Breakfast: 2 eggs, 1 slice Dave's Killer Bread, 10 g butter", "bowl"],
+  ["Recipe: chicken chili. 500 g chicken breast, 1 can black beans, 1 can tomatoes, 1 onion, 1 tbsp olive oil. Makes 4 servings", "book"],
+  ["Had a serving of my chicken chili", "pot"],
+  ["Ran 5 km in 30 min, then 20 min of weights", "dumbbell"],
+  ["Bought milk, eggs, spinach and 2 avocados", "bag"],
+  ["Add oat milk and lemons to my list", "note"],
+  ["What can I make tonight?", "sparkle"]
 ];
 function dayLabel(id) { const d = diffDays(id, todayId()); return d === 0 ? "Today" : d === 1 ? "Yesterday" : fmtShort(id); }
 function paneChat() {
   const msgs = CH.msgs.slice(-60), now = Date.now();
   let h = `<div class="feed">`;
   if (!msgs.length) {
-    h += `<div class="hello"><div class="hello-stk"><span class="sticker big c-lilac">💬</span><span class="sticker big c-mint">🥑</span><span class="sticker big c-butter">🏃</span></div><h2>Just tell me.</h2><p>What you ate (grams and brands help), a recipe to save, a workout, or groceries you bought. I'll do the tracking.</p>
+    h += `<div class="hello"><div class="hello-stk"><span class="sticker big c-butter">${doo("chat")}</span><span class="sticker big c-mint">${doo("carrot")}</span><span class="sticker big c-pink">${doo("dumbbell")}</span></div><h2>Just tell me.</h2><p>What you ate (grams and brands help), a recipe to save, a workout, or groceries you bought. I'll do the tracking.</p>
       ${aiOn() ? "" : `<p class="keynote">For exact numbers per ingredient, paste your Gemini API key here as a message. It stays on this phone.</p>`}
-      <div class="ex">${EXAMPLES.map(([t, e], i) => `<button data-act="ch-example" data-t="${esc(t)}" style="--c:var(--m-${PAL[i % PAL.length]})"><span class="sticker sm">${e}</span>${esc(t)}</button>`).join("")}</div></div>`;
+      <div class="ex">${EXAMPLES.map(([t, e], i) => `<button data-act="ch-example" data-t="${esc(t)}" style="--c:var(--m-${PAL[i % PAL.length]})"><span class="sticker sm">${doo(e)}</span>${esc(t)}</button>`).join("")}</div></div>`;
   }
   let lastDay = "";
   for (const m of msgs) {
@@ -3700,22 +3748,22 @@ function paneChat() {
   return h + `</div>`;
 }
 function itemRow(x, nn) { return `<li><span>${esc(x.name)}${x.brand ? ` <em>${esc(x.brand)}</em>` : ""}${x.amt ? `<small>${esc(x.amt)}</small>` : ""}</span>${nn ? "" : `<b>${x.kcal ? num(x.kcal) : "?"}</b>`}</li>`; }
-const BLK = { meal: ["peach", "🍽️"], recipe: ["butter", "📖"], workout: ["sky", "🏃"], steps: ["sky", "👟"], active: ["sky", "⌚"], weight: ["lilac", "⚖️"], bought: ["mint", "🛍️"], have: ["mint", "🧊"], list: ["pink", "📝"], unlist: ["pink", "✔️"], used: ["mint", "😋"], tossed: ["tomato", "🗑️"], removed: ["tomato", "↩️"], goals: ["lilac", "🎯"], habits: ["sky", "💧"], dup: ["butter", "👯"] };
+const BLK = { meal: ["peach", "bowl"], recipe: ["butter", "book"], workout: ["sky", "dumbbell"], steps: ["sky", "shoe"], active: ["sky", "watch"], weight: ["lilac", "scale"], bought: ["mint", "bag"], have: ["mint", "fridge"], list: ["pink", "note"], unlist: ["pink", "check"], used: ["mint", "check"], tossed: ["tomato", "bin"], removed: ["tomato", "undo"], goals: ["lilac", "star"], habits: ["sky", "drop"], dup: ["butter", "hearts"] };
 const BLK_TAG = { dup: "Already logged, skipped", bought: "Bought · now At home", have: "Now At home", list: "Added To buy", unlist: "Off the To buy list", used: "Used up", tossed: "Tossed", removed: "Removed", goals: "Goals updated", habits: "Habits", steps: "Steps", active: "Apple Health", weight: "Weight" };
 function blockHtml(b, m) {
   const nn = S.settings.noNumbers, [col, emo0] = BLK[b.k] || ["lilac", "✨"];
-  const wrap = (inner, emo = emo0) => `<div class="blk k-${b.k}"><span class="sticker c-${col}" style="--rot:${((b.name || b.k).length % 5) * 3 - 6}deg">${emo}</span><div class="bc">${inner}</div></div>`;
+  const wrap = (inner, emo = emo0) => `<div class="blk k-${b.k}"><span class="sticker c-${col}" style="--rot:${((b.name || b.k).length % 5) * 3 - 6}deg">${doo(emo)}</span><div class="bc">${inner}</div></div>`;
   switch (b.k) {
     case "meal": return wrap(`<div class="bh"><span class="btag">${cap(b.slot || "meal")}${b.via ? ` <em class="via">via ${esc(b.via)}</em>` : ""}</span><b>${esc(b.name)}</b>${nn ? "" : `<strong>${num(b.kcal)}<small> kcal</small></strong>`}</div>
       ${nn ? "" : `<div class="macros"><span class="mp">${num(b.protein)} g protein</span><span>${num(b.carbs)} g carbs</span><span>${num(b.fat)} g fat</span></div>`}
       ${(b.items || []).length > 1 || (b.items?.[0]?.amt) ? `<ul class="items">${b.items.map(x => itemRow(x, nn)).join("")}</ul>` : ""}
       ${b.note ? `<p class="bnote">${esc(b.note)}</p>` : ""}${b.guess ? `<p class="bnote">Some numbers are estimates. Correct me in a message if you know better.</p>` : ""}
       ${b.pattern && !m.undone ? `<div class="useq pat"><span>${esc(b.pattern)}</span>${b.saved ? `<span class="t-ok">Saved ✓</span>` : `<button class="linkbtn" data-act="save-from-meal" data-mid="${esc(m.id)}" data-bid="${esc(b.id)}">Save as recipe</button>`}</div>` : ""}
-      ${b.fridge?.length && !m.undone && !b.usedDone ? `<div class="useq"><span>From At home: ${esc(b.fridge.join(", "))}?</span><button class="linkbtn" data-act="ch-use" data-mid="${esc(m.id)}" data-bid="${esc(b.id)}">Mark used</button></div>` : ""}`, dishEmoji(b.name));
+      ${b.fridge?.length && !m.undone && !b.usedDone ? `<div class="useq"><span>From At home: ${esc(b.fridge.join(", "))}?</span><button class="linkbtn" data-act="ch-use" data-mid="${esc(m.id)}" data-bid="${esc(b.id)}">Mark used</button></div>` : ""}`);
     case "recipe": return wrap(`<div class="bh"><span class="btag">${b.updated ? "Recipe updated" : "Recipe saved"}</span><b>${esc(b.name)}</b>${nn ? "" : `<strong>${num(b.per.kcal)}<small> kcal/serving</small></strong>`}</div>
       <div class="macros"><span>${b.servings} serving${b.servings === 1 ? "" : "s"}</span>${nn ? "" : `<span class="mp">${num(b.per.protein)} g protein each</span><span>${num(b.total.kcal)} kcal total</span>`}</div>
       ${m.undone ? "" : `<div class="bact"><button class="pillbtn" data-act="rec-log1" data-id="${esc(b.id)}">Log a serving</button><button class="linkbtn" data-act="rec-view" data-id="${esc(b.id)}">See recipe</button></div>`}`);
-    case "workout": return wrap(`<div class="bh"><span class="btag">Workout${b.via ? ` <em class="via">via ${esc(b.via)}</em>` : ""}</span><b>${esc(b.name)} · ${b.min} min</b>${nn ? "" : `<strong>${num(b.kcal)}<small> kcal</small></strong>`}</div>${b.details ? `<p class="bnote">${esc(b.details)}</p>` : ""}${b.est && !nn ? `<p class="bnote">Add your weight (tap the calorie card) for an exact burn.</p>` : ""}`, b.emoji || emo0);
+    case "workout": return wrap(`<div class="bh"><span class="btag">Workout${b.via ? ` <em class="via">via ${esc(b.via)}</em>` : ""}</span><b>${esc(b.name)} · ${b.min} min</b>${nn ? "" : `<strong>${num(b.kcal)}<small> kcal</small></strong>`}</div>${b.details ? `<p class="bnote">${esc(b.details)}</p>` : ""}${b.est && !nn ? `<p class="bnote">Add your weight (tap the calorie card) for an exact burn.</p>` : ""}`, ["run", "walk", "hike"].includes(b.type) ? "shoe" : emo0);
     case "steps": return wrap(`<div class="bh"><span class="btag">Steps</span><b>${num(b.v)} steps</b>${nn || !bodyReady() ? "" : `<strong>${num(Math.max(0, b.v - 2500) * kcalPerStep())}<small> kcal</small></strong>`}</div>`);
     case "active": return wrap(`<div class="bh"><span class="btag">Apple Health</span><b>${num(b.v)} active kcal</b></div>`);
     case "weight": return wrap(`<div class="bh"><span class="btag">Weight</span><b>${b.v} ${esc(b.unit)}</b></div>`);
@@ -3740,21 +3788,21 @@ function appMsg(m, fresh = "") {
 const ZONE_GROUP = z => z === "freezer" ? "freezer" : z === "pantry" ? "pantry" : "fridge";
 function itemRowHtml(i) {
   const l = lifeInfo(i);
-  return `<button class="row-i" data-act="item" data-id="${esc(i.id)}"><span class="emo f-${l.cls}">${esc(i.emoji || "🛒")}</span><span class="nm"><b>${esc(i.name)}${(i.qty || 1) > 1 ? ` <em>×${i.qty}</em>` : ""}</b><small>${esc(ZONE_SHORT[i.zone] || "")}${i.boughtAt ? ` · since ${fmtShort(i.boughtAt)}` : ""}</small></span><span class="pill ${l.cls}">${esc(l.label)}</span></button>`;
+  return `<button class="row-i" data-act="item" data-id="${esc(i.id)}"><span class="emo f-${l.cls}">${esc((i.name || "?").trim().charAt(0).toUpperCase())}</span><span class="nm"><b>${esc(i.name)}${(i.qty || 1) > 1 ? ` <em>×${i.qty}</em>` : ""}</b><small>${esc(ZONE_SHORT[i.zone] || "")}${i.boughtAt ? ` · since ${fmtShort(i.boughtAt)}` : ""}</small></span><span class="pill ${l.cls}">${esc(l.label)}</span></button>`;
 }
-function phead(col, emo, title, sub) { return `<div class="phead"><span class="sticker big c-${col}">${emo}</span><div><h2 class="ptitle">${title}</h2><p>${sub}</p></div></div>`; }
+function phead(col, emo, title, sub) { return `<div class="phead"><span class="sticker big c-${col}">${doo(emo)}</span><div><h2 class="ptitle">${title}</h2><p>${sub}</p></div></div>`; }
 function paneFridge() {
   const all = S.items.filter(i => i.status === "fresh"), z = CH.fzone;
   const shown = all.filter(i => z === "all" || ZONE_GROUP(i.zone) === z).sort((a, b) => daysLeft(a) - daysLeft(b));
   const soon = shown.filter(i => i.zone !== "pantry" && daysLeft(i) <= 3), rest = shown.filter(i => !soon.includes(i));
   const cnt = k => all.filter(i => k === "all" || ZONE_GROUP(i.zone) === k).length;
-  let h = `<div class="pane-in">${phead("mint", "🧊", "At home", "Food you already have. What goes bad first is at the top.")}
+  let h = `<div class="pane-in">${phead("mint", "fridge", "At home", "Food you already have. What goes bad first is at the top.")}
     <form class="addrow" id="fridgeAdd"><input class="inp" id="fridgeIn" placeholder="I have… e.g. 2 avocados, milk" autocomplete="off" enterkeyhint="done"><button class="btn sm">Add</button></form>
-    <div class="row2"><button class="chipbtn" data-act="ch-scan" style="--c:var(--m-sky)">🧾 Scan receipt</button><button class="chipbtn" data-act="open" data-sheet="scan" data-mode="photo" style="--c:var(--m-peach)">📸 Fridge photo</button></div>
+    <div class="row2"><button class="chipbtn" data-act="ch-scan" style="--c:var(--m-sky)">${doo("receipt")}Scan receipt</button><button class="chipbtn" data-act="open" data-sheet="scan" data-mode="photo" style="--c:var(--m-peach)">${doo("camera")}Fridge photo</button></div>
     <div class="seg">${[["all", "All"], ["fridge", "Fridge"], ["freezer", "Freezer"], ["pantry", "Pantry"]].map(([k, l]) => `<button class="${z === k ? "on" : ""}" data-act="fzone" data-z="${k}">${l} ${cnt(k) ? `<small>${cnt(k)}</small>` : ""}</button>`).join("")}</div>`;
   if (S.items.some(i => i.example)) h += `<div class="banner2">This is example food. <button class="linkbtn" data-act="clear-examples">Clear examples</button></div>`;
-  if (!shown.length) h += `<div class="emptycard"><span class="sticker big c-mint">🥕</span><p>Nothing here yet. Add above, scan a receipt, or tick items on your To buy list when you shop.</p></div>`;
-  if (soon.length) h += `<div class="gtitle warn">⏰ Eat soon</div><div class="group">${soon.map(itemRowHtml).join("")}</div>`;
+  if (!shown.length) h += `<div class="emptycard"><span class="sticker big c-mint">${doo("carrot")}</span><p>Nothing here yet. Add above, scan a receipt, or tick items on your To buy list when you shop.</p></div>`;
+  if (soon.length) h += `<div class="gtitle warn">Eat soon</div><div class="group">${soon.map(itemRowHtml).join("")}</div>`;
   if (rest.length) h += `<div class="gtitle">${soon.length ? "Everything else" : "All good"}</div><div class="group">${rest.map(itemRowHtml).join("")}</div>`;
   return h + `</div>`;
 }
@@ -3772,10 +3820,10 @@ function paneGroceries() {
   const due = restockDue().filter(r => !open.some(x => nameMatch(x.name, r.name)));
   const recentUsed = []; S.items.filter(i => i.status !== "fresh" && i.closedAt >= addDays(todayId(), -21) && !act.some(a => nameMatch(a.name, i.name)) && !open.some(x => nameMatch(x.name, i.name)) && !due.some(r => nameMatch(r.name, i.name))).forEach(i => { if (!recentUsed.some(u => nameMatch(u.name, i.name))) recentUsed.push(i); });
   const again = [...due.map(r => ({ name: r.name, why: `every ~${r.every}d` })), ...recentUsed.slice(0, 8).map(i => ({ name: i.name, why: "ran out" }))].slice(0, 10);
-  let h = `<div class="pane-in">${phead("pink", "📝", "To buy", "Your shopping list. Tick it at the store and it moves to At home.")}
+  let h = `<div class="pane-in">${phead("pink", "cart", "To buy", "Your shopping list. Tick it at the store and it moves to At home.")}
     <form class="addrow" id="listAdd"><input class="inp" id="listIn" placeholder="I need… e.g. oat milk, lemons" autocomplete="off" enterkeyhint="done"><button class="btn sm">Add</button></form>`;
   h += open.length ? `<div class="paper-receipt"><div class="pr-top"><b>SHOPPING LIST</b><span>ORDER NO. ${String(open.length).padStart(3, "0")} · TABLE FOR 1</span></div>${open.map(x => { const home = act.filter(a => nameMatch(a.name, x.name)); return `<div class="row-l"><button class="tickbtn" data-act="list-tick" data-id="${esc(x.id)}" aria-label="Bought ${esc(x.name)}"></button><span class="nm"><b>${esc(x.name)}</b>${home.length ? `<small class="t-ok">Already At home: ${esc(home[0].name)}</small>` : ""}</span><button class="x-btn" data-act="list-del" data-id="${esc(x.id)}" aria-label="Remove ${esc(x.name)}">${icon("x")}</button></div>`; }).join("")}<div class="pr-total"><b>TOTAL</b><span class="script">${open.length} thing${open.length === 1 ? "" : "s"} to get</span></div><div class="barcode" aria-hidden="true"></div><p class="pr-thanks">TICK IT AT THE STORE, IT GOES HOME ♥</p></div>`
-    : `<div class="emptycard"><span class="sticker big c-pink">🛒</span><p>Nothing to buy. Add above, or tell the chat “add oat milk to my list”.</p></div>`;
+    : `<div class="emptycard"><span class="sticker big c-pink">${doo("cart")}</span><p>Nothing to buy. Add above, or tell the chat “add oat milk to my list”.</p></div>`;
   if (done.length) h += `<div class="gtitle">Bought, moved to At home <button class="linkbtn" data-act="shop-clear">Clear</button></div><div class="group dim">${done.map(x => `<div class="row-l"><span class="tickbtn on">${icon("check")}</span><span class="nm"><b>${esc(x.name)}</b></span></div>`).join("")}</div>`;
   if (again.length) h += `<div class="gtitle">Buy again</div><div class="chips2">${again.map((a, i) => `<button data-act="list-again" data-name="${esc(a.name)}" style="--c:var(--m-${PAL[i % PAL.length]})">+ ${esc(a.name)}<small>${esc(a.why)}</small></button>`).join("")}</div>`;
   const since = addDays(todayId(), -30), bought = S.items.filter(i => i.boughtAt && i.boughtAt >= since && !["have", "example"].includes(i.source) && !i.example).sort((a, b) => b.boughtAt.localeCompare(a.boughtAt));
@@ -3799,27 +3847,51 @@ function listTick(id) {
 /* ---------- Recipes tab ---------- */
 function paneRecipes() {
   const L = myRecipes(), nn = S.settings.noNumbers, ideas = savedRecipes(), spot = spotted();
-  let h = `<div class="pane-in">${phead("butter", "📖", "Recipes", "Your own recipes, with calories per serving, plus patterns in what you eat.")}`;
+  let h = `<div class="pane-in">${phead("butter", "book", "Recipes", "Your own recipes, with calories per serving, plus patterns in what you eat.")}`;
   if (spot.length) {
-    const flag = p => `<div class="spot"><span class="sticker" style="--c:var(--m-${p.col || "butter"})">${p.emo}</span><div><b>${esc(p.t)}</b><small>${esc(p.s)}</small>${p.act ? `<button class="pillbtn sm" ${p.act}>${esc(p.btn)}</button>` : ""}</div></div>`;
+    const flag = p => `<div class="spot"><span class="sticker" style="--c:var(--m-${p.col || "butter"})">${doo(p.emo)}</span><div><b>${esc(p.t)}</b><small>${esc(p.s)}</small>${p.act ? `<button class="pillbtn sm" ${p.act}>${esc(p.btn)}</button>` : ""}</div></div>`;
     const green = spot.filter(p => !p.bad), red = spot.filter(p => p.bad);
     h += `<div class="flags">${green.length ? `<div class="flagbox green"><h3>GREEN FLAGS</h3>${green.map(flag).join("")}</div>` : ""}${red.length ? `<div class="flagbox red"><h3>RED FLAGS</h3>${red.map(flag).join("")}</div>` : ""}</div>`;
   }
   h += `<div class="gtitle">My recipes${L.length ? ` · ${L.length}` : ""}</div>`;
-  if (!L.length) h += `<div class="emptycard"><span class="sticker big c-butter">🍲</span><p>Type a recipe in Chat, with amounts, and it's saved here with calories per serving. Then just say “had a serving of my chili”.</p><button class="pillbtn" data-act="ch-example" data-t="${esc(EXAMPLES[1][0])}">Try an example</button></div>`;
+  if (!L.length) h += `<div class="emptycard"><span class="sticker big c-butter">${doo("pot")}</span><p>Type a recipe in Chat, with amounts, and it's saved here with calories per serving. Then just say “had a serving of my chili”.</p><button class="pillbtn" data-act="ch-example" data-t="${esc(EXAMPLES[1][0])}">Try an example</button></div>`;
   for (const [i, r] of L.entries()) {
     const open = CH.openRec === r.id, st = recipeStats(r);
-    h += `<div class="rcard" style="--c:var(--m-${PAL[i % PAL.length]});--tilt:${i % 2 ? .6 : -.6}deg"><span class="tape" aria-hidden="true"></span><button class="rhead" data-act="rec-toggle" data-id="${esc(r.id)}" aria-expanded="${open}"><span class="sticker">${esc(dishEmoji(r.name))}</span><span class="nm"><b>${esc(r.name)}</b><small>${r.servings} serving${r.servings === 1 ? "" : "s"}${nn ? "" : ` · ${num(r.per.protein)} g protein each`}</small><small class="made">${st.n ? `Eaten ${st.n}× · last ${esc(dayLabel(st.last).toLowerCase())}` : "Not logged yet"}</small></span>${nn ? "" : `<strong>${num(r.per.kcal)}<small>kcal/serving</small></strong>`}</button>
+    h += `<div class="rcard" style="--c:var(--m-${PAL[i % PAL.length]});--tilt:${i % 2 ? .6 : -.6}deg"><span class="tape" aria-hidden="true"></span><button class="rhead" data-act="rec-toggle" data-id="${esc(r.id)}" aria-expanded="${open}"><span class="sticker">${doo(/soup|chili|curry|dal|stew/i.test(r.name) ? "pot" : "bowl")}</span><span class="nm"><b>${esc(r.name)}</b><small>${r.servings} serving${r.servings === 1 ? "" : "s"}${nn ? "" : ` · ${num(r.per.protein)} g protein each`}</small><small class="made">${st.n ? `Eaten ${st.n}× · last ${esc(dayLabel(st.last).toLowerCase())}` : "Not logged yet"}</small></span>${nn ? "" : `<strong>${num(r.per.kcal)}<small>kcal/serving</small></strong>`}</button>
       ${open ? `<div class="rbody"><div class="gtitle">Ingredients · whole batch</div><ul class="items">${r.items.map(x => itemRow(x, nn)).join("")}</ul>${!nn ? `<p class="bnote">Batch: ${num(r.total.kcal)} kcal · ${num(r.total.protein)} g protein · ${num(r.total.carbs)} g carbs · ${num(r.total.fat)} g fat${r.cookedG ? ` · ${num(r.cookedG)} g cooked` : ""}</p>` : ""}
         ${r.steps?.length ? `<div class="gtitle">Steps</div><ol class="steps">${r.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
         <div class="rcook"><span>Servings</span><div class="stepper"><button data-act="rec-serv2" data-d="-0.5" aria-label="Fewer">−</button><output>${fmtServ(CH.serv || 1)}</output><button data-act="rec-serv2" data-d="0.5" aria-label="More">+</button></div><button class="btn sm" data-act="rec-log1" data-id="${esc(r.id)}">Log it</button></div>
         <div class="bact"><button class="linkbtn" data-act="rec-edit" data-id="${esc(r.id)}">Change it in chat</button><button class="linkbtn danger" data-act="rec-del" data-id="${esc(r.id)}">Delete</button></div></div>` : ""}</div>`;
   }
-  h += `<div class="gtitle">Ideas</div><button class="chipbtn wide" data-act="open" data-sheet="recipes" style="--c:var(--m-lilac)">💡 What can I make with what's At home?</button>`;
-  if (ideas.length) h += `<div class="group">${ideas.slice(0, 20).map(s => `<button class="row-i" data-act="open" data-sheet="recipes" data-tab="saved"><span class="emo">${esc(dishEmoji(s.name))}</span><span class="nm"><b>${esc(s.name)}</b><small>${s.minutes || 15} min${nn ? "" : ` · ${num(s.kcal)} kcal`}</small></span></button>`).join("")}</div>`;
+  h += `<div class="gtitle">Ideas</div><button class="chipbtn wide" data-act="open" data-sheet="recipes" style="--c:var(--m-lilac)">${doo("sparkle")}What can I make with what's At home?</button>`;
+  if (ideas.length) h += `<div class="group">${ideas.slice(0, 20).map(s => `<button class="row-i" data-act="open" data-sheet="recipes" data-tab="saved"><span class="emo">${esc(s.name.trim().charAt(0).toUpperCase())}</span><span class="nm"><b>${esc(s.name)}</b><small>${s.minutes || 15} min${nn ? "" : ` · ${num(s.kcal)} kcal`}</small></span></button>`).join("")}</div>`;
   h += `<p class="hint">${S.mode === "db" ? "Recipes are saved to your Claude account, so they're the same everywhere you open this page." : "Recipes are saved on this phone with the rest of your data. Back them up from Settings → Your data."}</p>`;
   return h + `</div>`;
 }
+/* ---------- steps from Apple Health ---------- */
+function syncRow(T) {
+  const a = actOf(T), steps = +a.steps || 0, wk = workoutsOn(T), synced = a.src === "health" && a.at;
+  return `<div class="syncrow"><button class="sync" data-act="health-sync">${doo("shoe")}<span><b>${num(steps)}</b> steps${synced ? `<small>synced ${new Date(a.at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</small>` : `<small>${S.settings.healthSetup ? "tap to sync" : "from Apple Health"}</small>`}</span><em>↻</em></button><button class="sync wk" data-act="ch-example" data-t="Workout: ">${doo("dumbbell")}<span><b>${wk.length}</b> workout${wk.length === 1 ? "" : "s"}<small>${wk.length ? num(wk.reduce((s, w) => s + (+w.min || 0), 0)) + " min" : "tap to log"}</small></span></button></div>`;
+}
+function healthCard() {
+  return `<div class="card stack" style="gap:10px"><p class="tiny" style="margin:0">Websites can't read Apple Health directly, so a tiny Shortcut copies today's steps and the app grabs them when you tap <b>Sync</b>. Set it up once:</p>
+    <ol class="howto"><li>Open <b>Shortcuts</b> → <b>+</b>, name it <b>Fridge steps</b>.</li>
+    <li>Add <b>Find Health Samples</b> → Steps, Start Date <b>is today</b>. Add <b>Calculate Statistics</b> → <b>Sum</b>.</li>
+    <li>If you wear a Watch: another <b>Find Health Samples</b> → Active Energy, today, then <b>Sum</b>.</li>
+    <li>Add <b>Text</b>: <code>fridge:steps=</code> + the first Sum, then <code>;active=</code> + the second.</li>
+    <li>Add <b>Copy to Clipboard</b>. Run it once and allow Health access.</li>
+    <li>Make it automatic: <b>Automation</b> tab → <b>+</b> → <b>Time of Day</b> (say 12 pm, 6 pm and 9 pm) → <b>Run Immediately</b> → pick Fridge steps.</li></ol>
+    <p class="tiny muted" style="margin:0">Then tap the steps sticker on Chat and choose <b>Paste</b>. Workouts you just type in Chat, like “ran 5 km in 30 min” or “45 min weights”.</p>
+    <div class="row"><button class="btn sm" data-act="health-sync">Sync steps now</button></div></div>`;
+}
+async function healthSync() {
+  let txt = "";
+  try { txt = await navigator.clipboard.readText(); } catch (_) { txt = ""; }
+  if (txt && parseHealthPaste(txt) && applyHealth(txt)) { if (!S.settings.healthSetup) { S.settings = { ...S.settings, healthSetup: true }; putSettings(); } renderAll(); if (SH?.kind === "goals") renderSheet(); return; }
+  if (SH?.kind !== "goals") { if (SH) closeSheet(); setTimeout(() => openSheet("goals"), SH ? 200 : 0); }
+  toast(S.settings.healthSetup ? "No steps copied yet. Run the Fridge steps Shortcut, then tap Sync." : "Set up the 2-minute Health Shortcut first.");
+}
+
 /* ---------- patterns ---------- */
 function recipeStats(r) {
   let n = 0, last = "";
@@ -3848,13 +3920,13 @@ function spotted() {
   const out = [], lib = mealLibrary();
   lib.filter(e => e.count >= 2 && !myRecipes().some(r => normName(r.name) === e.key)).sort((a, b) => b.count - a.count).forEach(e => {
     const m = lastMeal(e.key); if (!m || (m.items || []).length < 2 || (m.items || []).some(x => x.rid) || out.length >= 2) return;
-    out.push({ emo: dishEmoji(e.name), t: `You've had ${e.name} ${e.count}×`, s: "Save it as a recipe so it logs in one tap.", act: `data-act="save-pattern" data-key="${esc(e.key)}"`, btn: "Save as recipe" });
+    out.push({ emo: "hearts", t: `You've had ${e.name} ${e.count}×`, s: "Save it as a recipe so it logs in one tap.", act: `data-act="save-pattern" data-key="${esc(e.key)}"`, btn: "Save as recipe" });
   });
   const top = myRecipes().map(r => ({ r, ...recipeStats(r) })).filter(x => x.n >= 2).sort((a, b) => b.n - a.n)[0];
-  if (top) out.push({ emo: "🏆", t: `Your favourite: ${top.r.name}`, s: `Eaten ${top.n}× · last ${dayLabel(top.last).toLowerCase()}.`, col: "butter" });
+  if (top) out.push({ emo: "trophy", t: `Your favourite: ${top.r.name}`, s: `Eaten ${top.n}× · last ${dayLabel(top.last).toLowerCase()}.`, col: "butter" });
   const P = patterns(), go = P.filter(p => p.ic === "spark");
-  if (go.length) out.push({ emo: "⭐️", t: "Your go-to meals", s: go.map(p => p.t.replace(/^Go-to /, "").replace(":", " →")).join(" · ") + ". They show up first as one-tap chips in Chat.", col: "lilac" });
-  P.filter(p => p.ic !== "spark").slice(0, 3).forEach(p => out.push({ emo: { spark: "⭐️", alert: "📈", flame: "💪", leaf: "🥀", cart: "🛒" }[p.ic] || "✨", t: p.t, s: p.s, col: { violet: "lilac", amber: "butter", red: "tomato", pink: "pink" }[p.c], bad: p.ic === "alert" || p.ic === "leaf" || p.ic === "flame" }));
+  if (go.length) out.push({ emo: "star", t: "Your go-to meals", s: go.map(p => p.t.replace(/^Go-to /, "").replace(":", " →")).join(" · ") + ". They show up first as one-tap chips in Chat.", col: "lilac" });
+  P.filter(p => p.ic !== "spark").slice(0, 3).forEach(p => out.push({ emo: { spark: "star", alert: "chart", flame: "muscle", leaf: "leaf", cart: "cart" }[p.ic] || "sparkle", t: p.t, s: p.s, col: { violet: "lilac", amber: "butter", red: "tomato", pink: "pink" }[p.c], bad: p.ic === "alert" || p.ic === "leaf" || p.ic === "flame" }));
   return out.slice(0, 6);
 }
 function saveFromMeal(m) {
@@ -3881,6 +3953,7 @@ document.addEventListener("click", e => {
     case "ch-idea-save": { const r = msg()?.ideas?.[+el.dataset.i]; if (r) { const was = isSaved(r); toggleSave({ ...r, useNames: r.uses }); toast(was ? "Removed from saved ideas." : "Saved to Recipes."); renderAll(); } break; }
     case "ch-idea-log": { const r = msg()?.ideas?.[+el.dataset.i]; if (!r) break; const out = applyActions({ meals: [{ name: r.name, slot: slotNow(), items: [{ name: r.name, amount: "1 serving", kcal: r.kcal, protein: r.protein }] }] }); const b = out.blocks[0]; if (b && r.uses?.length) b.fridge = r.uses.map(n => fridgeMatch(canon(n))?.name).filter(Boolean); pushMsg({ who: "app", text: `Logged ${r.name}.`, blocks: out.blocks, undo: out.undo, tracked: true }); break; }
     case "relog": relogMeal(el.dataset.key); break;
+    case "health-sync": healthSync(); break;
     case "save-pattern": { const m = lastMeal(el.dataset.key); if (!m) break; const r = saveFromMeal(m); renderAll(); toast(`Saved ${r.name} as a recipe.`); break; }
     case "save-from-meal": { const mm = msg(), b = mm?.blocks?.find(x => x.id === el.dataset.bid); if (!b) break; const r = saveFromMeal(b); b.saved = true; chatSave(); renderAll(); toast(`Saved ${r.name}. Find it in Recipes.`); break; }
     case "fzone": CH.fzone = el.dataset.z; renderAll(); break;
@@ -3940,9 +4013,7 @@ function vGoals() {
   h += `<div class="gweek">${days.map(d => { const l = goalList(d), n = l.filter(x => x.done).length, any = (dayOf(d).meals || []).length || workoutsOn(d).length || +actOf(d).steps; return `<button class="${d === T ? "on" : ""}" data-act="g-day" data-d="${d}"><small>${esc(parseId(d).toLocaleDateString(undefined, { weekday: "narrow" }))}</small><span class="gdot ${!any ? "none" : n === l.length ? "all" : n ? "some" : ""}">${any ? n : ""}</span></button>`; }).join("")}</div>`;
   h += `<div class="ghead"><b>${T === todayId() ? "Today" : dayLabel(T)}</b><span>${done} of ${list.length} goals hit${done === list.length && list.length ? " 🎉" : ""}</span></div>`;
   h += `<div class="glist">${list.map(x => goalRowHtml(x, T)).join("")}</div>`;
-  h += `<div class="section-t">All your apps, one scoreboard</div><div class="apps">${[["🏃", "Strava", "Runs, rides, walks"], ["🏋️", "Hevy", "Sets, reps, weights"], ["🍎", "MyFitnessPal", "Your food diary"], ["❤️", "Apple Health", "Steps & active energy"]].map(([e, n, d], i) => `<div class="app-t" style="--tilt:${[-2, 1.5, -1, 2][i]}deg"><span>${e}</span><b>${n}</b><small>${d}</small></div>`).join("")}</div>
-    <p class="muted tiny" style="margin:0">Screenshot any of them and import in Chat. Workouts, meals and steps land here and count toward your goals. Anything already logged is skipped, so nothing counts twice.</p>
-    <div class="row"><button class="btn sm" data-act="g-import">📲 Import screenshots</button><button class="btn soft sm" data-act="g-health">❤️ Paste from Health</button></div>`;
+  h += `<div class="section-t">Steps from Apple Health</div>${healthCard()}`;
   h += `<div class="section-t">My goals</div><div class="card stack" style="gap:12px">`;
   if (!st.noNumbers) {
     const auto = st.goalMode === "auto" && bodyReady();
@@ -3988,8 +4059,7 @@ document.addEventListener("click", e => {
   const G = SH.goal;
   switch (el.dataset.act) {
     case "g-day": G.day = el.dataset.d; renderSheet(); break;
-    case "g-import": closeSheet(); CH.tab = "chat"; renderAll(); setTimeout(() => $("#chImp")?.click(), 250); break;
-    case "g-health": closeSheet(); setTimeout(() => openSheet("calories"), 200); break;
+
     case "g-hab": habitStep(el.dataset.id, Number(el.dataset.d)); renderSheet(); break;
     case "g-mode": if (el.dataset.v === "auto" && !bodyReady()) { closeSheet(); setTimeout(() => openSheet("calories"), 200); toast("Add your body stats first, then switch on “Follow my activity”."); break; } S.settings = { ...S.settings, goalMode: el.dataset.v }; putSettings(); renderAll(); renderSheet(); break;
     case "g-hadd": { const n = String(G.hn || "").trim(); if (!n) { toast("Name the habit first."); break; } S.settings = { ...S.settings, habits: [...(S.settings.habits || []), { id: uid(), name: n, target: Math.max(1, +G.ht || 1) }] }; putSettings(); G.hn = ""; G.ht = 1; renderAll(); renderSheet(); break; }
