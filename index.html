@@ -1096,23 +1096,30 @@ body[data-tab=chat] .rc-bar i{background:var(--ink)}
 /* header band in the tab's soft colour + breathing room above the tabs */
 .topbar{background:var(--acc-soft);border-radius:0 0 28px 28px;padding-bottom:18px;transition:background .35s ease}
 .tabbar{margin-top:20px}
-/* win screen */
-.winscreen{position:fixed;inset:0;z-index:9999;background:#0b0a0a;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 28px calc(28px + env(safe-area-inset-bottom,0px));text-align:center;animation:wfade .3s ease both}
+/* win screen: black, but built from the app's own pieces */
+.winscreen{position:fixed;inset:0;z-index:9999;background:#0b0a0a;color:#fff;display:flex;flex-direction:column;padding:calc(12px + env(safe-area-inset-top,0px)) 18px calc(22px + env(safe-area-inset-bottom,0px));font-family:var(--f);animation:wfade .3s ease both}
 .winscreen.out{animation:wfade .35s ease reverse both}
 @keyframes wfade{from{opacity:0}}
 .wconf{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.wstar{position:relative;width:min(58vw,240px);aspect-ratio:1;animation:swoop 1.25s cubic-bezier(.2,.9,.25,1.15) both,bob 2.6s ease-in-out 1.3s infinite}
+.whead{position:relative;display:flex;justify-content:space-between;align-items:flex-start}
+.wbrand{font-family:-apple-system,"SF Pro Display",BlinkMacSystemFont,system-ui,sans-serif;font-weight:800;font-size:38px;letter-spacing:-.05em;line-height:1;color:#fff}
+.wdate{color:rgba(255,255,255,.55);font-size:13px;margin-top:5px;font-weight:500}
+.wsun{width:60px;height:60px;fill:var(--sun);animation:bsun 24s linear infinite}
+.wmid{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.wstar{position:relative;width:min(50vw,210px);aspect-ratio:1;animation:swoop 1.25s cubic-bezier(.2,.9,.25,1.15) both,bob 2.6s ease-in-out 1.3s infinite}
 .wstar svg{width:100%;height:100%;filter:drop-shadow(0 18px 30px rgba(255,200,61,.35))}
 @keyframes swoop{0%{transform:translate(-110vw,-55vh) rotate(-260deg) scale(.35)}55%{transform:translate(8vw,4vh) rotate(18deg) scale(1.08)}78%{transform:translate(-2vw,-1vh) rotate(-6deg) scale(.97)}100%{transform:none}}
 @keyframes bob{50%{transform:translateY(-10px) rotate(4deg)}}
 .seyes{transform-origin:104px 96px;animation:blink 3.6s 1.6s infinite}
 @keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
-.wtitle{position:relative;font-family:-apple-system,"SF Pro Display",BlinkMacSystemFont,system-ui,sans-serif;font-weight:800;font-size:clamp(34px,10vw,46px);letter-spacing:-.05em;line-height:1.02;margin:26px 0 0;max-width:12ch}
+.wtitle{font-family:-apple-system,"SF Pro Display",BlinkMacSystemFont,system-ui,sans-serif;font-weight:800;font-size:clamp(32px,9.5vw,42px);letter-spacing:-.05em;line-height:1.02;margin:20px 0 22px;max-width:12ch;color:#fff}
 .wtitle span{display:inline-block;animation:wword .5s cubic-bezier(.2,.9,.3,1.3) both;animation-delay:calc(1s + var(--i) * .09s)}
 @keyframes wword{from{opacity:0;transform:translateY(18px) scale(.9)}}
-.wsub{position:relative;color:rgba(255,255,255,.62);font-size:14px;margin:14px 0 0;animation:wword .5s 1.8s both}
-.wbtn{position:relative;margin-top:28px;background:#ffc83d;color:#141010;border:0;border-radius:999px;font:600 16px -apple-system,system-ui,sans-serif;padding:14px 26px;animation:wword .5s 2s both}
-.winscreen.calm .wstar,.winscreen.calm .wtitle span,.winscreen.calm .wsub,.winscreen.calm .wbtn{animation:none}
+.receipt.wrc{width:100%;max-width:340px;border-radius:0;animation:wword .55s 1.75s both}
+.wrc .rc-main b{font-family:var(--fa);font-weight:400;font-size:40px;letter-spacing:-.04em;color:var(--ink)}
+.wrc .rc-top span:first-child{color:var(--ink)}
+.wbtn{position:relative;align-self:stretch;background:var(--sun);color:var(--ink);border:0;border-radius:999px;font:600 16px var(--f);padding:15px 26px;animation:wword .5s 2s both}
+.winscreen.calm .wstar,.winscreen.calm .wtitle span,.winscreen.calm .wrc,.winscreen.calm .wbtn{animation:none}
 .defcard{display:flex;align-items:center;gap:12px;background:#141010;color:#fff;border-radius:20px;padding:12px 14px}
 .defcard .dstar{width:46px;height:46px;flex:none}.defcard .dstar svg{width:100%;height:100%}
 .defcard>span:nth-child(2){flex:1;display:flex;flex-direction:column}.defcard b{font-size:16px}.defcard small{color:rgba(255,255,255,.65);font-size:12.5px}
@@ -4777,10 +4784,17 @@ function showWin(d) {
   const el = document.createElement("div"); el.className = "winscreen" + (calm ? " calm" : "");
   el.setAttribute("role", "dialog"); el.setAttribute("aria-label", "Deficit goal hit");
   const words = "One day closer to your fitness goals.".split(" ");
+  const T = todayId(), sun = document.querySelector(".bsun path")?.getAttribute("d") || "";
+  const line = (l, v, cls = "") => `<p class="${cls}"><span>${l}</span><i></i><b>${v}</b></p>`;
   el.innerHTML = `<canvas class="wconf"></canvas>
-    <div class="wstar">${starSVG("w")}</div>
-    <h2 class="wtitle">${words.map((w, i) => `<span style="--i:${i}">${w}</span>`).join(" ")}</h2>
-    ${d ? `<p class="wsub">${num(d.def)} kcal deficit today<br>burned ${num(d.burn)} · ate ${num(d.eaten)}</p>` : ""}
+    <div class="whead"><div><div class="wbrand">snatched.</div><div class="wdate">${esc(parseId(T).toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" }))}</div></div><svg class="wsun" viewBox="0 0 100 100" aria-hidden="true"><path d="${sun}"/></svg></div>
+    <div class="wmid">
+      <div class="wstar">${starSVG("w")}</div>
+      <h2 class="wtitle">${words.map((w, i) => `<span style="--i:${i}">${w}</span>`).join(" ")}</h2>
+      ${d ? `<div class="receipt wrc"><div class="rc-top"><span>TODAY'S WIN</span><span>${esc(fmtShort(T).toUpperCase())}</span></div>
+        <div class="rc-body"><div class="rc-main"><b>${num(d.def)}</b><span class="script">kcal deficit</span></div>
+        <div class="rc-lines">${line("Burned", num(d.burn))}${line("Eaten", "− " + num(d.eaten))}${line("Goal", num(d.target) + " deficit", "ok")}</div></div></div>` : ""}
+    </div>
     <button class="wbtn">Keep going ✨</button>`;
   document.body.appendChild(el);
   const stop = calm ? () => {} : confettiRain(el.querySelector(".wconf"));
