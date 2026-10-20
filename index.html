@@ -3812,7 +3812,43 @@ Reply JSON: {"items":[{"i": number, "kcal": number, "protein": number, "carbs": 
     (res?.items || []).forEach(r => { const x = need[+r.i]; if (!x || !(+r.kcal > 0)) return; Object.assign(x, { kcal: +r.kcal, protein: +r.protein || 0, carbs: +r.carbs || 0, fat: +r.fat || 0, needs_lookup: false }); });
   } catch (e) { if (e?.code === "cancelled") throw e; }
 }
+/* ---------- make AI replies safe to apply: AIs vary their JSON, so accept the common shapes ---------- */
+const numIn = v => { if (v == null || v === "") return null; if (typeof v === "number") return isFinite(v) ? v : null; const m = String(v).replace(/,/g, "").match(/-?\d+(\.\d+)?/); return m ? +m[0] : null; };
+const pick = (o, keys) => { for (const k of keys) { const v = numIn(o?.[k]); if (v != null) return v; } return null; };
+function tidyItem(x) {
+  if (typeof x === "string") x = { name: x };
+  if (!x || typeof x !== "object") return null;
+  const name = String(x.name || x.food || x.item || "").trim(); if (!name) return null;
+  const out = { ...x, name, kcal: pick(x, ["kcal", "calories", "cal", "energy_kcal", "energy"]), protein: pick(x, ["protein", "protein_g"]), carbs: pick(x, ["carbs", "carbs_g", "carbohydrates", "carbohydrate"]), fat: pick(x, ["fat", "fat_g", "total_fat"]), fiber: pick(x, ["fiber", "fiber_g", "fibre"]), grams: pick(x, ["grams", "g", "weight_g", "weight"]) };
+  // no number and no weight we can compute from? fall back to the built-in food list so it isn't logged as 0
+  if (!(out.kcal > 0) && !(out.grams > 0 && staple(name))) {
+    const f = typeof foodSearch === "function" ? foodSearch(name, 1)[0] : null;
+    if (f) Object.assign(out, { kcal: f.k, protein: f.p, carbs: f.c || 0, fat: f.f || 0, amount: out.amount || f.s || "1 serving", needs_lookup: true });
+  }
+  return out;
+}
+function tidyRes(res) {
+  if (!res || typeof res !== "object") return res;
+  const r = { ...res };
+  if (!Array.isArray(r.meals)) r.meals = r.meals && typeof r.meals === "object" ? [r.meals] : r.meal && typeof r.meal === "object" ? [r.meal] : [];
+  r.meals = r.meals.filter(m => m && typeof m === "object").map(m => {
+    let items = (Array.isArray(m.items) ? m.items : Array.isArray(m.foods) ? m.foods : Array.isArray(m.ingredients) ? m.ingredients : []).map(tidyItem).filter(Boolean);
+    const mk = pick(m, ["kcal", "calories", "cal", "total_kcal", "total_calories"]);
+    // the AI gave a total but no ingredients: keep the meal as one line instead of dropping it
+    if (!items.length && mk > 0) items = [{ name: String(m.name || "Meal"), amount: m.amount || "1 serving", kcal: mk, protein: pick(m, ["protein", "protein_g"]) || 0, carbs: pick(m, ["carbs", "carbs_g"]) || 0, fat: pick(m, ["fat", "fat_g"]) || 0, fiber: pick(m, ["fiber", "fiber_g"]) || 0 }];
+    if (!items.length && m.name && !m.recipe) { const t = tidyItem({ name: m.name }); if (t && t.kcal > 0) items = [t]; }
+    return { ...m, items };
+  });
+  // removals: accept real ids, "id abc", or the meal's name
+  const today = dayOf(todayId()).meals || [];
+  const resolve = v => { const s = String(v ?? "").trim().replace(/^id[\s:#-]*/i, ""); if (!s) return null; const byId = today.find(m => m.id === s); if (byId) return byId.id; const n = normName(s); const byName = today.filter(m => normName(m.name) === n); if (byName.length) return byName[byName.length - 1].id; const part = today.filter(m => n.length > 2 && (normName(m.name).includes(n) || n.includes(normName(m.name)))); return part.length ? part[part.length - 1].id : null; };
+  for (const k of ["delete_meal_ids", "remove_meals", "delete_meals"]) if (r[k] != null && k !== "delete_meal_ids") r.delete_meal_ids = [].concat(r.delete_meal_ids || [], r[k]);
+  if (r.delete_meal_ids != null) r.delete_meal_ids = [].concat(r.delete_meal_ids).map(v => resolve(typeof v === "object" ? v?.id || v?.name : v)).filter(Boolean);
+  if (r.delete_workout_ids != null) r.delete_workout_ids = [].concat(r.delete_workout_ids).map(v => String(v ?? "").trim().replace(/^id[\s:#-]*/i, "")).filter(Boolean);
+  return r;
+}
 function applyActions(res) {
+  res = tidyRes(res) || {};
   const T = todayId(), U = { meals: [], workouts: [], items: [], itemPrev: [], recipes: [], recipePrev: [], delMeals: [], delWorkouts: [], act: null, body: null, shopPrev: null };
   const blocks = [];
   const keepAct = () => { if (!U.act) U.act = { ...(actOf(T)) }; };
@@ -4039,7 +4075,7 @@ async function chatSend(textArg) {
   const out = applyActions(res);
   const answer = String(res.answer || "").trim();
   const reply = String(res.reply || "").trim() || (out.blocks.length ? "Saved." : "");
-  if (!out.blocks.length && !answer && !out.ideas.length) { pushMsg({ who: "app", text: reply || "I didn't find anything to save there. Try “lunch: 150 g chicken, 1 cup rice” or “bought eggs and spinach”.", retry: text }); return; }
+  if (!out.blocks.length && !answer && !out.ideas.length) { pushMsg({ who: "app", text: ((res.meals || res.meal || res.delete_meal_ids) ? "Nothing was saved, sorry. " : "") + "I didn't find anything to save there. Try “lunch: 150 g chicken, 1 cup rice” or “bought eggs and spinach”.", retry: text }); return; }
   pushMsg({ who: "app", text: [reply, answer].filter(Boolean).join(" "), blocks: out.blocks, ideas: out.ideas, undo: out.undo, tracked: out.tracked });
 }
 function keyErrText(e) {
