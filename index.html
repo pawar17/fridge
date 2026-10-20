@@ -3977,6 +3977,7 @@ My message: """${text || "(no text)"}"""${hasImg ? "\n" + (imp ? "These are scre
 How to read it:
 - For these ingredients use EXACTLY these values per 100 g as weighed (raw unless it says cooked), and always fill "grams" when I give a weight so the app can check the maths:
 ${staplesForPrompt()}
+- Packaged, branded or store-bought foods ("string cheese from Target", "Chobani", "Trader Joe's dumplings", a protein bar): set "brand" (for a store, its own label: Target → Good & Gather or Market Pantry, Costco → Kirkland Signature, Walmart → Great Value, Whole Foods → 365), set "needs_lookup": true, keep the count in "amount" ("1 stick", "2 bars"), and give your best estimate. The app then reads the real label.
 - Meals: one entry per meal. If it's a meal I've had before, use the same name as before so the app can spot my patterns. Break it into items and estimate EACH item separately with USDA-style values. Use the exact weight or amount I give (grams, oz, cups, slices). If I name a brand, use that product's label (e.g. Dave's Killer Bread, Fage, Chobani, Trader Joe's, Quest). If I give no amount, assume one normal portion and write what you assumed in "amount". Weights are as eaten unless I say raw. Restaurant or chain food: use the chain's official nutrition; if you are not sure of it, still estimate and set "needs_lookup": true.
 - If I ate one of my saved recipes, set "recipe" to its exact name and "servings" (or "grams" if I weighed my portion), and put only extras in "items". Never repeat the recipe's own ingredients.
 - A recipe (a dish name with ingredients and amounts, "makes 4", "recipe:", "I cooked/meal prepped") goes in save_recipes with every ingredient and its total amount for the whole batch, plus servings (default 1) and cooked_weight_g if I give it. Only also log a meal if I say I ate some.
@@ -4083,6 +4084,7 @@ async function chatSend(textArg) {
     if (img && !text) { CH.busy = false; pushMsg({ who: "app", text: err || "Photos need the AI key. Use Scan for receipts and order screenshots, it works without one.", retry: text }); return; }
     res = localParse(text); if (err) res.reply = (res.reply ? res.reply + " " : "") + `(${err} I used the offline reader.)`;
   }
+  if (res && typeof res === "object") { try { const rr = tidyRes(res), st = brandGuess({ name: text }); if (st) { const cut = s => String(s || "").replace(new RegExp("\\s*(from|at|by)\\s+" + st.store + "\\S*", "i"), "").trim(); rr.meals.forEach(m => { m.name = cut(m.name) || m.name; (m.items || []).forEach(x => { if (!x.brand) x.store = st.store; x.name = cut(x.name) || x.name; }); }); } if (rr.meals.some(m => (m.items || []).some(needsLabel))) { res = rr; await labelLookup(res.meals, CH.ctl.signal); } } catch (e) { if (e?.name === "AbortError") { CH.busy = false; pushMsg({ who: "app", text: "Stopped." }); return; } } }
   CH.busy = false;
   const out = applyActions(res);
   const answer = String(res.answer || "").trim();
@@ -5186,6 +5188,56 @@ function localClass(text) {
   const s = studioOf(text); if (!s) return null;
   const m = String(text).match(/(\d{2,3})\s*(?:min|minutes|m\b)/i);
   return { type: s[1], name: s[2], minutes: m ? +m[1] : s[3], met: s[4], details: s[5] + (m ? "" : ` · assumed a ${s[3]}-min class`) };
+}
+
+/* ---------- packaged & store-brand foods: real label numbers from free public databases ----------
+   1) USDA FoodData Central "Branded" foods (manufacturer label data, most US store brands)
+   2) Open Food Facts (crowd-sourced labels, worldwide)
+   Works with any AI (or none). Only the food name goes out, nothing about you. */
+const STORE_BRANDS = { target: "Good & Gather", "trader joe": "Trader Joe's", "whole foods": "365", costco: "Kirkland Signature", walmart: "Great Value", aldi: "", kroger: "Kroger", wegmans: "Wegmans", safeway: "Signature Select", "h-e-b": "H-E-B", heb: "H-E-B", publix: "Publix", "stop & shop": "Stop & Shop", "shoprite": "Bowl & Basket" };
+function brandGuess(x) {
+  const t = `${x.brand || ""} ${x.name || ""} ${x.store || ""}`.toLowerCase();
+  for (const [k, v] of Object.entries(STORE_BRANDS)) if (t.includes(k)) return { store: k, brand: v };
+  return null;
+}
+const qtyOf = x => { const m = String(x.amount || x.amt || "").match(/(\d+(?:\.\d+)?)|½|half/i); return !m ? 1 : /½|half/i.test(m[0]) ? 0.5 : +m[1] || 1; };
+const words = s => String(s || "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter(w => w.length > 2 && !["from", "the", "and", "with", "brand", "stick", "sticks", "piece", "pieces", "pack", "target", "costco", "walmart"].includes(w));
+function scoreName(cand, x) { const want = words(x.name), have = words(cand); const hit = want.filter(w => have.some(h => h.startsWith(w) || w.startsWith(h))).length; return want.length ? hit / want.length : 0; }
+async function usdaFind(x, signal) {
+  const g = brandGuess(x), q = [x.brand && !/^(target|costco|walmart|trader)/i.test(x.brand) ? x.brand : g?.brand, x.name].filter(Boolean).join(" ");
+  const r = await fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=DEMO_KEY&dataType=Branded&pageSize=8&query=${encodeURIComponent(q)}`, { signal });
+  if (!r.ok) return null;
+  const foods = (await r.json())?.foods || [];
+  const nut = (f, re) => (f.foodNutrients || []).find(n => re.test(n.nutrientName) && (!/Energy/.test(n.nutrientName) || /KCAL/i.test(n.unitName)))?.value;
+  const best = foods.map(f => ({ f, s: scoreName(`${f.description} ${f.brandName || ""} ${f.brandOwner || ""}`, x) + (g?.brand && new RegExp(g.brand.split(" ")[0], "i").test(`${f.brandName} ${f.brandOwner}`) ? 0.6 : 0) })).filter(o => o.s >= 0.5 && nut(o.f, /^Energy/)).sort((a, b) => b.s - a.s)[0]?.f;
+  if (!best) return null;
+  const per = { kcal: nut(best, /^Energy/), protein: nut(best, /^Protein/) || 0, carbs: nut(best, /^Carbohydrate/) || 0, fat: nut(best, /^Total lipid/) || 0, fiber: nut(best, /^Fiber/) || 0 };
+  const sg = /^(g|grm|ml|mlt)$/i.test(best.servingSizeUnit || "") ? +best.servingSize : null;
+  return { per100: per, servingG: sg, servingText: best.householdServingFullText || (sg ? `${sg} g` : ""), label: `${best.brandName || best.brandOwner || ""} ${titleCase(best.description)}`.trim(), src: "USDA FoodData Central" };
+}
+async function offFind(x, signal) {
+  const g = brandGuess(x), q = [x.brand && !/^(target|costco|walmart|trader)/i.test(x.brand) ? x.brand : g?.brand, x.name].filter(Boolean).join(" ");
+  const r = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=8&fields=product_name,brands,nutriments,serving_quantity,serving_size`, { signal });
+  if (!r.ok) return null;
+  const ps = (await r.json())?.products || [];
+  const best = ps.map(p => ({ p, s: scoreName(`${p.product_name} ${p.brands}`, x) + (g?.brand && new RegExp(g.brand.split(" ")[0], "i").test(p.brands || "") ? 0.6 : 0) })).filter(o => o.s >= 0.5 && +o.p.nutriments?.["energy-kcal_100g"] > 0).sort((a, b) => b.s - a.s)[0]?.p;
+  if (!best) return null;
+  const n = best.nutriments;
+  return { per100: { kcal: +n["energy-kcal_100g"], protein: +n.proteins_100g || 0, carbs: +n.carbohydrates_100g || 0, fat: +n.fat_100g || 0, fiber: +n.fiber_100g || 0 }, servingG: +best.serving_quantity || null, servingText: best.serving_size || "", label: `${(best.brands || "").split(",")[0]} ${best.product_name}`.trim(), src: "Open Food Facts" };
+}
+function titleCase(s) { return String(s || "").toLowerCase().replace(/\b[a-z]/g, c => c.toUpperCase()); }
+const needsLabel = x => x && x.name && (x.needs_lookup || x.brand || brandGuess(x) || !(+x.kcal > 0));
+async function labelLookup(meals, signal) {
+  const need = []; (meals || []).forEach(m => (m?.items || []).forEach(x => { if (needsLabel(x) && !(+x.grams > 0 && staple(x.name) && !x.brand)) need.push(x); }));
+  await Promise.all(need.slice(0, 6).map(async x => {
+    let hit = null;
+    for (const find of [usdaFind, offFind]) { try { hit = await find(x, signal); } catch (e) { if (e?.name === "AbortError") throw e; } if (hit) break; }
+    if (!hit) return;
+    // amount: your grams if you gave them, otherwise servings × the label's serving size
+    const g = +x.grams > 0 ? +x.grams : hit.servingG ? hit.servingG * qtyOf(x) : null; if (!g) return;
+    const f = g / 100, p = hit.per100;
+    Object.assign(x, { kcal: Math.round(p.kcal * f), protein: Math.round(p.protein * f * 10) / 10, carbs: Math.round(p.carbs * f * 10) / 10, fat: Math.round(p.fat * f * 10) / 10, fiber: Math.round(p.fiber * f * 10) / 10, grams: Math.round(g), name: x.name, brand: hit.label, amount: `${x.amount || (qtyOf(x) + " serving")}${hit.servingText && !+x.grams ? ` (${hit.servingText})` : ""} · label from ${hit.src}`, needs_lookup: false, labeled: true });
+  }));
 }
 
 setInterval(() => { if (!SH) renderHome(); }, 10 * 60 * 1000);
