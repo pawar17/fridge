@@ -3228,7 +3228,7 @@ function saveAnyKey(v) {
 
 /* ---------- Gemini ---------- */
 function geminiSampler(key) {
-  const MODELS = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-2.0-flash"];
+  const MODELS = ["gemini-flash-latest", "gemini-3.8-flash", "gemini-3.6-flash", "gemini-3-flash-preview", "gemini-3.5-flash-lite", "gemini-2.5-flash"];
   const URLS = { gl: m => `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, vx: m => `https://aiplatform.googleapis.com/v1/publishers/google/models/${m}:generateContent`, vxq: m => `https://aiplatform.googleapis.com/v1/publishers/google/models/${m}:generateContent?key=${encodeURIComponent(key)}` };
   let pref = null; try { pref = JSON.parse(localStorage.getItem("fridge.gem") || "null"); } catch (_) {}
   async function once(ep, model, body, signal) {
@@ -3239,13 +3239,25 @@ function geminiSampler(key) {
     if (!res.ok) {
       const msg = String(j?.error?.message || txt || "");
       const code = res.status === 429 ? "rate_limited"
-        : res.status === 404 || (res.status === 400 && /model|not found|not supported/i.test(msg) && !/api key/i.test(msg)) ? "no_model"
+        : res.status === 404 || ((res.status === 400 || res.status === 403) && /model|not found|not supported|no longer available|access to this model/i.test(msg) && !/api key not valid|API_KEY_INVALID/i.test(msg)) ? "no_model"
         : res.status === 401 || res.status === 403 || /api key|api_key|unauthenticated|credential/i.test(msg) ? "bad_key" : "upstream_error";
       throw { code, status: res.status, message: msg };
     }
     const c = j?.candidates?.[0];
     if (!c) throw { code: "upstream_error", message: j?.promptFeedback?.blockReason || "No answer" };
     return { text: (c.content?.parts || []).filter(p => p.text && !p.thought).map(p => p.text).join(""), truncated: c.finishReason === "MAX_TOKENS" };
+  }
+  let found = null;
+  async function listModels(signal) {
+    try {
+      const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=200", { signal, headers: { "x-goog-api-key": key } });
+      if (!r.ok) return [];
+      const j = await r.json();
+      const ok = (j.models || []).filter(m => (m.supportedGenerationMethods || []).includes("generateContent")).map(m => String(m.name).replace(/^models\//, ""))
+        .filter(n => /flash/.test(n) && !/image|tts|audio|live|embed|thinking|exp|learnlm/.test(n));
+      const ver = n => { const v = n.match(/gemini-(\d+(?:\.\d+)?)/); return v ? +v[1] : 0; };
+      return ok.sort((a, b) => (/latest/.test(b) - /latest/.test(a)) || (/lite/.test(a) - /lite/.test(b)) || (/preview/.test(a) - /preview/.test(b)) || ver(b) - ver(a)).slice(0, 6);
+    } catch (_) { return []; }
   }
   async function call(input, o = {}) {
     const parts = [{ text: String(input) }];
@@ -3258,8 +3270,10 @@ function geminiSampler(key) {
     const eps = /^AIza/.test(key) ? ["gl"] : ["gl", "vx", "vxq"]; const seen = [];
     if (pref && eps.includes(pref[0])) eps.sort((a, b) => (b === pref[0]) - (a === pref[0]));
     let last = null;
+    if (!found) found = await listModels(o.signal);
     for (const ep of eps) {
-      const models = pref && pref[0] === ep ? [pref[1], ...MODELS.filter(m => m !== pref[1])] : MODELS;
+      const base = ep === "gl" && found.length ? [...found, ...MODELS.filter(m => !found.includes(m))] : MODELS;
+      const models = pref && pref[0] === ep ? [pref[1], ...base.filter(m => m !== pref[1])] : base;
       for (const m of models) {
         try {
           const r = await once(ep, m, body, o.signal);
@@ -3269,8 +3283,8 @@ function geminiSampler(key) {
           last = e; seen.push(`${ep === "gl" ? "Gemini API" : "Vertex AI"}: ${String(e.message || e.code).replace(/\s+/g, " ").slice(0, 160)}`);
           if (e.code === "cancelled" || e.code === "rate_limited") throw e;
           if (o.web && e.code === "upstream_error") return call(input, { ...o, web: false });
-          if (e.code === "no_model") continue;
-          break; // bad key or network on this endpoint: try the other endpoint
+          if (e.code === "no_model" || (e.code === "bad_key" && !/api key not valid|API_KEY_INVALID|UNAUTHENTICATED|ACCESS_TOKEN/i.test(String(e.message)))) continue;
+          break; // key not accepted or network on this endpoint: try the other endpoint
         }
       }
     }
