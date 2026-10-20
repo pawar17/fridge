@@ -1136,6 +1136,9 @@ body[data-tab=chat] .rc-bar i{background:var(--ink)}
 .goal>div{display:flex;flex-direction:column;gap:2px;flex:1;text-align:left}.goal>div small{color:var(--ink-2);font-weight:400;font-size:13px}
 .goal{background:#fff;border:1px solid var(--edge);box-shadow:none}.goal.on{border:1.5px solid var(--ink);background:#fff}
 .goal.on .goal-tick{background:var(--ink);border-color:var(--ink)}
+.statscard{display:flex;flex-direction:column;gap:10px}
+.statscard .linkbtn{background:none;border:0;font:600 14px var(--f);padding:0}
+.btn.good{background:var(--ink);color:#fff}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -2377,6 +2380,7 @@ function vCalories() {
       <div class="grid2"><div><label class="lbl" for="pW">Weight ${us ? "lb" : "kg"}</label><input class="inp" id="pW" type="number" inputmode="decimal" value="${esc(us ? P.lb : P.kg)}" data-prof="${us ? "lb" : "kg"}"></div><div style="align-self:end"><div class="seg"><button class="${us ? "on" : ""}" data-act="prof-units" data-v="us">lb · ft</button><button class="${!us ? "on" : ""}" data-act="prof-units" data-v="metric">kg · cm</button></div></div></div>
       <div class="row"><button class="btn good" data-act="prof-save">Save</button>${C.editProf ? `<button class="btn soft" data-act="prof-cancel">Cancel</button>` : ""}</div></div>`;
   }
+  if (bodyReady() && !C.editProf) h += statsCard();
   if (bodyReady()) {
     const b = burnFor(T), goal = goalFor(T), def = b.total - eaten, gd = +S.settings.deficit || 500, left = goal - eaten;
     const status = !eaten ? `Nothing logged yet. You can eat about ${num(goal)} kcal today and stay at a ${num(gd)} kcal deficit.`
@@ -4868,12 +4872,26 @@ function setAim(patch) {
 }
 // Keep targets in step with your weight and step/workout goals while auto is on.
 function refreshAim() { const a = aim(); if (a && a.auto) applyAimPlan(computePlan(a), true); }
+/* ---------- your body stats, always visible ---------- */
+function statsCard() {
+  const b = body(); if (!bodyReady()) return "";
+  const us = (S.settings.units || "us") === "us", ins = Math.round(b.heightCm / 2.54);
+  const h = us ? `${Math.floor(ins / 12)}′${ins % 12}″` : `${b.heightCm} cm`;
+  const cell = (l, v) => `<p><span>${l}</span><b>${v}</b></p>`;
+  return `<div class="statscard"><div class="aimtop"><b>My stats</b><button class="linkbtn" data-act="stats-edit">Edit</button></div>
+    <div class="aimres">${cell("Height", h)}${cell("Weight", fmtW(b.weightKg))}${cell("Age", b.age)}${cell("Sex", b.sex === "m" ? "Male" : "Female")}${cell("Resting burn", num(bmr()) + " kcal")}${cell("Normal day", num(expectedBurn()) + " kcal")}</div></div>`;
+}
+document.addEventListener("click", e => {
+  const el = e.target.closest('[data-act="stats-edit"]'); if (!el) return;
+  const go = () => { SH.cal = SH.cal || {}; SH.cal.editProf = true; SH.cal.prof = profDraft(); renderSheet(true); };
+  if (SH?.kind === "calories") go(); else { closeSheet(); setTimeout(() => { openSheet("calories"); setTimeout(go, 30); }, 250); }
+});
 function aimCard() {
   if (!bodyReady()) return `<div class="aimcard"><b>Auto targets</b><small>Add your height, weight, age and sex and the app works out your calories, protein, fiber and fat for you.</small><button class="btn sm" data-act="open" data-sheet="calories">Add body stats</button></div>`;
   const a = aim() || { type: "recomp", pace: 0.5 }, p = computePlan(a), us = (S.settings.units || "us") === "us";
   const paces = us ? [[0.23, "½ lb"], [0.45, "1 lb"], [0.68, "1½ lb"]] : [[0.25, "0.25 kg"], [0.5, "0.5 kg"], [0.75, "0.75 kg"]];
   const tv = +a.targetKg > 25 ? (us ? Math.round(kgToLb(a.targetKg)) : a.targetKg) : "";
-  return `<div class="aimcard">
+  return statsCard() + `<div class="aimcard">
     <div class="aimtop"><b>Auto targets</b>${a.auto ? `<span class="aimon">On</span>` : ""}</div>
     <div class="seg">${Object.entries(AIMS).map(([k, l]) => `<button class="${a.type === k ? "on" : ""}" data-act="aim-type" data-v="${k}">${l}</button>`).join("")}</div>
     ${a.type === "lose" ? `<div><label class="lbl">Pace per week</label><div class="seg">${paces.map(([v, l]) => `<button class="${Math.abs((+a.pace || 0.5) - v) < 0.05 ? "on" : ""}" data-act="aim-pace" data-v="${v}">${l}</button>`).join("")}</div></div>` : ""}
