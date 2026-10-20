@@ -871,6 +871,10 @@ button,input,textarea,select{font-family:var(--f)}
 
 .addrow .btn{background:var(--red);color:#fff;border:0}
 .dots i{border:0}
+
+.chat-tools{display:flex;justify-content:flex-end;margin-bottom:-4px}
+.clearbtn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--edge);background:#fffdf8;color:var(--ink-2);font-size:12.5px;font-weight:600;padding:5px 11px 5px 9px;border-radius:999px}
+.clearbtn svg.i{width:12px;height:12px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -3307,17 +3311,21 @@ const webOn = () => AI.via === "gemini" || AI.via === "api";
 /* ---------- chat store ---------- */
 const CH = { seen: new Set(), msgs: [], tab: "chat", draft: "", imgs: [], imp: false, busy: false, ctl: null, tray: false, fzone: "all", openRec: "", saveT: null, stick: true };
 function chatLoaded(list) { CH.msgs = Array.isArray(list) ? list : []; renderAll(); }
+// The chat lasts only while the app is open: it lives in session storage, which iOS wipes when you fully close the app.
+// Meals, workouts, recipes and groceries are saved separately and are never affected.
 function chatInit() {
-  if (store.db) store.db.doc("chat/main").get().then(x => chatLoaded(x.exists ? x.data().msgs : [])).catch(() => chatLoaded([]));
-  else { let l = []; try { l = JSON.parse(localStorage.getItem("fridge.chat") || "[]"); } catch (_) {} chatLoaded(l); }
+  let l = []; try { l = JSON.parse(sessionStorage.getItem("fridge.chat") || "[]"); } catch (_) {}
+  try { localStorage.removeItem("fridge.chat"); } catch (_) {}
+  if (store.db) store.db.doc("chat/main").delete().catch(() => {});
+  chatLoaded(l);
 }
 function chatSave() {
   clearTimeout(CH.saveT);
-  CH.saveT = setTimeout(() => {
-    const keep = CH.msgs.slice(-(store.db ? 80 : 200));
-    if (store.db) queue("chat/main", () => store.db.doc("chat/main").set(clean({ msgs: keep })));
-    else { try { localStorage.setItem("fridge.chat", JSON.stringify(keep)); } catch (_) {} }
-  }, 300);
+  CH.saveT = setTimeout(() => { try { sessionStorage.setItem("fridge.chat", JSON.stringify(CH.msgs.slice(-200))); } catch (_) {} }, 200);
+}
+function clearChat() {
+  const prev = CH.msgs.slice(); CH.msgs = []; CH.seen = new Set(); chatSave(); renderAll();
+  toast("Chat cleared. Everything you logged is still saved.", () => { CH.msgs = prev; chatSave(); renderAll(); });
 }
 function pushMsg(m) { CH.msgs.push({ id: uid(), t: Date.now(), day: todayId(), ...m }); CH.stick = true; chatSave(); renderAll(); return CH.msgs[CH.msgs.length - 1]; }
 
@@ -3739,6 +3747,7 @@ function paneChat() {
       ${aiOn() ? "" : `<p class="keynote">For exact numbers per ingredient, paste your Gemini API key here as a message. It stays on this phone.</p>`}
       <div class="ex">${EXAMPLES.map(([t, e], i) => `<button data-act="ch-example" data-t="${esc(t)}" style="--c:var(--m-${PAL[i % PAL.length]})"><span class="sticker sm">${doo(e)}</span>${esc(t)}</button>`).join("")}</div></div>`;
   }
+  if (msgs.length) h += `<div class="chat-tools"><button class="clearbtn" data-act="ch-clear">${icon("x")}Clear chat</button></div>`;
   let lastDay = "";
   for (const m of msgs) {
     if (m.day !== lastDay) { h += `<div class="daysep"><span>${esc(dayLabel(m.day || todayId()))}</span></div>`; lastDay = m.day; }
@@ -3954,6 +3963,7 @@ document.addEventListener("click", e => {
     case "ch-idea-save": { const r = msg()?.ideas?.[+el.dataset.i]; if (r) { const was = isSaved(r); toggleSave({ ...r, useNames: r.uses }); toast(was ? "Removed from saved ideas." : "Saved to Recipes."); renderAll(); } break; }
     case "ch-idea-log": { const r = msg()?.ideas?.[+el.dataset.i]; if (!r) break; const out = applyActions({ meals: [{ name: r.name, slot: slotNow(), items: [{ name: r.name, amount: "1 serving", kcal: r.kcal, protein: r.protein }] }] }); const b = out.blocks[0]; if (b && r.uses?.length) b.fridge = r.uses.map(n => fridgeMatch(canon(n))?.name).filter(Boolean); pushMsg({ who: "app", text: `Logged ${r.name}.`, blocks: out.blocks, undo: out.undo, tracked: true }); break; }
     case "relog": relogMeal(el.dataset.key); break;
+    case "ch-clear": clearChat(); break;
     case "health-sync": healthSync(); break;
     case "save-pattern": { const m = lastMeal(el.dataset.key); if (!m) break; const r = saveFromMeal(m); renderAll(); toast(`Saved ${r.name} as a recipe.`); break; }
     case "save-from-meal": { const mm = msg(), b = mm?.blocks?.find(x => x.id === el.dataset.bid); if (!b) break; const r = saveFromMeal(b); b.saved = true; chatSave(); renderAll(); toast(`Saved ${r.name}. Find it in Recipes.`); break; }
