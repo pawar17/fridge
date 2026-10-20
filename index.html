@@ -3375,6 +3375,7 @@ function localParse(text) {
 async function chatSend(textArg) {
   const text = String(textArg ?? CH.draft).trim(), img = CH.img;
   if ((!text && !img) || CH.busy) return;
+  if (KEY_RE.test(text) && window.claude) { CH.draft = ""; pushMsg({ who: "app", text: "This version already uses Claude, so it doesn't need a key. I didn't save it. Paste it in the home-screen app instead." }); return; }
   if (KEY_RE.test(text)) {
     CH.draft = ""; saveAnyKey(text);
     pushMsg({ who: "app", text: `Key saved on this phone only. ${AI.via === "gemini" ? "Gemini" : "Claude"} is on. Checking it works…` });
