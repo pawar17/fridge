@@ -4036,6 +4036,7 @@ function healthCard() {
 async function healthSync() {
   let txt = "";
   try { txt = await navigator.clipboard.readText(); } catch (_) { txt = ""; }
+  if (txt && /steps|active/i.test(txt)) { if (!applyHealth(txt)) return; if (!S.settings.healthSetup) { S.settings = { ...S.settings, healthSetup: true }; putSettings(); } renderAll(); if (SH?.kind === "goals") renderSheet(); return; }
   if (txt && parseHealthPaste(txt) && applyHealth(txt)) { if (!S.settings.healthSetup) { S.settings = { ...S.settings, healthSetup: true }; putSettings(); } renderAll(); if (SH?.kind === "goals") renderSheet(); return; }
   if (SH?.kind !== "goals") { if (SH) closeSheet(); setTimeout(() => openSheet("goals"), SH ? 200 : 0); }
   toast(S.settings.healthSetup ? "No steps copied yet. Run the Fridge steps Shortcut, then tap Sync." : "Set up the 2-minute Health Shortcut first.");
