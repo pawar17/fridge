@@ -563,7 +563,8 @@ button,input,textarea,select{font-family:var(--f)}
 /* calorie receipt */
 #budgetStrip{padding:8px 16px 2px;display:flex;flex-direction:column;gap:8px}
 #budgetStrip[hidden]{display:none}
-.receipt{position:relative;display:block;width:100%;border:0;background:var(--paper);color:var(--ink);text-align:left;padding:8px 13px 10px;margin-bottom:8px;transform:none;filter:drop-shadow(0 6px 10px rgba(70,20,25,.10));animation:print .6s ease-out}
+.receipt{position:relative;display:block;width:100%;border:0;background:var(--paper);color:var(--ink);text-align:left;padding:8px 13px 10px;margin-bottom:8px;transform:none;filter:drop-shadow(0 6px 10px rgba(70,20,25,.10))}
+.receipt.fresh{animation:print .6s ease-out}
 .receipt::after{content:"";position:absolute;left:0;right:0;bottom:-8px;height:8px;background:linear-gradient(135deg,var(--paper) 50%,transparent 50%) 0 0/14px 8px repeat-x,linear-gradient(225deg,var(--paper) 50%,transparent 50%) 0 0/14px 8px repeat-x}
 @keyframes print{from{clip-path:inset(0 0 100% 0);transform:none translateY(-8px)}to{clip-path:inset(0 0 -20px 0)}}
 .rc-top{display:flex;justify-content:space-between;font-family:var(--fm);font-size:10px;letter-spacing:.12em;color:var(--ink-2);padding-bottom:6px;border-bottom:1.5px dashed var(--dash)}
@@ -875,6 +876,10 @@ button,input,textarea,select{font-family:var(--f)}
 .chat-tools{display:flex;justify-content:flex-end;margin-bottom:-4px}
 .clearbtn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--edge);background:#fffdf8;color:var(--ink-2);font-size:12.5px;font-weight:600;padding:5px 11px 5px 9px;border-radius:999px}
 .clearbtn svg.i{width:12px;height:12px}
+.plan{display:flex;gap:12px;align-items:center;background:#fff6e0;border-radius:12px;padding:10px 12px}
+.plan b{display:block;font-size:14.5px;font-weight:600}
+.plan small{display:block;font-size:12.5px;color:var(--ink-2);line-height:1.4;margin-top:2px}
+.plan .btn{flex:none;background:var(--red);color:#fff}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1890,7 +1895,8 @@ function burnFor(id) {
   if (a.active != null && a.active !== "") { const base = Math.round(B * 1.1); return { base, move: Math.round(+a.active), steps: 0, work: 0, total: base + Math.round(+a.active), src: "health" }; }
   // everyday-life baseline (×1.2) already covers ~2,500 steps, so only steps beyond that are added
   const base = Math.round(B * 1.2), steps = Math.round(Math.max(0, (+a.steps || 0) - 2500) * kcalPerStep());
-  const work = (a.workouts || []).filter(w => !(+a.steps > 0 && ["walk", "run", "hike"].includes(w.type))).reduce((s, w) => s + workoutKcal(w), 0);
+  // walks, runs and hikes are already partly counted in your steps: only add what they burn on top of those steps
+  const work = (a.workouts || []).reduce((s, w) => s + (+a.steps > 0 && ["walk", "run", "hike"].includes(w.type) ? Math.max(0, workoutKcal(w) - Math.round((+w.min || 0) * (w.type === "run" ? 160 : 105) * kcalPerStep())) : workoutKcal(w)), 0);
   return { base, move: steps + work, steps, work, total: base + steps + work, src: "est" };
 }
 const FLOOR = () => (body()?.sex === "m" ? 1500 : 1200);
@@ -3181,6 +3187,71 @@ document.addEventListener("change", e => {
   if (d.shopdone) { S.shopping = { ...S.shopping, items: S.shopping.items.map(x => x.id === d.shopdone ? { ...x, done: t.checked } : x) }; putShopping(); renderAll(); renderSheet(); return; }
   if (d.setf) { const v = Math.round(Number(t.value)); if (v > 0) { S.settings = { ...S.settings, [d.setf]: v }; putSettings(); renderAll(); } return; }
 });
+/* ---------- your staple ingredients, per 100 g (USDA FoodData Central; brand items from their labels) ----------
+   When a meal or recipe gives a weight for one of these, the app does the maths itself instead of trusting the AI's estimate. */
+// [match regex, display name, kcal, protein, carbs, fat, fiber]  — all per 100 g as weighed
+const STAPLES = [
+  [/chicken breast.*(cooked|grilled|roasted|baked)|(cooked|grilled|roasted|baked).*chicken breast/, "Chicken breast, cooked", 165, 31, 0, 3.6, 0],
+  [/chicken thigh/, "Chicken thigh, skinless, raw", 121, 19.7, 0, 4.1, 0],
+  [/chicken(?! (thigh|wing|leg|drum))/, "Chicken breast, raw", 120, 22.5, 0, 2.6, 0],
+  [/salmon/, "Salmon, raw", 208, 20.4, 0, 13.4, 0],
+  [/tilapia/, "Tilapia, raw", 96, 20.1, 0, 1.7, 0],
+  [/prawn|shrimp/, "Prawns, raw", 85, 20.1, 0, 0.5, 0],
+  [/egg ?whites?|liquid egg/, "Egg whites", 52, 10.9, 0.7, 0.2, 0],
+  [/\beggs?\b/, "Whole egg", 143, 12.6, 0.7, 9.5, 0],
+  [/paneer/, "Paneer (full fat)", 290, 18.5, 2.5, 22.5, 0],
+  [/greek yog(h)?urt/, "Greek yogurt, 0% plain", 59, 10.2, 3.6, 0.4, 0],
+  [/chia/, "Chia seeds", 486, 16.5, 42.1, 30.7, 34.4],
+  [/whey|func\.? ?lab/, "Whey isolate (The Func. Lab, label)", 371, 82.9, 4.3, 1.4, 0],
+  [/collagen/, "Collagen peptides", 360, 90, 0, 0, 0],
+  [/psyllium|isabgol|husk/, "Psyllium husk", 300, 0, 85, 0, 75],
+  [/creatine/, "Creatine", 0, 0, 0, 0, 0],
+  [/dal|lentil/, "Lentils (dal), cooked", 116, 9, 20.1, 0.4, 7.9],
+  [/chick ?peas?|chana|garbanzo/, "Chickpeas, canned, drained", 139, 7, 22.5, 2.6, 7.6],
+  [/kidney|red beans?|rajma/, "Red kidney beans, canned, drained", 124, 8, 22, 0.6, 6.4],
+  [/black beans?/, "Black beans, canned, drained", 132, 8.9, 23.7, 0.5, 8.7],
+  [/quinoa/, "Quinoa, cooked", 120, 4.4, 21.3, 1.9, 2.8],
+  [/brown rice/, "Brown rice, cooked", 123, 2.7, 25.6, 1, 1.6],
+  [/rice/, "White/basmati rice, cooked", 130, 2.7, 28.2, 0.3, 0.4],
+  [/pasta.*(cooked|boiled)/, "Pasta, cooked", 158, 5.8, 31, 0.9, 1.8],
+  [/pasta|spaghetti|penne|macaroni/, "Pasta, dry", 371, 13, 74.7, 1.5, 3.2],
+  [/protein bread|aldi.*bread/, "Aldi protein bread (label: 2 slices = 54 g)", 278, 25.9, 18.5, 13, 7.4],
+  [/sweet potato/, "Sweet potato, raw", 86, 1.6, 20.1, 0.1, 3],
+  [/potato/, "Potato, raw", 77, 2, 17.5, 0.1, 2.1],
+  [/brussels?/, "Brussels sprouts", 43, 3.4, 9, 0.3, 3.8],
+  [/bell pepper|capsicum|\bpeppers?\b/, "Bell pepper", 31, 1, 6, 0.3, 2.1],
+  [/mushroom/, "Mushrooms", 22, 3.1, 3.3, 0.3, 1],
+  [/carrot.*juice|orange.*juice|ginger.*juice|juice blend|morning juice/, "Carrot-orange-ginger juice, fresh", 45, 0.8, 10.5, 0.2, 0.3],
+  [/carrot/, "Carrots", 41, 0.9, 9.6, 0.2, 2.8],
+  [/spring mix|mixed greens|salad greens|spinach/, "Spring mix", 23, 2.2, 3.6, 0.4, 2.1],
+  [/romaine|caesar (salad )?mix|lettuce/, "Romaine / Caesar greens", 17, 1.2, 3.3, 0.3, 2.1],
+  [/green beans?/, "Green beans", 31, 1.8, 7, 0.2, 2.7],
+  [/corn/, "Sweet corn, drained", 81, 2.6, 18.6, 1, 2],
+  [/avocado/, "Avocado", 160, 2, 8.5, 14.7, 6.7],
+  [/ghee/, "Ghee", 876, 0.3, 0, 99.5, 0],
+  [/olive oil|\boil\b/, "Olive / cooking oil", 884, 0, 0, 100, 0],
+  [/butter/, "Butter", 717, 0.9, 0.1, 81, 0],
+  [/blueberr/, "Blueberries", 57, 0.7, 14.5, 0.3, 2.4],
+  [/strawberr/, "Strawberries", 32, 0.7, 7.7, 0.3, 2],
+  [/cranberr/, "Cranberries, fresh", 46, 0.5, 12, 0.1, 3.6],
+  [/berr/, "Mixed berries", 45, 0.6, 11, 0.3, 2.7],
+  [/granola/, "Granola (typical; your label wins)", 471, 10, 64, 20, 5],
+  [/coconut water/, "Coconut water", 19, 0.7, 3.7, 0.2, 1.1],
+  [/lemon juice|\blemon\b/, "Lemon juice", 22, 0.4, 6.9, 0.2, 0.3],
+  [/almond milk/, "Almond milk, unsweetened", 15, 0.6, 0.3, 1.2, 0.2],
+  [/apple cider|\bacv\b/, "Apple cider vinegar", 21, 0, 0.9, 0, 0]
+];
+function staple(name) { const n = String(name || "").toLowerCase(); const s = STAPLES.find(x => x[0].test(n)); return s || null; }
+function fromStaple(s, g) { const f = g / 100; return { kcal: r0(s[2] * f), protein: r1(s[3] * f), carbs: r1(s[4] * f), fat: r1(s[5] * f), fiber: r1(s[6] * f) }; }
+// If the item has a real weight and is one of the staples, recompute it from the table. Brand-labelled items keep the AI's label numbers.
+function exactItem(it) {
+  if (!(it.g > 0)) return it;
+  const s = staple(it.name); if (!s) return it;
+  if (it.brand && !/aldi|func/i.test(it.brand) && !/whey|bread/.test(s[1].toLowerCase())) return it;
+  return { ...it, ...fromStaple(s, it.g), exact: true };
+}
+const staplesForPrompt = () => STAPLES.map(s => `${s[1]}: ${s[2]} kcal, ${s[3]} g protein, ${s[4]} g carbs, ${s[5]} g fat, ${s[6]} g fiber`).join("\n");
+
 /* ---------- hand-drawn doodles instead of emoji ---------- */
 const DOO = {
   bowl: '<path d="M3.5 11.5h17a8.5 7 0 0 1-17 0z" fill="#ff4fa3"/><path d="M8 20h8"/><path d="M9 8.5c-1-1.5 1-2.5 0-4M12.5 8.5c-1-1.5 1-2.5 0-4M16 8.5c-1-1.5 1-2.5 0-4"/>',
@@ -3378,17 +3449,17 @@ function findRecipe(name) {
   return L.find(r => normName(r.name) === n) || L.find(r => normName(r.name).includes(n) || n.includes(normName(r.name))) || L.find(r => nameMatch(r.name, name)) || null;
 }
 const r0 = v => Math.max(0, Math.round(+v || 0)), r1 = v => Math.max(0, Math.round((+v || 0) * 10) / 10);
-function sumItems(items) { return items.reduce((t, x) => ({ kcal: t.kcal + (+x.kcal || 0), protein: t.protein + (+x.protein || 0), carbs: t.carbs + (+x.carbs || 0), fat: t.fat + (+x.fat || 0) }), { kcal: 0, protein: 0, carbs: 0, fat: 0 }); }
-const roundM = t => ({ kcal: r0(t.kcal), protein: r0(t.protein), carbs: r0(t.carbs), fat: r0(t.fat) });
+function sumItems(items) { return items.reduce((t, x) => ({ kcal: t.kcal + (+x.kcal || 0), protein: t.protein + (+x.protein || 0), carbs: t.carbs + (+x.carbs || 0), fat: t.fat + (+x.fat || 0), fiber: t.fiber + (+x.fiber || 0) }), { kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 }); }
+const roundM = t => ({ kcal: r0(t.kcal), protein: r1(t.protein), carbs: r1(t.carbs), fat: r1(t.fat), fiber: r1(t.fiber) });
 function normItem(x) {
   const g = +x.grams || null;
-  return { name: String(x.name || "").trim(), brand: x.brand ? String(x.brand).trim() : "", amt: x.amount ? String(x.amount).trim() : g ? `${Math.round(g)} g` : "", g, kcal: r0(x.kcal), protein: r1(x.protein), carbs: r1(x.carbs), fat: r1(x.fat), look: !!x.needs_lookup };
+  return exactItem({ name: String(x.name || "").trim(), brand: x.brand ? String(x.brand).trim() : "", amt: x.amount ? String(x.amount).trim() : g ? `${Math.round(g)} g` : "", g, kcal: r0(x.kcal), protein: r1(x.protein), carbs: r1(x.carbs), fat: r1(x.fat), fiber: r1(x.fiber), look: !!x.needs_lookup });
 }
 const fmtServ = f => { const r = Math.round(f * 100) / 100; return r === 0.5 ? "½" : r === 1.5 ? "1½" : String(r); };
 function saveRecipe(r) {
   const items = (Array.isArray(r.items) ? r.items : []).filter(x => x && x.name).map(normItem);
   const servings = Math.max(1, +r.servings || 1), total = sumItems(items);
-  const per = roundM({ kcal: total.kcal / servings, protein: total.protein / servings, carbs: total.carbs / servings, fat: total.fat / servings });
+  const per = roundM({ kcal: total.kcal / servings, protein: total.protein / servings, carbs: total.carbs / servings, fat: total.fat / servings, fiber: total.fiber / servings });
   const old = findRecipe(r.name);
   const rec = { id: old && normName(old.name) === normName(r.name) ? old.id : uid(), name: String(r.name).trim(), servings, cookedG: +r.cooked_weight_g || +r.cookedG || null, items, steps: Array.isArray(r.steps) ? r.steps.map(String) : [], total: roundM(total), per, t: Date.now() };
   LRN.data.mine = [rec, ...myRecipes().filter(x => x.id !== rec.id)].slice(0, 120); saveLearn();
@@ -3446,7 +3517,7 @@ function buildMeal(m) {
     else if (+m.grams > 0 && !f) recipeNote = `Add the cooked weight to “${rec.name}” to log by grams. I logged 1 serving.`;
     if (!(f > 0)) f = 1;
     const p = rec.per;
-    items = [{ name: rec.name, brand: "", amt: `${fmtServ(f)} serving${f === 1 ? "" : "s"}${+m.grams > 0 ? ` · ${Math.round(+m.grams)} g` : ""}`, kcal: r0(p.kcal * f), protein: r1(p.protein * f), carbs: r1(p.carbs * f), fat: r1(p.fat * f), rid: rec.id }, ...items];
+    items = [{ name: rec.name, brand: "", amt: `${fmtServ(f)} serving${f === 1 ? "" : "s"}${+m.grams > 0 ? ` · ${Math.round(+m.grams)} g` : ""}`, kcal: r0(p.kcal * f), protein: r1(p.protein * f), carbs: r1(p.carbs * f), fat: r1(p.fat * f), fiber: r1((p.fiber || 0) * f), rid: rec.id }, ...items];
   }
   const tot = roundM(sumItems(items));
   return { name: String(m.name || rec?.name || items.map(x => x.name).join(", ") || "Meal").trim(), slot: mealSlot(m.slot), items, ...tot, recipeNote };
@@ -3481,7 +3552,7 @@ function applyActions(res) {
     const m = buildMeal(m0); if (!m.items.length && !m.kcal) continue;
     if (m0.source && (dayOf(T).meals || []).some(x => normName(x.name) === normName(m.name) || (x.via && x.via === m0.source && x.slot === m.slot))) { blocks.push({ k: "dup", names: [m.name] }); continue; }
     const fridgeNames = []; m.items.forEach(x => { if (x.rid) return; const it = fridgeMatch(canon(x.name)); if (it && !fridgeNames.includes(it.name)) fridgeNames.push(it.name); });
-    const meal = { id: uid(), name: m.name, kcal: m.kcal, protein: m.protein, carbs: m.carbs, fat: m.fat, slot: m.slot, portion: 1, src: "chat", ...(m0.source ? { via: String(m0.source) } : {}), items: m.items.map(({ look, ...x }) => x), uses: [] };
+    const meal = { id: uid(), name: m.name, kcal: m.kcal, protein: m.protein, carbs: m.carbs, fat: m.fat, fiber: m.fiber, slot: m.slot, portion: 1, src: "chat", ...(m0.source ? { via: String(m0.source) } : {}), items: m.items.map(({ look, ...x }) => x), uses: [] };
     editDay(T, d => d.meals.push(meal)); U.meals.push(meal.id); track("logs"); track("logMs", 1500);
     blocks.push(mealBlock(meal, { via: meal.via || "", fridge: fridgeNames, note: m.recipeNote || "", guess: m.items.some(x => x.look), pattern: patternNote(meal) }));
   }
@@ -3512,6 +3583,13 @@ function applyActions(res) {
   const tossed = closeByName(res.tossed || [], "tossed", U); if (tossed.length) blocks.push({ k: "tossed", names: tossed });
   const added = listAdd(res.grocery_add || [], U); if (added.length) blocks.push({ k: "list", names: added });
   const off = listRemove(res.remove_from_list || [], U); if (off.length) blocks.push({ k: "unlist", names: off });
+  const sb = res.set_body;
+  if (sb && (+sb.weight_kg > 25 || +sb.height_cm > 100 || +sb.age >= 13 || /^[fm]/i.test(sb.sex || ""))) {
+    if (!U.settingsPrev) U.settingsPrev = { ...S.settings };
+    const b0 = body() || {}, nb = { ...b0, ...(+sb.weight_kg > 25 ? { weightKg: Math.round(+sb.weight_kg * 10) / 10 } : {}), ...(+sb.height_cm > 100 ? { heightCm: Math.round(+sb.height_cm) } : {}), ...(+sb.age >= 13 ? { age: Math.round(+sb.age) } : {}), ...(/^[fm]/i.test(sb.sex || "") ? { sex: sb.sex[0].toLowerCase() } : {}) };
+    S.settings = { ...S.settings, body: nb }; putSettings();
+    blocks.push({ k: "goals", names: [`body: ${[nb.weightKg && nb.weightKg + " kg", nb.heightCm && nb.heightCm + " cm", nb.age && nb.age + " y", nb.sex && (nb.sex === "f" ? "female" : "male")].filter(Boolean).join(", ")}${bodyReady() ? ` · resting burn ${num(bmr())} kcal` : ""}`] });
+  }
   const gch = setGoalsFrom(res.set_goals, U); if (gch.length) blocks.push({ k: "goals", names: gch });
   const hab = habitsFrom(res.habits_done, U); if (hab.length) blocks.push({ k: "habits", names: hab });
   const ideas = (Array.isArray(res.ideas) ? res.ideas : []).filter(r => r && r.name).slice(0, 3).map(r => ({ name: String(r.name), minutes: +r.minutes || 15, kcal: r0(r.kcal), protein: r0(r.protein), uses: Array.isArray(r.uses) ? r.uses.map(String) : [], ingredients: Array.isArray(r.ingredients) ? r.ingredients.map(String) : [], steps: Array.isArray(r.steps) ? r.steps.map(String) : [] }));
@@ -3570,6 +3648,8 @@ ${chatContext()}
 My message: """${text || "(no text)"}"""${hasImg ? "\n" + (imp ? "These are screenshots or exports from my other apps (Strava, Hevy, MyFitnessPal, Apple Health or Fitness). Read every number on them." : "A photo is attached. If it shows food I ate, log it as a meal and estimate each component's amount. If it shows groceries or a receipt, treat them as bought. If it's a screenshot from a fitness or food app, import it as below.") : ""}
 
 How to read it:
+- For these ingredients use EXACTLY these values per 100 g as weighed (raw unless it says cooked), and always fill "grams" when I give a weight so the app can check the maths:
+${staplesForPrompt()}
 - Meals: one entry per meal. If it's a meal I've had before, use the same name as before so the app can spot my patterns. Break it into items and estimate EACH item separately with USDA-style values. Use the exact weight or amount I give (grams, oz, cups, slices). If I name a brand, use that product's label (e.g. Dave's Killer Bread, Fage, Chobani, Trader Joe's, Quest). If I give no amount, assume one normal portion and write what you assumed in "amount". Weights are as eaten unless I say raw. Restaurant or chain food: use the chain's official nutrition; if you are not sure of it, still estimate and set "needs_lookup": true.
 - If I ate one of my saved recipes, set "recipe" to its exact name and "servings" (or "grams" if I weighed my portion), and put only extras in "items". Never repeat the recipe's own ingredients.
 - A recipe (a dish name with ingredients and amounts, "makes 4", "recipe:", "I cooked/meal prepped") goes in save_recipes with every ingredient and its total amount for the whole batch, plus servings (default 1) and cooked_weight_g if I give it. Only also log a meal if I say I ate some.
@@ -3579,21 +3659,23 @@ How to read it:
 - Steps → "steps". Active calories from my watch → "active_kcal". My body weight → "weight".
 - Corrections ("actually 2 slices", "remove the latte", "that run was 40 min"): put the old id in delete_meal_ids / delete_workout_ids and add the corrected entry.
 - Groceries: bought/got/picked up → bought (it goes into my fridge). "I have", "there's X in my fridge/pantry" → have. "add X to my list", "need X", "buy X" → grocery_add. Finished, used up, ran out of → used_up (also grocery_add if I say I need more). Threw out, tossed, went bad → tossed. "Got X" for list items also counts as bought. For bought/have items give qty, price if I said it, "where" (fridge, freezer or pantry) and "shelf_days" (typical days it stays good there).
-- Goals: "set my protein goal to 120 g", "10k steps a day", "4 workouts a week", "500 calorie deficit", "1600 calories a day", "add a habit: read 20 min" → set_goals. Doing a habit ("drank 3 glasses of water", "read today") → habits_done with the habit's exact name, count = total for today (set "add": true if they say "another"/"2 more").
+- My body ("I'm 55 kg, 5 ft 1, 22, female") → set_body in metric.
+- Goals: "set my protein goal to 120 g", "25 g fiber", "fat under 50 g", "burn 1800 a day", "10k steps a day", "4 workouts a week", "500 calorie deficit", "1600 calories a day", "add a habit: read 20 min" → set_goals. Doing a habit ("drank 3 glasses of water", "read today") → habits_done with the habit's exact name, count = total for today (set "add": true if they say "another"/"2 more").
 - Questions ("what can I make?", "how am I doing?", "is this healthy?") → "answer" (1-3 short sentences using my data). For cooking ideas add up to 3 "ideas" that use food in my fridge, soonest-expiring first, high protein, fitting my calories left.
 - "reply": one short, warm sentence about what you saved. No calorie math in it, the app shows the numbers.
 - Only include what my message says. Never invent meals or workouts.
 
 Return JSON only, in this shape (leave out empty fields):
 {"reply": string,
- "meals": [{"name": string, "slot": string, "source": string, "recipe": string|null, "servings": number|null, "grams": number|null, "items": [{"name": string, "brand": string, "amount": string, "grams": number, "kcal": number, "protein": number, "carbs": number, "fat": number, "needs_lookup": boolean}]}],
+ "meals": [{"name": string, "slot": string, "source": string, "recipe": string|null, "servings": number|null, "grams": number|null, "items": [{"name": string, "brand": string, "amount": string, "grams": number, "kcal": number, "protein": number, "carbs": number, "fat": number, "fiber": number, "needs_lookup": boolean}]}],
  "save_recipes": [{"name": string, "servings": number, "cooked_weight_g": number|null, "items": [same item shape, amounts for the whole batch], "steps": [string]}],
  "workouts": [{"type": string, "name": string, "minutes": number, "met": number, "details": string, "app_kcal": number, "source": string}],
  "steps": number, "active_kcal": number, "weight": {"value": number, "unit": "lb"|"kg"},
  "delete_meal_ids": [string], "delete_workout_ids": [string],
  "bought": [{"name": string, "qty": number, "price": number, "where": string, "shelf_days": number}],
  "have": [same as bought], "grocery_add": [string], "remove_from_list": [string], "used_up": [string], "tossed": [string],
- "set_goals": {"protein": number, "steps": number, "kcal": number, "deficit": number, "active_min": number, "week_workouts": number, "habits_add": [{"name": string, "target": number, "unit": string}]},
+ "set_body": {"weight_kg": number, "height_cm": number, "age": number, "sex": "f"|"m"},
+ "set_goals": {"protein": number, "fiber": number, "fat_max": number, "burn": number, "steps": number, "kcal": number, "deficit": number, "active_min": number, "week_workouts": number, "habits_add": [{"name": string, "target": number, "unit": string}]},
  "habits_done": [{"name": string, "count": number, "add": boolean}],
  "answer": string, "ideas": [{"name": string, "minutes": number, "kcal": number, "protein": number, "uses": [string], "ingredients": [string], "steps": [string]}]}`;
 }
@@ -3620,7 +3702,11 @@ function localParse(text) {
   const q = it?.kind === "meal" ? it.q : s.replace(/^(?:for\s+)?(breakfast|lunch|dinner|snack)\s*[:\-]?\s*/i, "");
   const slot = it?.slot || (low.match(/\b(breakfast|lunch|dinner|snack)\b/) || [])[1] || slotNow();
   const items = [];
-  for (const p of parseQuick(q)) {
+  const pieces = String(q).split(/\s*(?:,|\n|;|\+|&|\band\b)\s*/i).filter(x => /[a-z]/i.test(x));
+  for (const raw of pieces) {
+    const gm = raw.trim().match(/^(\d+(?:\.\d+)?)\s*(?:g|gm|gram|grams|ml)\b\s*(?:of\s+)?(.+)$/i) || raw.trim().match(/^(.+?)\s+(\d+(?:\.\d+)?)\s*(?:g|gm|gram|grams|ml)$/i);
+    if (gm) { const num1 = /^\d/.test(gm[1]), grams = +(num1 ? gm[1] : gm[2]), food = (num1 ? gm[2] : gm[1]).replace(/^(?:a|some)\s+/i, ""), st = staple(food); if (st) { items.push({ name: titleCase(food), grams, amount: `${grams} g`, ...fromStaple(st, grams) }); continue; } }
+    const p = parseQuick(raw)[0]; if (!p) continue;
     const rec = findRecipe(p.name);
     if (rec) { items.push({ name: rec.name, amount: `${p.qty} serving${p.qty === 1 ? "" : "s"}`, kcal: rec.per.kcal * p.qty, protein: rec.per.protein * p.qty, carbs: rec.per.carbs * p.qty, fat: rec.per.fat * p.qty }); continue; }
     const f = foodSearch(p.name, 1)[0];
@@ -3637,12 +3723,13 @@ async function chatSend(textArg) {
   if ((!text && !img) || CH.busy) return;
   if (KEY_RE.test(text) && window.claude) { CH.draft = ""; pushMsg({ who: "app", text: "This version already uses Claude, so it doesn't need a key. I didn't save it. Paste it in the home-screen app instead." }); return; }
   if (KEY_RE.test(text)) {
-    CH.draft = ""; saveAnyKey(text);
+    CH.draft = ""; { const ti = $("#chIn"); if (ti) ti.value = ""; } saveAnyKey(text);
     pushMsg({ who: "app", text: `Key saved on this phone only. ${{ gemini: "Gemini", groq: "Groq", openrouter: "OpenRouter" }[AI.via] || "Claude"} is on. Checking it works…` });
     try { await AI.fn("Reply with the single word: ok", { modelTier: "quick" }); pushMsg({ who: "app", text: "It works. Tell me what you ate, cooked, bought or did today." }); }
     catch (e) { pushMsg({ who: "app", text: keyErrText(e) }); }
     return;
   }
+  { const ti = $("#chIn"); if (ti) { ti.value = ""; autoGrow(ti); } }
   const urls = CH.imgs.map(x => x.url); CH.draft = ""; CH.imgs = []; CH.imp = false; CH.tray = false;
   pushMsg({ who: "me", text: text || (imp ? "Import from my apps" : ""), img: imgs.length });
   setTimeout(() => urls.forEach(u => URL.revokeObjectURL(u)), 60000);
@@ -3708,6 +3795,7 @@ function renderHome() {
   const need = (S.shopping.items || []).filter(x => !x.done).length;
   tabs.innerHTML = TABS.map(([k, ic, l, col]) => `<button class="${CH.tab === k ? "on" : ""}" style="--tc:var(--m-${col})" data-act="tab" data-t="${k}" aria-label="${l}"${CH.tab === k ? ' aria-current="page"' : ""}><span class="tb-ic">${icon(ic)}${k === "groceries" && need ? `<i>${need}</i>` : ""}</span><span>${l}</span></button>`).join("");
   const bs = $("#budgetStrip"); bs.hidden = CH.tab !== "chat"; bs.innerHTML = CH.tab === "chat" ? stripHtml(T) + syncRow(T) + goalsRow(T) : "";
+  if (!CH.printed) { $("#budgetStrip .receipt")?.classList.add("fresh"); CH.printed = true; }
   countUp();
   celebrateGoals(T);
   const pane = $("#pane"), stick = CH.tab === "chat" && (CH.stick || pane.scrollHeight - pane.scrollTop - pane.clientHeight < 80);
@@ -3730,7 +3818,7 @@ function stripHtml(T) {
   return `<button class="receipt" data-act="open" data-sheet="calories" aria-label="Calories today, ${num(Math.abs(left))} ${left >= 0 ? "left" : "over"}">
     <div class="rc-top"><span>TODAY'S RECEIPT</span><span>NO. ${no} · ${esc(fmtShort(T).toUpperCase())}</span></div>
     <div class="rc-body"><div class="rc-main"><b class="${left < 0 ? "over" : ""}" data-to="${Math.abs(left)}">${num(Math.abs(left))}</b><span class="script">${left >= 0 ? "kcal left" : "kcal over"}</span></div>
-    <div class="rc-lines">${line("Budget", num(goal))}${line("Eaten", "− " + num(eaten))}${b ? line("Burned", num(b.total), "muted") : ""}${line("Protein", `${prot}/${S.settings.protein} g`, prot >= S.settings.protein ? "ok" : "")}</div></div>
+    <div class="rc-lines">${line("Budget", num(goal))}${line("Eaten", "− " + num(eaten))}${b ? line("Burned", num(b.total) + (S.settings.burnGoal ? `/${num(S.settings.burnGoal)}` : ""), b.total >= (S.settings.burnGoal || 1e9) ? "ok" : "muted") : ""}${line("Protein", `${prot}/${S.settings.protein} g`, prot >= S.settings.protein ? "ok" : "")}${S.settings.fiber ? line("Fiber", `${Math.round(macroOf(T, "fiber"))}/${S.settings.fiber} g`, macroOf(T, "fiber") >= S.settings.fiber ? "ok" : "") : ""}</div></div>
     <div class="rc-bar"><i class="${left < 0 ? "over" : ""}" style="width:${clamp(eaten / Math.max(goal, 1) * 100, 0, 100)}%"></i></div></button>`;
 }
 function countUp() {
@@ -3813,7 +3901,7 @@ function blockHtml(b, m) {
   const wrap = (inner, emo = emo0) => `<div class="blk k-${b.k}"><span class="sticker c-${col}" style="--rot:${((b.name || b.k).length % 5) * 3 - 6}deg">${doo(emo)}</span><div class="bc">${inner}</div></div>`;
   switch (b.k) {
     case "meal": return wrap(`<div class="bh"><span class="btag">${cap(b.slot || "meal")}${b.via ? ` <em class="via">via ${esc(b.via)}</em>` : ""}</span><b>${esc(b.name)}</b>${nn ? "" : `<strong>${num(b.kcal)}<small> kcal</small></strong>`}</div>
-      ${nn ? "" : `<div class="macros"><span class="mp">${num(b.protein)} g protein</span><span>${num(b.carbs)} g carbs</span><span>${num(b.fat)} g fat</span></div>`}
+      ${nn ? "" : `<div class="macros"><span class="mp">${num(b.protein)} g protein</span><span>${num(b.carbs)} g carbs</span><span>${num(b.fat)} g fat</span>${b.fiber ? `<span>${num(b.fiber)} g fiber</span>` : ""}</div>`}
       ${(b.items || []).length > 1 || (b.items?.[0]?.amt) ? `<ul class="items">${b.items.map(x => itemRow(x, nn)).join("")}</ul>` : ""}
       ${b.note ? `<p class="bnote">${esc(b.note)}</p>` : ""}${b.guess ? `<p class="bnote">Some numbers are estimates. Correct me in a message if you know better.</p>` : ""}
       ${b.pattern && !m.undone ? `<div class="useq pat"><span>${esc(b.pattern)}</span>${b.saved ? `<span class="t-ok">Saved ✓</span>` : `<button class="linkbtn" data-act="save-from-meal" data-mid="${esc(m.id)}" data-bid="${esc(b.id)}">Save as recipe</button>`}</div>` : ""}
@@ -3916,7 +4004,7 @@ function paneRecipes() {
   for (const [i, r] of L.entries()) {
     const open = CH.openRec === r.id, st = recipeStats(r);
     h += `<div class="rcard" style="--c:var(--m-${PAL[i % PAL.length]});--tilt:${i % 2 ? .6 : -.6}deg"><span class="tape" aria-hidden="true"></span><button class="rhead" data-act="rec-toggle" data-id="${esc(r.id)}" aria-expanded="${open}"><span class="sticker">${doo(/soup|chili|curry|dal|stew/i.test(r.name) ? "pot" : "bowl")}</span><span class="nm"><b>${esc(r.name)}</b><small>${r.servings} serving${r.servings === 1 ? "" : "s"}${nn ? "" : ` · ${num(r.per.protein)} g protein each`}</small><small class="made">${st.n ? `Eaten ${st.n}× · last ${esc(dayLabel(st.last).toLowerCase())}` : "Not logged yet"}</small></span>${nn ? "" : `<strong>${num(r.per.kcal)}<small>kcal/serving</small></strong>`}</button>
-      ${open ? `<div class="rbody"><div class="gtitle">Ingredients · whole batch</div><ul class="items">${r.items.map(x => itemRow(x, nn)).join("")}</ul>${!nn ? `<p class="bnote">Batch: ${num(r.total.kcal)} kcal · ${num(r.total.protein)} g protein · ${num(r.total.carbs)} g carbs · ${num(r.total.fat)} g fat${r.cookedG ? ` · ${num(r.cookedG)} g cooked` : ""}</p>` : ""}
+      ${open ? `<div class="rbody"><div class="gtitle">Ingredients · whole batch</div><ul class="items">${r.items.map(x => itemRow(x, nn)).join("")}</ul>${!nn ? `<p class="bnote">Batch: ${num(r.total.kcal)} kcal · ${num(r.total.protein)} g protein · ${num(r.total.carbs)} g carbs · ${num(r.total.fat)} g fat · ${num(r.total.fiber || 0)} g fiber${r.cookedG ? ` · ${num(r.cookedG)} g cooked` : ""}</p>` : ""}
         ${r.steps?.length ? `<div class="gtitle">Steps</div><ol class="steps">${r.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
         <div class="rcook"><span>Servings</span><div class="stepper"><button data-act="rec-serv2" data-d="-0.5" aria-label="Fewer">−</button><output>${fmtServ(CH.serv || 1)}</output><button data-act="rec-serv2" data-d="0.5" aria-label="More">+</button></div><button class="btn sm" data-act="rec-log1" data-id="${esc(r.id)}">Log it</button></div>
         <div class="bact"><button class="linkbtn" data-act="rec-edit" data-id="${esc(r.id)}">Change it in chat</button><button class="linkbtn danger" data-act="rec-del" data-id="${esc(r.id)}">Delete</button></div></div>` : ""}</div>`;
@@ -3950,6 +4038,22 @@ async function healthSync() {
   toast(S.settings.healthSetup ? "No steps copied yet. Run the Fridge steps Shortcut, then tap Sync." : "Set up the 2-minute Health Shortcut first.");
 }
 
+/* ---------- the recomp plan (numbers checked against USDA + your labels) ---------- */
+function applyPlan() {
+  const prev = { ...S.settings };
+  S.settings = { ...S.settings, kcal: 1400, goalMode: "fixed", protein: 105, fiber: 25, fatMax: 50, burnGoal: 1800, stepGoal: 8000, planSet: true, fit: { ...fit(), weekWorkouts: 5, activeMin: 30 } };
+  putSettings();
+  const R = [
+    { name: "Morning drinks", servings: 1, items: [{ name: "Ghee", amount: "14 g (turmeric + splash ACV)", grams: 14 }, { name: "Apple cider vinegar", amount: "15 g", grams: 15 }, { name: "Carrot-orange-ginger juice", amount: "120 g", grams: 120 }, { name: "Coconut water", amount: "60 g", grams: 60 }, { name: "Lemon juice", amount: "15 g", grams: 15 }, { name: "Jeera, ajwain & saunf water", amount: "240 g, strained", kcal: 5, carbs: 1 }] },
+    { name: "Chia yogurt protein base", servings: 3, cooked_weight_g: 821, items: [{ name: "Greek yogurt 0%", amount: "3 cups", grams: 680 }, { name: "Chia seeds", amount: "1/4 cup", grams: 36 }, { name: "Whey isolate (The Func. Lab)", amount: "3 scoops", grams: 105 }], steps: ["Mix yogurt, chia and whey", "Split into 3 (about 274 g each)", "Chill overnight"] },
+    { name: "Breakfast bowl", servings: 1, items: [{ name: "Chia yogurt protein base", amount: "274 g (1/3 batch)", kcal: 322, protein: 54.1, carbs: 14.7, fat: 5.1, fiber: 4.1 }, { name: "Mixed berries", amount: "60 g", grams: 60 }, { name: "Granola", amount: "15 g", grams: 15 }] },
+    { name: "Night stack", servings: 1, items: [{ name: "Creatine", amount: "5 g", grams: 5 }, { name: "Psyllium husk", amount: "7 g", grams: 7 }, { name: "Collagen peptides", amount: "10 g", grams: 10 }] }
+  ];
+  R.forEach(r => saveRecipe(r));
+  renderAll();
+  toast("Plan set: 1,400 kcal, 105 g protein, 25 g fiber. Your 3 anchors are in Recipes.", () => { S.settings = prev; putSettings(); renderAll(); refreshSheet(); });
+}
+
 /* ---------- patterns ---------- */
 function recipeStats(r) {
   let n = 0, last = "";
@@ -3958,7 +4062,7 @@ function recipeStats(r) {
 }
 function lastMeal(key) { let src = null, sid = ""; for (const id in S.days) (S.days[id].meals || []).forEach(m => { if (normName(m.name) === key && id >= sid) { src = m; sid = id; } }); return src; }
 const emptyU = () => ({ meals: [], workouts: [], items: [], itemPrev: [], recipes: [], recipePrev: [], delMeals: [], delWorkouts: [], act: null, body: null, shopPrev: null });
-function mealBlock(meal, extra = {}) { return { k: "meal", id: meal.id, name: meal.name, slot: meal.slot, kcal: meal.kcal, protein: meal.protein, carbs: meal.carbs || 0, fat: meal.fat || 0, items: meal.items || [], ...extra }; }
+function mealBlock(meal, extra = {}) { return { k: "meal", id: meal.id, name: meal.name, slot: meal.slot, kcal: meal.kcal, protein: meal.protein, carbs: meal.carbs || 0, fat: meal.fat || 0, fiber: meal.fiber || 0, items: meal.items || [], ...extra }; }
 function patternNote(meal) {
   const e = mealLibrary().find(x => x.key === normName(meal.name));
   if (!e || e.count < 3 || (meal.items || []).length < 2 || (meal.items || []).some(x => x.rid) || myRecipes().some(r => normName(r.name) === e.key)) return "";
@@ -4045,6 +4149,12 @@ function goalList(T) {
   if (!nn) g.push({ id: "kcal", label: "Calories in budget", val: eaten ? `${num(eaten)} of ${num(goal)}` : "nothing logged", done: eaten > 0 && eaten <= goal * 1.03, miss: eaten > goal * 1.03 || (past && !eaten), frac: eaten / Math.max(goal, 1) });
   const p = Math.round(proteinOf(T)), pg = +S.settings.protein || 0;
   if (pg) g.push({ id: "protein", label: "Protein", val: `${p} of ${pg} g`, done: p >= pg, frac: p / pg });
+  const fb = Math.round(macroOf(T, "fiber")), fg = +S.settings.fiber || 0;
+  if (fg) g.push({ id: "fiber", label: "Fiber", val: `${fb} of ${fg} g`, done: fb >= fg, frac: fb / fg });
+  const ft = Math.round(macroOf(T, "fat")), fm = +S.settings.fatMax || 0;
+  if (fm && !nn) g.push({ id: "fat", label: "Fat under limit", val: `${ft} of max ${fm} g`, done: eaten > 0 && ft <= fm, miss: ft > fm, frac: ft / fm });
+  const bg = +S.settings.burnGoal || 0, bn = bodyReady() ? burnFor(T)?.total || 0 : 0;
+  if (bg && !nn) g.push({ id: "burn", label: "Burn", val: bodyReady() ? `${num(bn)} of ${num(bg)} kcal` : "add body stats", done: bn >= bg, frac: bn / bg });
   const st = +actOf(T).steps || 0, sg = stepGoal();
   if (sg) g.push({ id: "steps", label: "Steps", val: `${num(st)} of ${num(sg)}`, done: st >= sg, frac: st / sg });
   const am = wkMinutes(T), ag = +fit().activeMin || 0;
@@ -4054,7 +4164,7 @@ function goalList(T) {
   for (const h of S.settings.habits || []) { const c = habitCount(h, T), t = h.target || 1; g.push({ id: "h:" + h.id, hid: h.id, label: h.name, val: t > 1 ? `${c} of ${t} ${h.unit || ""}`.trim() : c ? "done" : "not yet", done: c >= t, frac: c / t, habit: true, target: t }); }
   return g;
 }
-const GOAL_COL = { kcal: "butter", protein: "pink", steps: "sky", active: "peach", week: "lilac" };
+const GOAL_COL = { kcal: "butter", protein: "pink", fiber: "mint", fat: "peach", burn: "tomato", steps: "sky", active: "peach", week: "lilac" };
 function goalsRow(T) {
   const g = goalList(T); if (!g.length) return "";
   const done = g.filter(x => x.done).length, all = done === g.length;
@@ -4073,14 +4183,17 @@ function vGoals() {
   h += `<div class="ghead"><b>${T === todayId() ? "Today" : dayLabel(T)}</b><span>${done} of ${list.length} goals hit${done === list.length && list.length ? " 🎉" : ""}</span></div>`;
   h += `<div class="glist">${list.map(x => goalRowHtml(x, T)).join("")}</div>`;
   h += `<div class="section-t">Steps from Apple Health</div>${healthCard()}`;
-  h += `<div class="section-t">My goals</div><div class="card stack" style="gap:12px">`;
+  h += `<div class="section-t">My goals</div><div class="card stack" style="gap:12px">
+    <div class="plan"><div><b>My recomp plan</b><small>Eat 1,400 · burn 1,800 · 105 g protein · 25 g fiber · fat ≤ 50 g · 8,000 steps · 5 workouts a week. Also saves your morning drinks, breakfast bowl and night stack as recipes.</small></div><button class="btn sm" data-act="g-plan">${st.planSet ? "Re-apply" : "Use it"}</button></div>`;
   if (!st.noNumbers) {
     const auto = st.goalMode === "auto" && bodyReady();
     h += `<div><label class="lbl">Calories</label><div class="seg"><button class="${auto ? "on" : ""}" data-act="g-mode" data-v="auto">Follow my activity</button><button class="${!auto ? "on" : ""}" data-act="g-mode" data-v="fixed">Fixed number</button></div></div>`;
     if (auto) h += `<div><label class="lbl">Daily deficit</label><div class="seg">${[250, 500, 750].map(v => `<button class="${(+st.deficit || 500) === v ? "on" : ""}" data-act="def-set" data-v="${v}">${v} kcal</button>`).join("")}</div><p class="muted tiny" style="margin:6px 0 0">Your budget is what you burn minus this. ${v500(st)}</p></div>`;
     else h += `<div><label class="lbl" for="gK">Calories per day</label><input class="inp" id="gK" type="number" inputmode="numeric" value="${esc(st.kcal)}" data-goalf="kcal"></div>`;
   }
-  h += `<div class="grid2"><div><label class="lbl" for="gP">Protein (g)</label><input class="inp" id="gP" type="number" inputmode="numeric" value="${esc(st.protein)}" data-goalf="protein"></div><div><label class="lbl" for="gS">Steps</label><input class="inp" id="gS" type="number" inputmode="numeric" value="${esc(stepGoal())}" data-goalf="stepGoal"></div>
+  h += `<div class="grid2"><div><label class="lbl" for="gF">Fiber (g, at least)</label><input class="inp" id="gF" type="number" inputmode="numeric" value="${esc(st.fiber || "")}" placeholder="25" data-goalf="fiber"></div><div><label class="lbl" for="gFt">Fat (g, at most)</label><input class="inp" id="gFt" type="number" inputmode="numeric" value="${esc(st.fatMax || "")}" placeholder="50" data-goalf="fatMax"></div>
+    <div><label class="lbl" for="gB">Burn (kcal/day)</label><input class="inp" id="gB" type="number" inputmode="numeric" value="${esc(st.burnGoal || "")}" placeholder="1800" data-goalf="burnGoal"></div><div></div></div>
+    <div class="grid2"><div><label class="lbl" for="gP">Protein (g)</label><input class="inp" id="gP" type="number" inputmode="numeric" value="${esc(st.protein)}" data-goalf="protein"></div><div><label class="lbl" for="gS">Steps</label><input class="inp" id="gS" type="number" inputmode="numeric" value="${esc(stepGoal())}" data-goalf="stepGoal"></div>
     <div><label class="lbl" for="gA">Active min/day</label><input class="inp" id="gA" type="number" inputmode="numeric" value="${esc(fit().activeMin)}" data-goalf="activeMin"></div><div><label class="lbl" for="gW">Workouts/week</label><input class="inp" id="gW" type="number" inputmode="numeric" value="${esc(fit().weekWorkouts)}" data-goalf="weekWorkouts"></div></div></div>`;
   h += `<div class="section-t">Daily habits</div><div class="card stack" style="gap:8px">${(st.habits || []).map((hb, i) => `<div class="row" style="flex-wrap:nowrap;justify-content:space-between"><span><b>${esc(hb.name)}</b> <span class="muted tiny">${(hb.target || 1) > 1 ? `${hb.target} ${esc(hb.unit || "times")} a day` : "once a day"}</span></span><button class="x-btn" data-act="g-hdel" data-i="${i}" aria-label="Remove ${esc(hb.name)}">${icon("x")}</button></div>`).join("") || `<span class="muted tiny">No habits yet.</span>`}
     <div class="row" style="flex-wrap:nowrap"><input class="inp" id="gHn" placeholder="New habit, e.g. Drink water" value="${esc(G.hn)}" data-goaln="hn"><input class="inp" id="gHt" type="number" min="1" style="width:64px" value="${esc(G.ht)}" aria-label="Times per day" data-goaln="ht"><button class="btn soft sm" data-act="g-hadd">Add</button></div></div>
@@ -4095,6 +4208,9 @@ function setGoalsFrom(sg, U) {
   if (+sg.steps > 0) { st.stepGoal = Math.round(+sg.steps); changes.push(`${num(st.stepGoal)} steps`); }
   if (+sg.kcal > 0) { st.kcal = Math.round(+sg.kcal); st.goalMode = "fixed"; changes.push(`${num(st.kcal)} kcal a day`); }
   if (+sg.deficit > 0) { st.deficit = Math.round(+sg.deficit); if (bodyReady()) st.goalMode = "auto"; changes.push(`${num(st.deficit)} kcal deficit`); }
+  if (+sg.fiber > 0) { st.fiber = Math.round(+sg.fiber); changes.push(`${st.fiber} g fiber`); }
+  if (+sg.fat_max > 0) { st.fatMax = Math.round(+sg.fat_max); changes.push(`fat under ${st.fatMax} g`); }
+  if (+sg.burn > 0) { st.burnGoal = Math.round(+sg.burn); changes.push(`burn ${num(st.burnGoal)} kcal`); }
   if (+sg.active_min > 0) { f.activeMin = Math.round(+sg.active_min); changes.push(`${f.activeMin} active min`); }
   if (+sg.week_workouts > 0) { f.weekWorkouts = Math.round(+sg.week_workouts); changes.push(`${f.weekWorkouts} workouts a week`); }
   for (const hb of Array.isArray(sg.habits_add) ? sg.habits_add : []) { if (!hb?.name || (st.habits || []).some(x => normName(x.name) === normName(hb.name))) continue; st.habits = [...(st.habits || []), { id: uid(), name: String(hb.name), target: Math.max(1, Math.round(+hb.target || 1)), unit: hb.unit ? String(hb.unit) : "" }]; changes.push(`new habit: ${hb.name}`); }
@@ -4118,6 +4234,7 @@ document.addEventListener("click", e => {
   const G = SH.goal;
   switch (el.dataset.act) {
     case "g-day": G.day = el.dataset.d; renderSheet(); break;
+    case "g-plan": applyPlan(); renderSheet(); break;
 
     case "g-hab": habitStep(el.dataset.id, Number(el.dataset.d)); renderSheet(); break;
     case "g-mode": if (el.dataset.v === "auto" && !bodyReady()) { closeSheet(); setTimeout(() => openSheet("calories"), 200); toast("Add your body stats first, then switch on “Follow my activity”."); break; } S.settings = { ...S.settings, goalMode: el.dataset.v }; putSettings(); renderAll(); renderSheet(); break;
