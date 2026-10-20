@@ -1,6 +1,6 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*,*::before,*::after{box-sizing:inherit}body{margin:0;font:14px system-ui,sans-serif;background:#fffdf2}@media (prefers-color-scheme: dark){body{background:#15130e}}img{max-width:100%}[hidden]{display:none!important}</style><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Snatched"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#d7141d"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#d7141d"></head><body>
 <title>Snatched</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700&display=swap">
 
 <style>
 /* Layout: a soft-shaded pastel fridge standing in a lilac kitchen. Doors bounce open onto glass shelves of little food; glossy magnets are dragged around the door and tapped to open paper-like sheets; a dock under the fridge logs your usual meal. */
@@ -946,6 +946,109 @@ button,input,textarea,select{font-family:var(--f)}
 .finrow .btn{flex:1;background:var(--red);color:#fff}
 .exl .nm small{line-height:1.35}
 .daycard .btn{background:var(--red);color:#fff;border-radius:999px}
+
+/* ===== v3 · clean & fun (Hello Dani cream + Cyber Areej red) ===== */
+:root{
+  --wall-1:#f7f4ec; --wall-2:#f7f4ec; --paper:#ffffff; --tile:#ffffff; --sheet:#fbf9f4; --field:#ffffff;
+  --ink:#141010; --ink-2:#6f6762; --line:#e9e3d8; --edge:#e6dfd3; --soft:#f1ede4; --dash:#e7ddd0;
+  --red:#d8352f; --red-t:#c42a25; --brick:#bf3f45; --blush:#ffd2d2; --maroon:#6b2a2e;
+  --fa:"Libre Baskerville",ui-serif,Georgia,serif; --fs:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  --f:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  --soft-sh:0 1px 2px rgba(40,20,10,.04),0 12px 28px -18px rgba(40,20,10,.28);
+  --ptitle:#141010; --on-wall:#141010; --on-wall-2:#6f6762; --me:#141010; --me-ink:#c42a25; --btn-bg:#141010; --btn-fg:#ffffff;
+}
+body{background:var(--wall-1)!important}
+.script{font-style:normal}
+/* header: Cyber Areej */
+.topbar{background:var(--brick);border-radius:0 0 28px 28px;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 16px}
+.topbar h1.brand{position:relative;display:flex;align-items:center;font-family:-apple-system,"SF Pro Display",BlinkMacSystemFont,system-ui,sans-serif;font-weight:800;font-size:44px;letter-spacing:-.055em;line-height:.95;color:var(--blush);margin:0}
+.topbar h1.brand span{position:relative;z-index:1}
+.bstar{order:2;width:22px;height:22px;fill:#ffd2d2;margin:-18px 0 0 4px;transform:rotate(12deg);animation:bspin 6s ease-in-out infinite}@keyframes bspin{50%{transform:rotate(-10deg) scale(1.08)}}
+.topbar .sub{color:#ffe3e3;opacity:.9;font-size:13px;margin-top:6px;font-weight:500}
+.topbar .icon-btn{background:transparent;border:1px solid rgba(255,210,210,.7);color:var(--blush)}
+/* tabs: outlined ovals, active = black pill */
+.tabbar{background:none;padding:0;gap:6px;margin:14px 16px 6px}
+.tabbar button{border:1px solid #d9cfc2;border-radius:999px;background:transparent;color:var(--ink);font-weight:500;font-size:11px;padding:6px 0 5px;gap:1px}
+.tabbar button.on{background:var(--ink);color:#fff;border-color:var(--ink);box-shadow:none}
+.tb-ic{font-size:16px;line-height:1.1}
+.tabbar i{background:var(--red);border:2px solid var(--wall-1)}
+/* type */
+.ptitle,.hello h2,.dh b,.sess-h b,.ghead b,.pr-top b,.sh-head h2{font-family:var(--fa);font-weight:400;letter-spacing:-.03em;color:var(--ink)}
+.ptitle{font-size:30px}
+.hello h2{font-size:30px;color:var(--ink)}
+.gtitle{font-family:var(--fa);font-weight:400;font-size:18px;letter-spacing:-.02em;color:var(--ink);margin:14px 2px -2px}
+.gtitle.warn{color:var(--red-t)}
+.section-t{font-family:var(--fa);font-weight:400;font-size:17px;letter-spacing:-.02em;color:var(--ink)}
+.sh-head h2{font-size:24px}
+.phead p,.hello p{color:var(--ink-2)}
+/* receipt: clean, Dani card */
+.receipt{background:#fff;filter:drop-shadow(0 10px 18px rgba(40,20,10,.08))}
+.receipt::after{background:linear-gradient(135deg,#fff 50%,transparent 50%) 0 0/14px 8px repeat-x,linear-gradient(225deg,#fff 50%,transparent 50%) 0 0/14px 8px repeat-x}
+.rc-top span:first-child{color:var(--red-t)}
+.rc-main b{font-family:var(--fa);font-weight:400;font-size:42px;letter-spacing:-.04em;color:var(--ink)}
+.rc-main b.over{color:var(--red-t)}
+.rc-main .script{font-family:var(--f);font-style:normal;font-size:12.5px;color:var(--ink-2);font-weight:500}
+.rc-bar{background:#f1ede4}.rc-bar i{background:var(--ink)}.rc-bar i.over{background:var(--red)}
+/* chips, pills, buttons */
+.burst{box-shadow:inset 0 0 0 2px var(--ink),var(--soft-sh);background:#fff}
+.burst b{font-family:var(--fa);font-weight:400}
+.burst.all{background:var(--blush)}
+.gc{background:#fff;border:1px solid var(--edge);font-weight:500}
+.gc.ok{background:var(--ink);color:#fff;border-color:var(--ink)}
+.gc i{background:conic-gradient(var(--red) var(--p),#efe7dc 0);border:0}
+.btn,.pillbtn,.addrow .btn,.daycard .btn,.finrow .btn,.plan .btn{background:var(--ink);color:#fff;border:0;border-radius:999px}
+.linkbtn{color:var(--red-t)}
+.chipbtn{background:#fff!important;border:1px solid var(--edge);font-weight:500}
+.chips2 button,.chips2 span{background:#fff!important;border:1px solid var(--edge);font-weight:500;color:var(--ink)}
+.chips2 button.sel{background:var(--ink)!important;color:#fff;border-color:var(--ink)}
+.chips2.gpick button.ingrp{box-shadow:inset 0 0 0 1.5px var(--blush)}
+.qchips button{background:#fff;border:1px solid var(--edge);font-weight:500}
+.qchips .ql{font-family:var(--f);font-style:normal;font-size:12.5px;color:var(--ink-2);font-weight:500}
+/* stickers = Apple emoji in soft circles */
+.sticker{background:#f3eee5!important;border:0!important;box-shadow:none!important;transform:none!important}
+.sticker .emo-i{font-size:19px;line-height:1}
+.sticker.big .emo-i{font-size:24px}
+.sticker.big{border-radius:50%}
+.chipbtn .emo-i{font-size:16px}
+.sync .emo-i{width:32px;height:32px;display:grid;place-items:center;background:#f3eee5;border-radius:50%;font-size:17px;flex:none}
+.sync{background:#fff;border:1px solid var(--edge)}
+.sync span b{font-family:var(--fa);font-weight:400;font-size:17px}
+.sync em{color:var(--ink-2)}
+.row-i .emo{background:#f3eee5!important;border:0;transform:none!important;font-family:inherit;font-size:19px}
+/* cards */
+.group,.glist,.daycard,.rcard,.emptycard,.msg.bot .card,.paper-receipt{background:#fff;border:1px solid var(--edge)}
+.msg.bot .card{box-shadow:var(--soft-sh);border-radius:20px 20px 20px 6px}
+.msg .bub{background:var(--ink);color:#fff;border-radius:20px 20px 6px 20px}
+.bh .btag{font-family:var(--f);font-size:12px;font-weight:600;color:var(--red-t)}
+.bh strong{font-family:var(--fa);font-weight:400;font-size:21px;letter-spacing:-.03em}
+.macros span{border:1px solid var(--edge);background:#fff;font-weight:500}
+.macros .mp{background:var(--blush);border-color:var(--blush)}
+.mfoot .left{font-family:var(--f);font-style:normal;font-size:12.5px;font-weight:600;color:var(--ink)}
+.daysep span{font-family:var(--f);font-style:normal;font-size:12px;font-weight:600;color:var(--ink-2);background:#efe9de;padding:3px 10px;border-radius:999px}
+.flagbox{border:1px solid var(--edge)}.flagbox h3{font-family:var(--fa);font-weight:400;letter-spacing:-.02em;font-size:17px}
+.flagbox.green{background:#eef6e9}.flagbox.red{background:#fdeceb}
+.rhead strong,.pr-total b{font-family:var(--fa);font-weight:400}
+.rhead small.made{font-family:var(--f);font-style:normal;font-size:12px;color:var(--red-t);font-weight:500}
+.pr-top b{color:var(--ink)}
+.pr-total .script{font-family:var(--f);font-style:normal;font-size:13px;color:var(--ink-2);font-weight:500}
+.tape{background:rgba(255,210,210,.7);border:0}
+.rcard{box-shadow:var(--soft-sh)!important}
+.cplus{background:#fff;color:var(--ink);border:1px solid var(--edge);box-shadow:none}
+.csend{border:1px solid var(--edge);box-shadow:none}
+.csend.ready{background:var(--ink);color:#fff;border-color:var(--ink)}
+.cbar textarea{border:1px solid var(--edge)}
+#composer{border-top:1px solid var(--line)}
+.week button{border-color:var(--edge)}
+.week button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.week button.today{box-shadow:inset 0 0 0 1.5px var(--red)}
+.sess{border:1.5px solid var(--ink)}
+.rest{background:var(--ink)}
+.dots i:nth-child(1){background:var(--brick)}.dots i:nth-child(2){background:var(--blush)}.dots i:nth-child(3){background:var(--ink)}
+.hello-stk .sticker{width:48px;height:48px}
+.ex button{background:#fff!important;border:1px solid var(--edge)}
+.ex button .sticker{background:#f3eee5!important}
+.banner2{background:#fff6dc;border:1px solid #f0e2b8}
+.keynote{background:#fff6dc!important;border:1px solid #f0e2b8!important;box-shadow:none!important}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -974,7 +1077,7 @@ button,input,textarea,select{font-family:var(--f)}
 
 <div class="app" id="app">
   <header class="topbar">
-    <div class="mast"><h1 id="greet" class="brand">Snatched</h1><div class="sub" id="todayLabel"></div></div>
+    <div class="mast"><h1 id="greet" class="brand"><svg class="bstar" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 3l13.6 32.3 35 3-26.6 23 8 34.2L50 77.6 20 95.5l8-34.2L1.4 38.3l35-3z"/></svg><span>snatched.</span></h1><div class="sub" id="todayLabel"></div></div>
     <span class="star s1" aria-hidden="true">★</span><span class="star s2" aria-hidden="true">★</span>
     <button class="icon-btn" data-act="open" data-sheet="settings" aria-label="Settings"><svg class="i"><use href="#i-sliders"/></svg></button>
   </header>
@@ -3355,7 +3458,8 @@ const DOO = {
   bolt: '<path d="M13.5 2.5L5 13.5h6l-1.5 8 8.5-11h-6z" fill="#ffb48a"/>',
   pot: '<path d="M4.5 10h15v6a4 4 0 0 1-4 4h-7a4 4 0 0 1-4-4z" fill="#ff9ccb"/><path d="M2.5 10h19M9 6.5c0-1.3 1.3-2 3-2s3 .7 3 2v3.5"/>'
 };
-function doo(name) { return `<svg class="doo" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${DOO[name] || DOO.bowl}</svg>`; }
+const EMO = { bowl: "🥗", dumbbell: "🏋️‍♀️", shoe: "👟", watch: "⌚️", scale: "⚖️", bag: "🛍️", fridge: "🧊", note: "📝", check: "✅", bin: "🗑️", undo: "↩️", star: "⭐️", drop: "💧", book: "📖", hearts: "💕", receipt: "🧾", camera: "📸", phone: "📱", chat: "💬", carrot: "🥕", cart: "🛒", sparkle: "✨", trophy: "🏆", chart: "📈", leaf: "🥬", muscle: "💪", apple: "🍎", heart: "❤️", bolt: "⚡️", pot: "🍲" };
+function doo(name) { return `<span class="emo-i" aria-hidden="true">${EMO[name] || "🍽️"}</span>`; }
 
 /* ===================== Chat-first home ===================== */
 /* Keys live only in this phone's storage. They are never part of the code. */
@@ -3863,7 +3967,7 @@ function renderHome() {
   const T = todayId();
   const tabs = $("#tabbar"); if (!tabs) return;
   const need = (S.shopping.items || []).filter(x => !x.done).length;
-  tabs.innerHTML = TABS.map(([k, ic, l, col]) => `<button class="${CH.tab === k ? "on" : ""}" style="--tc:var(--m-${col})" data-act="tab" data-t="${k}" aria-label="${l}"${CH.tab === k ? ' aria-current="page"' : ""}><span class="tb-ic">${icon(ic)}${k === "groceries" && need ? `<i>${need}</i>` : ""}</span><span>${l}</span></button>`).join("");
+  tabs.innerHTML = TABS.map(([k, ic, l, col]) => `<button class="${CH.tab === k ? "on" : ""}" style="--tc:var(--m-${col})" data-act="tab" data-t="${k}" aria-label="${l}"${CH.tab === k ? ' aria-current="page"' : ""}><span class="tb-ic">${{ chat: "💬", fridge: "🧊", cart: "🛒", book: "📖", dumbbell: "🏋️‍♀️" }[ic] || icon(ic)}${k === "groceries" && need ? `<i>${need}</i>` : ""}</span><span>${l}</span></button>`).join("");
   const bs = $("#budgetStrip"); bs.hidden = CH.tab !== "chat"; bs.innerHTML = CH.tab === "chat" ? stripHtml(T) + syncRow(T) + goalsRow(T) : "";
   if (!CH.printed) { $("#budgetStrip .receipt")?.classList.add("fresh"); CH.printed = true; }
   countUp();
@@ -3968,7 +4072,7 @@ const BLK = { meal: ["peach", "bowl"], recipe: ["butter", "book"], workout: ["sk
 const BLK_TAG = { dup: "Already logged, skipped", bought: "Bought · now At home", have: "Now At home", list: "Added To buy", unlist: "Off the To buy list", used: "Used up", tossed: "Tossed", removed: "Removed", goals: "Goals updated", habits: "Habits", steps: "Steps", active: "Apple Health", weight: "Weight" };
 function blockHtml(b, m) {
   const nn = S.settings.noNumbers, [col, emo0] = BLK[b.k] || ["lilac", "✨"];
-  const wrap = (inner, emo = emo0) => `<div class="blk k-${b.k}"><span class="sticker c-${col}" style="--rot:${((b.name || b.k).length % 5) * 3 - 6}deg">${doo(emo)}</span><div class="bc">${inner}</div></div>`;
+  const wrap = (inner, emo = emo0) => `<div class="blk k-${b.k}"><span class="sticker c-${col}">${b.k === "meal" ? `<span class="emo-i">${dishEmoji(b.name)}</span>` : doo(emo)}</span><div class="bc">${inner}</div></div>`;
   switch (b.k) {
     case "meal": return wrap(`<div class="bh"><span class="btag">${cap(b.slot || "meal")}${b.via ? ` <em class="via">via ${esc(b.via)}</em>` : ""}</span><b>${esc(b.name)}</b>${nn ? "" : `<strong>${num(b.kcal)}<small> kcal</small></strong>`}</div>
       ${nn ? "" : `<div class="macros"><span class="mp">${num(b.protein)} g protein</span><span>${num(b.carbs)} g carbs</span><span>${num(b.fat)} g fat</span>${b.fiber ? `<span>${num(b.fiber)} g fiber</span>` : ""}</div>`}
@@ -4004,7 +4108,7 @@ function appMsg(m, fresh = "") {
 const ZONE_GROUP = z => z === "freezer" ? "freezer" : z === "pantry" ? "pantry" : "fridge";
 function itemRowHtml(i) {
   const l = lifeInfo(i);
-  return `<button class="row-i" data-act="item" data-id="${esc(i.id)}"><span class="emo f-${l.cls}">${esc((i.name || "?").trim().charAt(0).toUpperCase())}</span><span class="nm"><b>${esc(i.name)}${(i.qty || 1) > 1 ? ` <em>×${i.qty}</em>` : ""}</b><small>${esc(ZONE_SHORT[i.zone] || "")}${i.boughtAt ? ` · since ${fmtShort(i.boughtAt)}` : ""}</small></span><span class="pill ${l.cls}">${esc(l.label)}</span></button>`;
+  return `<button class="row-i" data-act="item" data-id="${esc(i.id)}"><span class="emo f-${l.cls}">${esc(i.emoji || "🛒")}</span><span class="nm"><b>${esc(i.name)}${(i.qty || 1) > 1 ? ` <em>×${i.qty}</em>` : ""}</b><small>${esc(ZONE_SHORT[i.zone] || "")}${i.boughtAt ? ` · since ${fmtShort(i.boughtAt)}` : ""}</small></span><span class="pill ${l.cls}">${esc(l.label)}</span></button>`;
 }
 function phead(col, emo, title, sub) { return `<div class="phead"><span class="sticker big c-${col}">${doo(emo)}</span><div><h2 class="ptitle">${title}</h2><p>${sub}</p></div></div>`; }
 function paneFridge() {
@@ -4080,7 +4184,7 @@ function paneRecipes() {
         <div class="bact"><button class="linkbtn" data-act="rec-edit" data-id="${esc(r.id)}">Change it in chat</button><button class="linkbtn danger" data-act="rec-del" data-id="${esc(r.id)}">Delete</button></div></div>` : ""}</div>`;
   }
   h += `<div class="gtitle">Ideas</div><button class="chipbtn wide" data-act="open" data-sheet="recipes" style="--c:var(--m-lilac)">${doo("sparkle")}What can I make with what's At home?</button>`;
-  if (ideas.length) h += `<div class="group">${ideas.slice(0, 20).map(s => `<button class="row-i" data-act="open" data-sheet="recipes" data-tab="saved"><span class="emo">${esc(s.name.trim().charAt(0).toUpperCase())}</span><span class="nm"><b>${esc(s.name)}</b><small>${s.minutes || 15} min${nn ? "" : ` · ${num(s.kcal)} kcal`}</small></span></button>`).join("")}</div>`;
+  if (ideas.length) h += `<div class="group">${ideas.slice(0, 20).map(s => `<button class="row-i" data-act="open" data-sheet="recipes" data-tab="saved"><span class="emo">${esc(dishEmoji(s.name))}</span><span class="nm"><b>${esc(s.name)}</b><small>${s.minutes || 15} min${nn ? "" : ` · ${num(s.kcal)} kcal`}</small></span></button>`).join("")}</div>`;
   h += `<p class="hint">${S.mode === "db" ? "Recipes are saved to your Claude account, so they're the same everywhere you open this page." : "Recipes are saved on this phone with the rest of your data. Back them up from Settings → Your data."}</p>`;
   return h + `</div>`;
 }
