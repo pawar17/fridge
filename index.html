@@ -3625,6 +3625,7 @@ function geminiSampler(key) {
     if (o.json && !o.web) gen.responseMimeType = "application/json";
     const body = { contents: [{ role: "user", parts }], generationConfig: gen };
     if (o.web) body.tools = [{ googleSearch: {} }];
+    if (o.url) { body.tools = [{ urlContext: {} }]; delete gen.responseMimeType; }
     const eps = /^AIza/.test(key) ? ["gl"] : ["gl", "vx", "vxq"]; const seen = [];
     if (pref && eps.includes(pref[0])) eps.sort((a, b) => (b === pref[0]) - (a === pref[0]));
     let last = null;
@@ -3640,7 +3641,7 @@ function geminiSampler(key) {
         } catch (e) {
           last = e; seen.push(`${ep === "gl" ? "Gemini API" : "Vertex AI"}: ${String(e.message || e.code).replace(/\s+/g, " ").slice(0, 160)}`);
           if (e.code === "cancelled" || e.code === "rate_limited") throw e;
-          if (o.web && e.code === "upstream_error") return call(input, { ...o, web: false });
+          if ((o.web || o.url) && e.code === "upstream_error") return call(input, { ...o, web: false, url: false });
           if (e.code === "no_model" || (e.code === "bad_key" && !/api key not valid|API_KEY_INVALID|UNAUTHENTICATED|ACCESS_TOKEN/i.test(String(e.message)))) continue;
           break; // key not accepted or network on this endpoint: try the other endpoint
         }
@@ -3745,7 +3746,7 @@ function saveRecipe(r) {
   const servings = Math.max(1, +r.servings || 1), total = sumItems(items);
   const per = roundM({ kcal: total.kcal / servings, protein: total.protein / servings, carbs: total.carbs / servings, fat: total.fat / servings, fiber: total.fiber / servings });
   const old = findRecipe(r.name);
-  const rec = { id: old && normName(old.name) === normName(r.name) ? old.id : uid(), name: String(r.name).trim(), servings, cookedG: +r.cooked_weight_g || +r.cookedG || null, items, steps: Array.isArray(r.steps) ? r.steps.map(String) : [], total: roundM(total), per, t: Date.now() };
+  const rec = { id: old && normName(old.name) === normName(r.name) ? old.id : uid(), name: String(r.name).trim(), servings, cookedG: +r.cooked_weight_g || +r.cookedG || null, items, steps: Array.isArray(r.steps) ? r.steps.map(String) : [], ...(r.source_url ? { url: String(r.source_url) } : old?.url ? { url: old.url } : {}), total: roundM(total), per, t: Date.now() };
   LRN.data.mine = [rec, ...myRecipes().filter(x => x.id !== rec.id)].slice(0, 120); saveLearn();
   return { rec, replaced: old && old.id === rec.id ? old : null };
 }
@@ -3995,7 +3996,7 @@ ${staplesForPrompt()}
 Return JSON only, in this shape (leave out empty fields):
 {"reply": string,
  "meals": [{"name": string, "slot": string, "source": string, "recipe": string|null, "servings": number|null, "grams": number|null, "items": [{"name": string, "brand": string, "amount": string, "grams": number, "kcal": number, "protein": number, "carbs": number, "fat": number, "fiber": number, "needs_lookup": boolean}]}],
- "save_recipes": [{"name": string, "servings": number, "cooked_weight_g": number|null, "items": [same item shape, amounts for the whole batch], "steps": [string]}],
+ "save_recipes": [{"name": string, "servings": number, "cooked_weight_g": number|null, "source_url": string|null, "items": [same item shape, amounts for the whole batch], "steps": [string]}],
  "workouts": [{"type": string, "name": string, "minutes": number, "met": number, "details": string, "app_kcal": number, "source": string}],
  "steps": number, "active_kcal": number, "weight": {"value": number, "unit": "lb"|"kg"},
  "delete_meal_ids": [string], "delete_workout_ids": [string],
@@ -4062,10 +4063,13 @@ async function chatSend(textArg) {
   pushMsg({ who: "me", text: text || (imp ? "Import from my apps" : ""), img: imgs.length });
   setTimeout(() => urls.forEach(u => URL.revokeObjectURL(u)), 60000);
   CH.busy = true; CH.ctl = new AbortController(); renderAll();
-  let res = null, err = "";
+  let res = null, err = "", link = null, page = null;
+  if (URL_RE.test(text) && !img) { link = text.match(URL_RE)[0]; try { page = await readPage(link, CH.ctl.signal); } catch (e) { if (e?.name === "AbortError") { CH.busy = false; pushMsg({ who: "app", text: "Stopped." }); return; } } }
+  if (link && !page && aiOn() && !["gemini", "api"].includes(AI.via)) { CH.busy = false; pushMsg({ who: "app", text: "I couldn't open that link from here, and this AI can't browse. Paste the ingredients instead, or use a Gemini key to read links.", retry: text }); return; }
+  if (link && !aiOn()) { const r0 = page?.ld ? ldToRes(page.ld, link, text) : null; if (r0) res = r0; else { CH.busy = false; pushMsg({ who: "app", text: page ? "I can read that page, but it doesn't list its own nutrition. Add a free AI key (Settings) and I'll work it out ingredient by ingredient." : "I couldn't open that link from here. Paste the ingredients instead, or add an AI key and try again.", retry: text }); return; } }
   if (aiOn()) {
     try {
-      res = await AI.fn.json(chatPrompt(text, img, imp), { signal: CH.ctl.signal, ...(img ? { images: imgs } : {}) });
+      res = await AI.fn.json(chatPrompt(text, img, imp) + (link ? linkPrompt(page, link, text) : ""), { signal: CH.ctl.signal, ...(img ? { images: imgs } : {}), ...(link && !page && AI.via === "gemini" ? { url: true } : {}) });
       if (res && Array.isArray(res.meals) && res.meals.some(m => (m?.items || []).some(x => x?.needs_lookup))) await lookUpItems(res.meals, CH.ctl.signal);
     } catch (e) {
       if (e?.code === "cancelled") { CH.busy = false; pushMsg({ who: "app", text: "Stopped." }); return; }
@@ -5090,6 +5094,43 @@ document.addEventListener("click", e => {
   editAct(T, a => { a.workouts = (a.workouts || []).filter(x => x.id !== w.id); }); refreshSheet();
   toast(`Removed ${(WK[w.type] || [])[2] || "workout"}.`, () => { editAct(T, a => { a.workouts = [...(a.workouts || []), w]; }); refreshSheet(); });
 });
+
+/* ---------- paste a recipe link: read the page, save the recipe, log a serving ---------- */
+const URL_RE = /https?:\/\/[^\s<>"']+/i;
+function ldRecipe(html) {
+  // most recipe sites embed a schema.org Recipe as JSON-LD — exact ingredients, servings and often nutrition
+  const blocks = [...String(html).matchAll(/<script[^>]*application\/ld\+json[^>]*>([\s\S]*?)<\/script>/gi)].map(m => m[1]);
+  const flat = o => !o ? [] : Array.isArray(o) ? o.flatMap(flat) : o["@graph"] ? flat(o["@graph"]) : [o];
+  for (const b of blocks) { try { const r = flat(JSON.parse(b.trim())).find(x => [].concat(x["@type"] || []).some(t => /recipe/i.test(t))); if (r) return r; } catch (_) {} }
+  return null;
+}
+const ldText = v => !v ? "" : typeof v === "string" ? v : Array.isArray(v) ? v.map(ldText).filter(Boolean).join("\n") : v.text || v.name || (v.itemListElement ? ldText(v.itemListElement) : "");
+function ldSummary(r, url) {
+  const n = r.nutrition || {};
+  const nut = ["calories", "proteinContent", "carbohydrateContent", "fatContent", "fiberContent"].filter(k => n[k]).map(k => `${k.replace("Content", "")}: ${n[k]}`).join(", ");
+  return `Name: ${ldText(r.name)}\nServes: ${ldText(r.recipeYield) || "not stated"}\nIngredients:\n${[].concat(r.recipeIngredient || []).map(x => "- " + ldText(x)).join("\n")}${nut ? `\nThe site's own nutrition per serving: ${nut}` : ""}\nSteps:\n${ldText(r.recipeInstructions).slice(0, 2500)}\nSource: ${url}`;
+}
+async function readPage(url, signal) {
+  const get = async u => { const r = await fetch(u, { signal }); if (!r.ok) throw new Error("http " + r.status); return r.text(); };
+  // 1) the page itself (works when the site allows it)  2) a free reader that returns the page as text
+  try { const html = await get(url); const ld = ldRecipe(html); if (ld) return { ld, text: ldSummary(ld, url) }; const t = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(); if (t.length > 400) return { text: t.slice(0, 14000) }; } catch (e) { if (e?.name === "AbortError") throw e; }
+  try { const t = await get("https://r.jina.ai/" + url); if (t && t.length > 200) return { text: t.slice(0, 14000) }; } catch (e) { if (e?.name === "AbortError") throw e; }
+  return null;
+}
+function linkPrompt(page, url, text) {
+  const said = text.replace(URL_RE, "").trim();
+  return `\n\nI pasted a recipe link (${url}). ${page ? "Here is what's on that page:\n<<<\n" + page.text + "\n>>>" : "I couldn't open it from the phone, so read it yourself."}
+Save it in save_recipes: the recipe's name, servings from the page, every ingredient with its amount for the whole batch (convert to grams where you can, use the staple table above for those), the steps, and "source_url": "${url}". If the page gives nutrition per serving, check your totals against it and trust the page if you're unsure.
+${/\b(save|just save|don't log|dont log|later|for later)\b/i.test(said) ? "Do NOT log a meal, only save it." : `Also log what I ate as a meal now: ${/\d|half|½|two|three/i.test(said) ? "the amount I said" : "1 serving"} (meals: [{"recipe": the recipe name, "servings": number, "slot": the meal I said or the current one}]).`}`;
+}
+// No AI key: if the page has its own nutrition, we can still save it and log a serving.
+function ldToRes(ld, url, text) {
+  const n = ld.nutrition || {}, k = numIn(n.calories); if (!(k > 0)) return null;
+  const serv = Math.max(1, numIn(ldText(ld.recipeYield)) || 1), name = ldText(ld.name) || "Recipe";
+  const item = { name: `${name} (site nutrition)`, amount: `${serv} servings`, kcal: k * serv, protein: (numIn(n.proteinContent) || 0) * serv, carbs: (numIn(n.carbohydrateContent) || 0) * serv, fat: (numIn(n.fatContent) || 0) * serv, fiber: (numIn(n.fiberContent) || 0) * serv };
+  const save = /\b(save|later|don't log|dont log)\b/i.test(text);
+  return { reply: `Saved ${name} from the site's own nutrition (${num(k)} kcal a serving).${save ? "" : " Logged 1 serving."} Add an AI key to get it ingredient by ingredient.`, save_recipes: [{ name, servings: serv, items: [item], steps: ldText(ld.recipeInstructions).split("\n").filter(Boolean), source_url: url }], meals: save ? [] : [{ recipe: name, servings: 1 }] };
+}
 
 setInterval(() => { if (!SH) renderHome(); }, 10 * 60 * 1000);
 init();
