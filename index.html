@@ -1924,7 +1924,10 @@ async function pasteHealth() {
   applyHealth(txt);
 }
 function applyHealth(txt) {
-  const v = parseHealthPaste(txt); if (!v) { toast("No step numbers found. Run the Fridge steps shortcut first."); return false; }
+  const raw = String(txt || "").trim().slice(0, 60);
+  if (!/steps|active/i.test(raw)) { toast(raw ? `Your clipboard has “${raw}”, not steps. Run the Fridge Shortcut, then tap Sync.` : "Clipboard is empty. Run the Fridge Shortcut, then tap Sync."); return false; }
+  const v = parseHealthPaste(txt); if (!v || (v.steps == null && v.active == null)) { toast(`The Shortcut sent “${raw}” with no number. Check Health permission for Shortcuts (Settings → Health → Data Access → Shortcuts → Steps).`); return false; }
+  if (v.steps === 0 && !(v.active > 0)) { toast("The Shortcut sent 0 steps, so I kept your current count. Turn on Steps for Shortcuts in Settings → Health → Data Access & Devices → Shortcuts."); return false; }
   const id = v.day && v.day <= todayId() ? v.day : todayId();
   editAct(id, a => { if (v.steps != null) a.steps = v.steps; if (v.active != null && v.active > 0) a.active = v.active; a.src = "health"; a.at = Date.now(); });
   track("stepsLogged"); toast(`Updated from Health: ${v.steps != null ? num(v.steps) + " steps" : ""}${v.active ? `${v.steps != null ? ", " : ""}${num(v.active)} active kcal` : ""}.`);
