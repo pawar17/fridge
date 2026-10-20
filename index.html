@@ -1,5 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*,*::before,*::after{box-sizing:inherit}body{margin:0;font:14px system-ui,sans-serif;background:#fffdf2}@media (prefers-color-scheme: dark){body{background:#15130e}}img{max-width:100%}[hidden]{display:none!important}</style><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Fridge"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#d7141d"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#d7141d"></head><body>
-<title>What's In My Fridge</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*,*::before,*::after{box-sizing:inherit}body{margin:0;font:14px system-ui,sans-serif;background:#fffdf2}@media (prefers-color-scheme: dark){body{background:#15130e}}img{max-width:100%}[hidden]{display:none!important}</style><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Snatched"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#d7141d"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#d7141d"></head><body>
+<title>Snatched</title>
 
 <style>
 /* Layout: a soft-shaded pastel fridge standing in a lilac kitchen. Doors bounce open onto glass shelves of little food; glossy magnets are dragged around the door and tapped to open paper-like sheets; a dock under the fridge logs your usual meal. */
@@ -880,6 +880,9 @@ button,input,textarea,select{font-family:var(--f)}
 .plan b{display:block;font-size:14.5px;font-weight:600}
 .plan small{display:block;font-size:12.5px;color:var(--ink-2);line-height:1.4;margin-top:2px}
 .plan .btn{flex:none;background:var(--red);color:#fff}
+
+.brand{display:flex;align-items:center;gap:10px;font-style:italic}
+.brand .mark{width:36px;height:36px;border-radius:10px;box-shadow:0 0 0 1.5px rgba(255,244,230,.5)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -907,7 +910,7 @@ button,input,textarea,select{font-family:var(--f)}
 
 <div class="app" id="app">
   <header class="topbar">
-    <div class="mast"><span class="script">what's in my</span><h1 id="greet">FRIDGE</h1><div class="sub" id="todayLabel"></div></div>
+    <div class="mast"><h1 id="greet" class="brand"><img class="mark" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiIHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjEwMjQiPgogIDxkZWZzPgogICAgPHJhZGlhbEdyYWRpZW50IGlkPSJiZyIgY3g9IjM1JSIgY3k9IjI1JSIgcj0iODUlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNlYzJhMzAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNjNzBmMTgiLz48L3JhZGlhbEdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJib2R5IiB4MT0iMCIgeDI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZmFmMSIvPjxzdG9wIG9mZnNldD0iLjU1IiBzdG9wLWNvbG9yPSIjZmZmNGUzIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZjdlM2NjIi8+PC9saW5lYXJHcmFkaWVudD4KICAgIDxjbGlwUGF0aCBpZD0iZnIiPjxwYXRoIGlkPSJmcnAiIGQ9Ik0zMDAgMjYyIFEzMDAgMjA2IDM1NiAyMDYgTDY2OCAyMDYgUTcyNCAyMDYgNzI0IDI2MiBDNzI0IDQxMCA2NDYgNDY2IDY0NiA1MTIgQzY0NiA1NTggNzI0IDYxNCA3MjQgNzYyIFE3MjQgODE4IDY2OCA4MTggTDM1NiA4MTggUTMwMCA4MTggMzAwIDc2MiBDMzAwIDYxNCAzNzggNTU4IDM3OCA1MTIgQzM3OCA0NjYgMzAwIDQxMCAzMDAgMjYyIFoiLz48L2NsaXBQYXRoPgogICAgPGZpbHRlciBpZD0ic2giIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPjxmZURyb3BTaGFkb3cgZHg9IjAiIGR5PSIyMiIgc3RkRGV2aWF0aW9uPSIyMiIgZmxvb2QtY29sb3I9IiM1YTAwMDYiIGZsb29kLW9wYWNpdHk9Ii4zNSIvPjwvZmlsdGVyPgogIDwvZGVmcz4KICA8cmVjdCB3aWR0aD0iMTAyNCIgaGVpZ2h0PSIxMDI0IiBmaWxsPSJ1cmwoI2JnKSIvPgogIDwhLS0gZnJpZGdlIHdpdGggYSBzbmF0Y2hlZCB3YWlzdCAtLT4KICA8ZyBmaWx0ZXI9InVybCgjc2gpIj48dXNlIGhyZWY9IiNmcnAiIGZpbGw9InVybCgjYm9keSkiLz48L2c+CiAgPGcgY2xpcC1wYXRoPSJ1cmwoI2ZyKSI+CiAgICA8cmVjdCB4PSIyODAiIHk9IjM5MiIgd2lkdGg9IjQ3MCIgaGVpZ2h0PSIxMCIgZmlsbD0iI2U5Y2RiNiIvPgogICAgPHJlY3QgeD0iMjgwIiB5PSIyMDYiIHdpZHRoPSI0NzAiIGhlaWdodD0iNjEyIiBmaWxsPSJub25lIi8+CiAgPC9nPgogIDwhLS0gaGFuZGxlcyAtLT4KICA8cmVjdCB4PSIzNzAiIHk9IjI3MCIgd2lkdGg9IjE4IiBoZWlnaHQ9Ijg0IiByeD0iOSIgZmlsbD0iI2Q3MTQxZCIvPgogIDxyZWN0IHg9IjQwMiIgeT0iNjAwIiB3aWR0aD0iMTgiIGhlaWdodD0iMTIwIiByeD0iOSIgZmlsbD0iI2Q3MTQxZCIvPgogIDwhLS0gbWVhc3VyaW5nIHRhcGUgY2luY2hpbmcgdGhlIHdhaXN0IC0tPgogIDxnIHRyYW5zZm9ybT0icm90YXRlKC02IDUxMiA1MTIpIj4KICAgIDxyZWN0IHg9IjMxOCIgeT0iNDc4IiB3aWR0aD0iMzg4IiBoZWlnaHQ9IjY0IiByeD0iMTAiIGZpbGw9IiNmZmQ5M2IiIHN0cm9rZT0iIzFjMGIwZCIgc3Ryb2tlLW9wYWNpdHk9Ii4xMiIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgICA8ZyBzdHJva2U9IiM3YTFhMTAiIHN0cm9rZS13aWR0aD0iNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj4KICAgICAgPGxpbmUgeDE9IjM1MCIgeTE9IjQ4MiIgeDI9IjM1MCIgeTI9IjUwNiIvPjxsaW5lIHgxPSIzNzQiIHkxPSI0ODIiIHgyPSIzNzQiIHkyPSI0OTYiLz48bGluZSB4MT0iMzk4IiB5MT0iNDgyIiB4Mj0iMzk4IiB5Mj0iNTA2Ii8+PGxpbmUgeDE9IjQyMiIgeTE9IjQ4MiIgeDI9IjQyMiIgeTI9IjQ5NiIvPgogICAgICA8bGluZSB4MT0iNDQ2IiB5MT0iNDgyIiB4Mj0iNDQ2IiB5Mj0iNTE0Ii8+PGxpbmUgeDE9IjQ3MCIgeTE9IjQ4MiIgeDI9IjQ3MCIgeTI9IjQ5NiIvPjxsaW5lIHgxPSI0OTQiIHkxPSI0ODIiIHgyPSI0OTQiIHkyPSI1MDYiLz48bGluZSB4MT0iNTE4IiB5MT0iNDgyIiB4Mj0iNTE4IiB5Mj0iNDk2Ii8+CiAgICAgIDxsaW5lIHgxPSI1NDIiIHkxPSI0ODIiIHgyPSI1NDIiIHkyPSI1MTQiLz48bGluZSB4MT0iNTY2IiB5MT0iNDgyIiB4Mj0iNTY2IiB5Mj0iNDk2Ii8+PGxpbmUgeDE9IjU5MCIgeTE9IjQ4MiIgeDI9IjU5MCIgeTI9IjUwNiIvPjxsaW5lIHgxPSI2MTQiIHkxPSI0ODIiIHgyPSI2MTQiIHkyPSI0OTYiLz4KICAgICAgPGxpbmUgeDE9IjYzOCIgeTE9IjQ4MiIgeDI9IjYzOCIgeTI9IjUxNCIvPjxsaW5lIHgxPSI2NjIiIHkxPSI0ODIiIHgyPSI2NjIiIHkyPSI0OTYiLz4KICAgIDwvZz4KICAgIDxyZWN0IHg9IjY5NCIgeT0iNDg0IiB3aWR0aD0iNzAiIGhlaWdodD0iNDQiIHJ4PSI4IiBmaWxsPSIjZjJjMjAwIiB0cmFuc2Zvcm09InJvdGF0ZSgzMiA2OTQgNTA2KSIvPjxjaXJjbGUgY3g9Ijc0MiIgY3k9IjU0MCIgcj0iNyIgZmlsbD0iIzdhMWExMCIgb3BhY2l0eT0iLjUiLz4KICA8L2c+CiAgPCEtLSBzcGFya2xlcyAtLT4KICA8cGF0aCBkPSJNODAwIDE2OCBDODA4IDIxNCA4MjIgMjI4IDg2OCAyMzYgQzgyMiAyNDQgODA4IDI1OCA4MDAgMzA0IEM3OTIgMjU4IDc3OCAyNDQgNzMyIDIzNiBDNzc4IDIyOCA3OTIgMjE0IDgwMCAxNjggWiIgZmlsbD0iI2ZmZDkzYiIvPgogIDxwYXRoIGQ9Ik0yMzIgNzkwIEMyMzYgODEyIDI0MyA4MTkgMjY1IDgyMyBDMjQzIDgyNyAyMzYgODM0IDIzMiA4NTYgQzIyOCA4MzQgMjIxIDgyNyAxOTkgODIzIEMyMjEgODE5IDIyOCA4MTIgMjMyIDc5MCBaIiBmaWxsPSIjZmZlOWVlIi8+Cjwvc3ZnPgo=" alt="">Snatched</h1><div class="sub" id="todayLabel"></div></div>
     <span class="star s1" aria-hidden="true">★</span><span class="star s2" aria-hidden="true">★</span>
     <button class="icon-btn" data-act="open" data-sheet="settings" aria-label="Settings"><svg class="i"><use href="#i-sliders"/></svg></button>
   </header>
@@ -1338,7 +1341,7 @@ function scheduleNudges() {
         out.push({ id: 1000 + d, title: `Use up tonight: ${soon.slice(0, 2).map(i => i.name.toLowerCase()).join(" & ")}`, body: soon.length > 2 ? `${soon.length - 2} more going bad soon. Tap for a recipe.` : "Tap for a quick recipe that uses it.", schedule: { at: when, allowWhileIdle: true }, extra: { open: "recipes" } });
       }
       const F = fit();
-      if (F.summaryOn !== false) { const [sh, sm] = String(F.summaryTime || "20:30").split(":").map(Number); for (let d = 0; d < 7; d++) { const when = parseId(addDays(todayId(), d)); when.setHours(Number.isFinite(sh) ? sh : 20, Number.isFinite(sm) ? sm : 30, 0, 0); if (when > new Date()) out.push({ id: 2000 + d, title: "Your day in Fridge 🌙", body: "See your calories, steps and goals for today.", schedule: { at: when, allowWhileIdle: true }, extra: { open: "summary" } }); } }
+      if (F.summaryOn !== false) { const [sh, sm] = String(F.summaryTime || "20:30").split(":").map(Number); for (let d = 0; d < 7; d++) { const when = parseId(addDays(todayId(), d)); when.setHours(Number.isFinite(sh) ? sh : 20, Number.isFinite(sm) ? sm : 30, 0, 0); if (when > new Date()) out.push({ id: 2000 + d, title: "Your day in Snatched 🌙", body: "See your calories, steps and goals for today.", schedule: { at: when, allowWhileIdle: true }, extra: { open: "summary" } }); } }
       if (out.length) await Native.LN.schedule({ notifications: out });
     } catch (e) { console.warn("nudges", e); }
   }, 2500);
@@ -1635,7 +1638,7 @@ async function saveBackup() {
   const json = exportData(), name = `fridge-backup-${todayId()}.json`;
   try {
     const f = new File([json], name, { type: "application/json" });
-    if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: "Fridge backup" }); markBackup(); toast("Backup saved."); renderSheet(); return; }
+    if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: "Snatched backup" }); markBackup(); toast("Backup saved."); renderSheet(); return; }
   } catch (e) { if (e && e.name === "AbortError") return; }
   try { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([json], { type: "application/json" })); a.download = name; document.body.appendChild(a); a.click(); a.remove(); markBackup(); toast("Backup downloaded."); renderSheet(); }
   catch (_) { toast("Couldn't save a file here. Use Copy instead."); }
@@ -1925,7 +1928,7 @@ async function pasteHealth() {
 }
 function applyHealth(txt) {
   const raw = String(txt || "").trim().slice(0, 60);
-  if (!/steps|active/i.test(raw)) { toast(raw ? `Your clipboard has “${raw}”, not steps. Run the Fridge Shortcut, then tap Sync.` : "Clipboard is empty. Run the Fridge Shortcut, then tap Sync."); return false; }
+  if (!/steps|active/i.test(raw)) { toast(raw ? `Your clipboard has “${raw}”, not steps. Run your steps Shortcut, then tap Sync.` : "Clipboard is empty. Run your steps Shortcut, then tap Sync."); return false; }
   const v = parseHealthPaste(txt); if (!v || (v.steps == null && v.active == null)) { toast(`The Shortcut sent “${raw}” with no number. Check Health permission for Shortcuts (Settings → Health → Data Access → Shortcuts → Steps).`); return false; }
   if (v.steps === 0 && !(v.active > 0)) { toast("The Shortcut sent 0 steps, so I kept your current count. Turn on Steps for Shortcuts in Settings → Health → Data Access & Devices → Shortcuts."); return false; }
   const id = v.day && v.day <= todayId() ? v.day : todayId();
@@ -2208,12 +2211,12 @@ function activityBlock(T, C, nn) {
     <div class="mini-lbl">Add a workout</div><div class="cats">${WORKOUTS.map(w => `<button class="${(C.wtype || "walk") === w[0] ? "on" : ""}" data-act="wk-type" data-v="${w[0]}">${w[1]} ${w[2]}</button>`).join("")}</div>
     <div class="row" style="justify-content:space-between"><div class="stepper"><button data-act="wk-min" data-d="-5" aria-label="5 minutes less">−</button><output>${C.wmin || 30} min</output><button data-act="wk-min" data-d="5" aria-label="5 minutes more">+</button></div><button class="btn soft sm" data-act="wk-add">Add ${esc((WK[C.wtype || "walk"] || [])[2] || "")}${bodyReady() && !nn ? ` · ≈ ${num(workoutKcal({ type: C.wtype || "walk", min: C.wmin || 30 }))} kcal` : ""}</button></div>
     <details class="tiny muted"><summary style="cursor:pointer;font-weight:700">Get steps from Apple Health in one tap (2-minute setup)</summary><ol class="howto">
-      <li>Open the <b>Shortcuts</b> app → <b>+</b> → name it <b>Fridge steps</b>.</li>
+      <li>Open the <b>Shortcuts</b> app → <b>+</b> → name it <b>Snatched steps</b>.</li>
       <li>Add <b>Find Health Samples</b>: Type <b>Steps</b>, Start Date <b>is today</b>. Then add <b>Calculate Statistics</b> → <b>Sum</b>.</li>
       <li>Add another <b>Find Health Samples</b>: Type <b>Active Energy</b>, today, then <b>Calculate Statistics</b> → <b>Sum</b> (skip if you don't wear a Watch).</li>
       <li>Add <b>Text</b> and type <code>fridge:steps=</code> then insert the first Statistics result, then <code>;active=</code> and the second.</li>
       <li>Add <b>Copy to Clipboard</b>. Allow Health access when asked.</li>
-      <li>Run it (add it to your Home Screen or Back Tap), open Fridge, tap <b>Paste from Health</b>.</li></ol></details>
+      <li>Run it (add it to your Home Screen or Back Tap), open Snatched, tap <b>Paste from Health</b>.</li></ol></details>
   </div>`;
 }
 function stepsChart() {
@@ -2957,7 +2960,7 @@ function studyMetrics() {
     { k: "Active days, last 28", v: `${m28.activeDays}/28`, t: "≥ 16 (wk-4 retention)", ok: m28.activeDays >= 16 },
     { k: "Receipt lines read right", v: fmt(acc, "%"), t: "≥ 90%", ok: acc == null ? null : acc >= 90 }
   ];
-  return { since, rows, text: `What's In My Fridge — self-study metrics${since ? ` (since ${since})` : ""}\n` + rows.map(r => r.head ? `\n${r.head}` : `• ${r.k}: ${r.v} (target ${r.t})`).join("\n") };
+  return { since, rows, text: `Snatched — self-study metrics${since ? ` (since ${since})` : ""}\n` + rows.map(r => r.head ? `\n${r.head}` : `• ${r.k}: ${r.v} (target ${r.t})`).join("\n") };
 }
 
 /* ----- settings ----- */
@@ -3101,7 +3104,7 @@ document.addEventListener("click", e => {
     case "backup-copy": copyBackup(); break;
     case "restore-open": SH.set.restore = true; renderSheet(); break;
     case "restore-no": SH.set.restore = false; SH.set.pending = null; renderSheet(); break;
-    case "restore-check": { const d = parseBackup($("#restoreText")?.value); if (!d) { toast("That doesn't look like a Fridge backup."); break; } SH.set.pending = d; renderSheet(); break; }
+    case "restore-check": { const d = parseBackup($("#restoreText")?.value); if (!d) { toast("That doesn't look like a Snatched backup."); break; } SH.set.pending = d; renderSheet(); break; }
     case "restore-yes": { const d = SH.set.pending; if (!d) break; restoreData(d); closeSheet(); toast("Restored. Welcome back."); break; }
     case "quick-log": { const r = el.getBoundingClientRect(); burst(r.right - 30, r.top + r.height / 2, 14); logFromLibrary(el.dataset.key, el.dataset.slot, 1); break; }
     // log
@@ -3175,7 +3178,7 @@ document.addEventListener("change", e => {
   if (t.id === "scanFile" && t.files?.length && SH?.scan) { setScanFiles(SH.scan, t.files); SH.scan.status = "idle"; SH.scan.rows = []; renderSheet(); return; }
   if (t.id === "qPhotos" && t.files?.length) { const fs = Array.from(t.files); closeSheet(); setTimeout(() => openSheet("scan", { files: fs }), 200); return; }
   if (t.id === "homePhotos" && t.files?.length) { const fs = Array.from(t.files); t.value = ""; if (SH) closeSheet(); setTimeout(() => openSheet("scan", { files: fs }), SH ? 200 : 0); return; }
-  if (t.id === "restoreFile" && t.files?.[0] && SH?.set) { t.files[0].text().then(txt => { const d = parseBackup(txt); if (!d) { toast("That file isn't a Fridge backup."); return; } SH.set.pending = d; renderSheet(); }); return; }
+  if (t.id === "restoreFile" && t.files?.[0] && SH?.set) { t.files[0].text().then(txt => { const d = parseBackup(txt); if (!d) { toast("That file isn't a Snatched backup."); return; } SH.set.pending = d; renderSheet(); }); return; }
   if (t.id === "stepsIn") { const v = Math.round(+t.value); if (t.value === "" || v >= 0) setSteps(v || 0); return; }
   if (t.id === "activeIn") { editAct(todayId(), a => { if (t.value === "") delete a.active; else a.active = Math.max(0, Math.round(+t.value)); }); return; }
   if (t.id === "fitMinIn") { const v = Math.round(+t.value); if (v >= 5) setFit({ activeMin: v }); return; }
@@ -3397,7 +3400,7 @@ function openSampler(key) {
     let last = null;
     for (const model of list.slice(0, 4)) {
       let res;
-      try { res = await fetch(base + "/chat/completions", { method: "POST", signal: o.signal, headers: { "content-type": "application/json", authorization: "Bearer " + key, ...(groq ? {} : { "x-title": "Fridge" }) }, body: JSON.stringify({ model, temperature: 0.2, max_tokens: 4000, messages: [{ role: "user", content: imgs.length ? content : String(input) }], ...(o.json ? { response_format: { type: "json_object" } } : {}) }) }); }
+      try { res = await fetch(base + "/chat/completions", { method: "POST", signal: o.signal, headers: { "content-type": "application/json", authorization: "Bearer " + key, ...(groq ? {} : { "x-title": "Snatched" }) }, body: JSON.stringify({ model, temperature: 0.2, max_tokens: 4000, messages: [{ role: "user", content: imgs.length ? content : String(input) }], ...(o.json ? { response_format: { type: "json_object" } } : {}) }) }); }
       catch (e) { throw { code: e?.name === "AbortError" ? "cancelled" : "network", message: String(e) }; }
       const txt = await res.text(); let j = null; try { j = JSON.parse(txt); } catch (_) {}
       if (res.ok) return { text: j?.choices?.[0]?.message?.content || "", truncated: j?.choices?.[0]?.finish_reason === "length" };
@@ -3644,7 +3647,7 @@ Recent chat:
 ${recent || "(none)"}`;
 }
 function chatPrompt(text, hasImg, imp) {
-  return `You are the assistant inside "Fridge", my personal food, fitness and grocery tracker. Turn my message into actions the app will save. Be accurate with nutrition: this is how I track a calorie deficit.
+  return `You are the assistant inside "Snatched", my personal food, fitness and grocery tracker. Turn my message into actions the app will save. Be accurate with nutrition: this is how I track a calorie deficit.
 
 ${chatContext()}
 
@@ -4024,12 +4027,12 @@ function syncRow(T) {
 }
 function healthCard() {
   return `<div class="card stack" style="gap:10px"><p class="tiny" style="margin:0">Websites can't read Apple Health directly, so a tiny Shortcut copies today's steps and the app grabs them when you tap <b>Sync</b>. Set it up once:</p>
-    <ol class="howto"><li>Open <b>Shortcuts</b> → <b>+</b>, name it <b>Fridge steps</b>.</li>
+    <ol class="howto"><li>Open <b>Shortcuts</b> → <b>+</b>, name it <b>Snatched steps</b>.</li>
     <li>Add <b>Find Health Samples</b> → Steps, Start Date <b>is today</b>. Add <b>Calculate Statistics</b> → <b>Sum</b>.</li>
     <li>If you wear a Watch: another <b>Find Health Samples</b> → Active Energy, today, then <b>Sum</b>.</li>
     <li>Add <b>Text</b>: <code>fridge:steps=</code> + the first Sum, then <code>;active=</code> + the second.</li>
     <li>Add <b>Copy to Clipboard</b>. Run it once and allow Health access.</li>
-    <li>Make it automatic: <b>Automation</b> tab → <b>+</b> → <b>Time of Day</b> (say 12 pm, 6 pm and 9 pm) → <b>Run Immediately</b> → pick Fridge steps.</li></ol>
+    <li>Make it automatic: <b>Automation</b> tab → <b>+</b> → <b>Time of Day</b> (say 12 pm, 6 pm and 9 pm) → <b>Run Immediately</b> → pick Snatched steps.</li></ol>
     <p class="tiny muted" style="margin:0">Then tap the steps sticker on Chat and choose <b>Paste</b>. Workouts you just type in Chat, like “ran 5 km in 30 min” or “45 min weights”.</p>
     <div class="row"><button class="btn sm" data-act="health-sync">Sync steps now</button></div></div>`;
 }
