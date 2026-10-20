@@ -1158,6 +1158,13 @@ body[data-tab=chat] .rc-bar i{background:var(--ink)}
 .lg-net.ok b{color:#1f8a4c}.lg-net.over b{color:var(--red-t)}
 .lg-slot{display:block;font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red-t);margin-top:4px}
 .ledger .lg-mrow{padding-top:0}
+.lg-mtop{display:flex;align-items:center;gap:8px;margin-top:4px}.lg-mtop .lg-slot{margin:0}
+.lg-x{margin-left:auto;background:none;border:1px solid var(--edge);border-radius:999px;font:500 11.5px var(--f);color:var(--ink-2);padding:3px 10px}
+.lg-x:active{background:var(--soft)}
+.lg-twin{font-size:11px;font-weight:600;color:#9a5b00;background:#fff3cf;border-radius:999px;padding:2px 8px}
+.lg-meal.twin{background:linear-gradient(#fffaf0,#fffaf0);margin:0 -8px;padding:4px 8px 6px}
+.lg-wrow{display:flex;align-items:center;gap:8px}.lg-wrow>p{flex:1;min-width:0}
+.lg-add{display:block;width:100%;margin-top:8px;background:none;border:1.5px dashed var(--edge);border-radius:12px;padding:9px;font:600 13px var(--f);color:var(--ink)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -5025,7 +5032,7 @@ function workoutBurnParts(T) {
     const full = workoutKcal(w), m = WK[w.type] || [];
     // walks/runs/hikes are partly already in your steps, so only the extra counts (same rule as the burn maths)
     const overlap = +a.steps > 0 && ["walk", "run", "hike"].includes(w.type) ? Math.round((+w.min || 0) * (w.type === "run" ? 160 : 105) * spc) : 0;
-    return { label: `${m[1] || "💪"} ${m[2] || w.type} · ${w.min} min`, kcal: Math.max(0, full - overlap), note: overlap ? "on top of its steps" : w.kcal != null ? "from your app" : "" };
+    return { id: w.id, label: `${m[1] || "💪"} ${m[2] || w.type} · ${w.min} min`, kcal: Math.max(0, full - overlap), note: overlap ? "on top of its steps" : w.kcal != null ? "from your app" : "" };
   });
 }
 function ledgerCard(T) {
@@ -5038,11 +5045,13 @@ function ledgerCard(T) {
   h += `<div class="lg-h"><b>In</b><span>${num(eaten)} kcal</span></div>`;
   if (!meals.length) h += `<p class="lg-empty">Nothing eaten yet. Tell the chat what you had.</p>`;
   for (const sl of SLOTS) for (const m of meals.filter(x => (x.slot || "snack") === sl)) {
-    h += `<div class="lg-meal"><em class="lg-slot">${slotName(sl)}</em>${row(esc(m.name), num(m.kcal), "lg-mrow", `${Math.round(+m.protein || 0)} g protein`)}`;
+    const twin = meals.filter(x => normName(x.name) === normName(m.name)).length > 1;
+    h += `<div class="lg-meal${twin ? " twin" : ""}"><div class="lg-mtop"><em class="lg-slot">${slotName(sl)}</em>${twin ? `<span class="lg-twin">Logged twice?</span>` : ""}<button class="lg-x" data-act="meal-del" data-id="${esc(m.id)}" aria-label="Remove ${esc(m.name)}">Remove</button></div>${row(esc(m.name), num(m.kcal), "lg-mrow", `${Math.round(+m.protein || 0)} g protein`)}`;
     const items = (m.items || []).filter(x => x && x.name);
     if (items.length > 1 || (items[0] && items[0].name !== m.name)) h += items.map(x => row(`${esc(x.name)}${x.g ? ` · ${num(x.g)} g` : x.amount ? ` · ${esc(x.amount)}` : ""}`, x.kcal != null ? num(x.kcal) : "–", "lg-item")).join("");
     h += `</div>`;
   }
+  h += `<button class="lg-add" data-act="open" data-sheet="log">+ Add food</button>`;
   // OUT
   if (b) {
     h += `<div class="lg-h"><b>Out</b><span>${num(b.total)} kcal</span></div>`;
@@ -5054,9 +5063,10 @@ function ledgerCard(T) {
       h += row("Digestion & everyday life", num(b.base - bmr()), "", "+20%: eating, standing, the first ~2,500 steps");
       const st = +a.steps || 0;
       h += row(`👟 Steps · ${num(st)}`, num(b.steps), "", st > 2500 ? `${num(st - 2500)} steps beyond everyday` : "Not past everyday steps yet");
-      for (const w of workoutBurnParts(T)) h += row(w.label, num(w.kcal), "", w.note);
+      for (const w of workoutBurnParts(T)) h += `<div class="lg-wrow">${row(w.label, num(w.kcal), "", w.note)}<button class="lg-x" data-act="lg-wdel" data-id="${esc(w.id)}" aria-label="Remove ${esc(w.label)}">Remove</button></div>`;
       if (!(a.workouts || []).length) h += `<p class="lg-empty">No workouts logged yet.</p>`;
     }
+    h += `<button class="lg-add" data-act="open" data-sheet="fitness">+ Add workout or steps</button>`;
     const net = b.total - eaten, goal = goalFor(T), left = goal - eaten, dt = typeof deficitTarget === "function" ? deficitTarget() : +S.settings.deficit || 500;
     h += `<div class="lg-total">${row("Burned", num(b.total))}${row("Eaten", "− " + num(eaten))}
       <p class="lg-net ${net >= dt ? "ok" : net < 0 ? "over" : ""}"><span>${net >= 0 ? "Deficit" : "Surplus"}</span><b>${num(Math.abs(net))} kcal</b></p>
@@ -5066,6 +5076,14 @@ function ledgerCard(T) {
   }
   return h + `</div>`;
 }
+
+// remove a workout from the receipt, with undo
+document.addEventListener("click", e => {
+  const el = e.target.closest('[data-act="lg-wdel"]'); if (!el) return;
+  const T = todayId(), w = (actOf(T).workouts || []).find(x => x.id === el.dataset.id); if (!w) return;
+  editAct(T, a => { a.workouts = (a.workouts || []).filter(x => x.id !== w.id); }); refreshSheet();
+  toast(`Removed ${(WK[w.type] || [])[2] || "workout"}.`, () => { editAct(T, a => { a.workouts = [...(a.workouts || []), w]; }); refreshSheet(); });
+});
 
 setInterval(() => { if (!SH) renderHome(); }, 10 * 60 * 1000);
 init();
