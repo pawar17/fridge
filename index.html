@@ -1917,7 +1917,7 @@ function setSteps(n, id = todayId()) { editAct(id, a => { a.steps = Math.max(0, 
 function addWorkout(type, min, id = todayId()) { editAct(id, a => { a.workouts = [...(a.workouts || []), { id: uid(), type, min: Math.max(1, Math.round(min)) }]; }); }
 function parseHealthPaste(t) {
   const s = String(t || ""), out = {};
-  const st = s.match(/steps\s*[=:]\s*([\d,.]+)/i), ac = s.match(/active\s*[=:]\s*([\d,.]+)/i), dy = s.match(/day\s*[=:]\s*(\d{4}-\d{2}-\d{2})/i);
+  const st = s.match(/steps[^\d;]{0,24}?([\d][\d,.]*)/i), ac = s.match(/active[^\d;]{0,24}?([\d][\d,.]*)/i), dy = s.match(/day\s*[=:]\s*(\d{4}-\d{2}-\d{2})/i);
   if (st) out.steps = Math.round(parseFloat(st[1].replace(/,/g, "")));
   if (ac) out.active = Math.round(parseFloat(ac[1].replace(/,/g, "")));
   if (!st && !ac) { const n = s.replace(/,/g, "").match(/\d+(\.\d+)?/); if (n) out.steps = Math.round(+n[0]); }
