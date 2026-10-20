@@ -1124,6 +1124,18 @@ body[data-tab=chat] .rc-bar i{background:var(--ink)}
 .defcard .dstar{width:46px;height:46px;flex:none}.defcard .dstar svg{width:100%;height:100%}
 .defcard>span:nth-child(2){flex:1;display:flex;flex-direction:column}.defcard b{font-size:16px}.defcard small{color:rgba(255,255,255,.65);font-size:12.5px}
 .defcard .btn{background:#ffc83d;color:#141010}
+/* auto targets */
+.aimcard{display:flex;flex-direction:column;gap:10px;background:var(--acc-soft);border-radius:18px;padding:14px}
+.aimcard>small{color:var(--ink-2);font-size:12.5px;line-height:1.4}
+.aimtop{display:flex;justify-content:space-between;align-items:center}.aimcard b{font-size:16px}
+.aimon{background:var(--ink);color:#fff;border-radius:999px;font-size:11.5px;font-weight:600;padding:3px 10px}
+.aimcard .seg{flex-wrap:wrap}
+.aimres{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.aimres p{margin:0;background:#fff;border-radius:12px;padding:8px 10px;display:flex;flex-direction:column}
+.aimres span{font-size:11.5px;color:var(--ink-2)}.aimres b{font-family:var(--fa);font-weight:400;font-size:17px;letter-spacing:-.02em}
+.goal>div{display:flex;flex-direction:column;gap:2px;flex:1;text-align:left}.goal>div small{color:var(--ink-2);font-weight:400;font-size:13px}
+.goal{background:#fff;border:1px solid var(--edge);box-shadow:none}.goal.on{border:1.5px solid var(--ink);background:#fff}
+.goal.on .goal-tick{background:var(--ink);border-color:var(--ink)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1532,14 +1544,9 @@ function vWelcome() {
     <div class="ob-row"><span class="ob-emo">⏰</span><div><b>See what to eat first</b><small>The note on the door always shows what's about to go bad.</small></div></div>
     <div class="ob-row"><span class="ob-emo">🍲</span><div><b>Cook it, log it, done</b><small>One tap logs the meal and takes the food off the shelf.</small></div></div></div>
     <div class="section-t">What do you want help with?</div>
-    <div class="stack" style="gap:8px">${[["waste", "🥬", "Stop food going bad"], ["rebuy", "🛒", "Stop buying things I already have"], ["deficit", "🔥", "Eat in a calorie deficit"], ["habits", "✅", "Build daily food habits"]].map(([k, e, t]) => `<button class="goal ${O.goals[k] ? "on" : ""}" data-act="ob-goal" data-k="${k}"><span style="font-size:22px">${e}</span><b>${t}</b><span class="goal-tick">${O.goals[k] ? icon("check") : ""}</span></button>`).join("")}</div>
+    <div class="stack" style="gap:8px">${[["waste", "🥬", "Stop food going bad"], ["rebuy", "🛒", "Stop buying things I already have"], ["deficit", "🔥", "Hit my fitness & calorie goals"], ["habits", "✅", "Build daily food habits"]].map(([k, e, t]) => `<button class="goal ${O.goals[k] ? "on" : ""}" data-act="ob-goal" data-k="${k}"><span style="font-size:22px">${e}</span><b>${t}</b><span class="goal-tick">${O.goals[k] ? icon("check") : ""}</span></button>`).join("")}</div>
     <button class="btn block" data-act="ob-next">Continue</button></div>`;
-  if (O.step === 1) return `<div class="stack">${dots}${O.goals.deficit ? `<p style="margin:0;font-weight:600">Pick a daily calorie goal. You can change it any time.</p>
-    <div class="chipset">${[1400, 1500, 1600, 1800, 2000].map(k => `<button class="${+O.kcal === k ? "on" : ""}" data-act="ob-kcal" data-k="${k}">${k.toLocaleString()}</button>`).join("")}</div>
-    <div class="grid2"><div><label class="lbl" for="obK">Calories / day</label><input class="inp" id="obK" type="number" inputmode="numeric" value="${esc(O.kcal)}" data-obf="kcal"></div><div><label class="lbl" for="obP">Protein (g)</label><input class="inp" id="obP" type="number" inputmode="numeric" value="${esc(O.protein)}" data-obf="protein"></div></div>
-    <div class="card row" style="justify-content:space-between;flex-wrap:nowrap"><div><b>Hide numbers</b><div class="muted tiny">Track meals without seeing calorie counts, if numbers stress you out.</div></div><button class="switch ${O.noNumbers ? "on" : ""}" data-act="ob-nonum" role="switch" aria-checked="${O.noNumbers}" aria-label="Hide numbers"></button></div>`
-      : `<p style="margin:0;font-weight:600">Got it, no calorie counting. Meals are still logged so the app can learn your go-to dishes.</p>`}
-    ${Native?.LN ? `<div class="card row" style="justify-content:space-between;flex-wrap:nowrap"><div><b>Dinner reminder</b><div class="muted tiny">A 5:30pm nudge with the food you should use up that night. Only sent when something is about to go bad.</div></div><button class="switch ${O.nudge ? "on" : ""}" data-act="ob-nudge" role="switch" aria-checked="${O.nudge}" aria-label="Dinner reminder"></button></div>` : ""}
+  if (O.step === 1) return O.goals.deficit ? vObAim(O, dots) : `<div class="stack">${dots}<p style="margin:0;font-weight:600">Got it, no calorie counting. Meals are still logged so the app can learn your go-to dishes.</p>
     <div class="grid2"><button class="btn soft" data-act="ob-back">Back</button><button class="btn" data-act="ob-next">Continue</button></div></div>`;
   return `<div class="stack">${dots}<p style="margin:0;font-weight:600">How do you want to start?</p>
     <button class="goal start" data-act="ob-finish" data-start="empty"><span style="font-size:26px">📸</span><div><b>With my real fridge</b><small>Clear the example food and scan my last grocery receipt.</small></div></button>
@@ -1548,8 +1555,8 @@ function vWelcome() {
 }
 async function obFinish(start) {
   const O = SH.ob;
-  S.settings = { ...S.settings, onboarded: true, goals: O.goals, kcal: Math.max(800, +O.kcal || 1600), protein: Math.max(20, +O.protein || 100), noNumbers: O.goals.deficit ? O.noNumbers : true, nudge: !!O.nudge };
-  putSettings();
+  S.settings = { ...S.settings, onboarded: true, goals: O.goals, noNumbers: O.goals.deficit ? false : true, nudge: !!O.nudge };
+  putSettings(); if (O.goals.deficit) obSaveAim(O);
   if (O.nudge && Native?.LN) { try { await Native.LN.requestPermissions(); } catch (_) {} }
   closeSheet(); renderAll(); scheduleNudges();
   if (start === "empty") { clearExamples(); setTimeout(() => openSheet("scan"), 350); }
@@ -2147,7 +2154,7 @@ function burnFor(id) {
 const FLOOR = () => (body()?.sex === "m" ? 1500 : 1200);
 function goalFor(id) {
   const st = S.settings;
-  if (st.goalMode === "auto" && bodyReady()) { const b = burnFor(id); /* plan on your burn goal until you actually burn more, so mornings aren't punished */ const planned = Math.max(b.total, +st.burnGoal || 0); return Math.max(FLOOR(), Math.round(planned - (+st.deficit || 500))); }
+  if (st.goalMode === "auto" && bodyReady()) { const b = burnFor(id); /* plan on your burn goal until you actually burn more, so mornings aren't punished */ const planned = Math.max(b.total, +st.burnGoal || expectedBurn()); return Math.max(FLOOR(), Math.round(planned - (+st.deficit || 500))); }
   return +st.kcal || 1600;
 }
 const macroOf = (id, k) => (dayOf(id).meals || []).reduce((s, m) => s + (+m[k] || 0), 0);
@@ -2329,7 +2336,7 @@ function saveProfile(P) {
   const weightKg = us ? Math.round(lbToKg(+P.lb) * 10) / 10 : +P.kg;
   const next = { sex: P.sex, age: Math.round(+P.age), heightCm, weightKg };
   if (!(next.age >= 13 && next.age < 100 && heightCm > 120 && heightCm < 230 && weightKg > 30 && weightKg < 300)) { toast("Check your age, height and weight."); return false; }
-  S.settings = { ...S.settings, body: next, units: P.units, goalMode: S.settings.goalMode || "auto", deficit: S.settings.deficit || 500, stepGoal: S.settings.stepGoal || 8000 };
+  S.settings = { ...S.settings, body: next, units: P.units, goalMode: S.settings.goalMode || "auto", deficit: S.settings.deficit || 500, stepGoal: S.settings.stepGoal || 8000 }; if (!S.settings.aim) setAim({ type: "recomp" });
   putSettings(); renderAll(); return true;
 }
 const fmtW = kg => (S.settings.units || "us") === "us" ? `${Math.round(kgToLb(kg))} lb` : `${Math.round(kg * 10) / 10} kg`;
@@ -2733,7 +2740,7 @@ function openSheet(kind, opts = {}, src) {
     if (kind === "summary") SH.day = opts.day || todayId();
     if (kind === "check") SH.check = { ids: needsCheck().map(i => i.id), i: 0 };
     if (kind === "insights") SH.tab = opts.tab || "week";
-    if (kind === "welcome") SH.ob = { step: 0, goals: { waste: true, rebuy: true, deficit: true, habits: false }, kcal: S.settings.kcal || 1600, protein: S.settings.protein || 100, noNumbers: false, nudge: true };
+    if (kind === "welcome") { const b = body() || {}, us = (S.settings.units || "us") === "us"; SH.ob = { step: 0, goals: { waste: true, rebuy: true, deficit: true, habits: false }, noNumbers: false, nudge: true, aim: aim()?.type || "recomp", pace: aim()?.pace || 0.5, sex: b.sex || "f", units: us ? "us" : "metric", age: b.age || "", lb: b.weightKg ? Math.round(kgToLb(b.weightKg)) : "", kg: b.weightKg || "", ft: b.heightCm ? Math.floor(b.heightCm / 30.48) : "", inch: b.heightCm ? Math.round((b.heightCm / 2.54) % 12) : "", cm: b.heightCm || "", wk: +fit().weekWorkouts || 3 }; }
     if (kind === "goals") SH.goal = { day: opts.day || todayId(), hn: "", ht: 1 };
     if (kind === "scan" && opts.mode) SH.scan.mode = opts.mode;
     if (kind === "recipes" && opts.tab === "saved") { SH.rec.tab = "saved"; SH.rec.tonight = SH.rec.list; }
@@ -3836,8 +3843,14 @@ function applyActions(res) {
   if (sb && (+sb.weight_kg > 25 || +sb.height_cm > 100 || +sb.age >= 13 || /^[fm]/i.test(sb.sex || ""))) {
     if (!U.settingsPrev) U.settingsPrev = { ...S.settings };
     const b0 = body() || {}, nb = { ...b0, ...(+sb.weight_kg > 25 ? { weightKg: Math.round(+sb.weight_kg * 10) / 10 } : {}), ...(+sb.height_cm > 100 ? { heightCm: Math.round(+sb.height_cm) } : {}), ...(+sb.age >= 13 ? { age: Math.round(+sb.age) } : {}), ...(/^[fm]/i.test(sb.sex || "") ? { sex: sb.sex[0].toLowerCase() } : {}) };
-    S.settings = { ...S.settings, body: nb }; putSettings();
+    S.settings = { ...S.settings, body: nb }; putSettings(); if (bodyReady()) { if (!S.settings.aim) setAim({ type: "recomp" }); else refreshAim(); }
     blocks.push({ k: "goals", names: [`body: ${[nb.weightKg && nb.weightKg + " kg", nb.heightCm && nb.heightCm + " cm", nb.age && nb.age + " y", nb.sex && (nb.sex === "f" ? "female" : "male")].filter(Boolean).join(", ")}${bodyReady() ? ` · resting burn ${num(bmr())} kcal` : ""}`] });
+  }
+  const sa = res.set_aim;
+  if (sa && AIMS[sa.type]) {
+    if (!U.settingsPrev) U.settingsPrev = { ...S.settings };
+    const p = setAim({ type: sa.type, ...(+sa.pace_kg_week > 0 ? { pace: Math.min(1, +sa.pace_kg_week) } : {}), ...(+sa.target_kg > 25 ? { targetKg: Math.round(+sa.target_kg * 10) / 10 } : {}) });
+    blocks.push({ k: "goals", names: p ? [`${AIMS[sa.type]}: eat ${num(p.kcal)} kcal`, `${p.protein} g protein`, `${p.fiber} g fiber`, `fat ≤ ${p.fatMax} g`, `burn ${num(p.burn)} kcal`].concat(p.weeks ? [`goal weight in ~${p.weeks} weeks`] : []) : [`${AIMS[sa.type]} saved · add your height, weight, age and sex to get numbers`] });
   }
   const gch = setGoalsFrom(res.set_goals, U); if (gch.length) blocks.push({ k: "goals", names: gch });
   const hab = habitsFrom(res.habits_done, U); if (hab.length) blocks.push({ k: "habits", names: hab });
@@ -3909,6 +3922,7 @@ ${staplesForPrompt()}
 - Corrections ("actually 2 slices", "remove the latte", "that run was 40 min"): put the old id in delete_meal_ids / delete_workout_ids and add the corrected entry.
 - Groceries: bought/got/picked up → bought (it goes into my fridge). "I have", "there's X in my fridge/pantry" → have. "add X to my list", "need X", "buy X" → grocery_add. Finished, used up, ran out of → used_up (also grocery_add if I say I need more). Threw out, tossed, went bad → tossed. "Got X" for list items also counts as bought. For bought/have items give qty, price if I said it, "where" (fridge, freezer or pantry) and "shelf_days" (typical days it stays good there).
 - My body ("I'm 55 kg, 5 ft 1, 22, female") → set_body in metric.
+- My overall aim ("I want to lose 5 kg", "lose a pound a week", "recomp", "maintain", "build muscle", "get to 120 lb") → set_aim in kg. The app calculates calories, protein, fiber, fat and burn itself from my body stats, so do NOT put numbers in set_goals for an aim. Only use set_goals when I give an exact number.
 - Goals: "set my protein goal to 120 g", "25 g fiber", "fat under 50 g", "burn 1800 a day", "10k steps a day", "4 workouts a week", "500 calorie deficit", "1600 calories a day", "add a habit: read 20 min" → set_goals. Doing a habit ("drank 3 glasses of water", "read today") → habits_done with the habit's exact name, count = total for today (set "add": true if they say "another"/"2 more").
 - Questions ("what can I make?", "how am I doing?", "is this healthy?") → "answer" (1-3 short sentences using my data). For cooking ideas add up to 3 "ideas" that use food in my fridge, soonest-expiring first, high protein, fitting my calories left.
 - "reply": one short, warm sentence about what you saved. No calorie math in it, the app shows the numbers.
@@ -3924,6 +3938,7 @@ Return JSON only, in this shape (leave out empty fields):
  "bought": [{"name": string, "qty": number, "price": number, "where": string, "shelf_days": number}],
  "have": [same as bought], "grocery_add": [string], "remove_from_list": [string], "used_up": [string], "tossed": [string],
  "set_body": {"weight_kg": number, "height_cm": number, "age": number, "sex": "f"|"m"},
+ "set_aim": {"type": "lose"|"recomp"|"maintain"|"gain", "target_kg": number, "pace_kg_week": number},
  "set_goals": {"protein": number, "fiber": number, "fat_max": number, "burn": number, "steps": number, "kcal": number, "deficit": number, "active_min": number, "week_workouts": number, "habits_add": [{"name": string, "target": number, "unit": string}]},
  "habits_done": [{"name": string, "count": number, "add": boolean}],
  "answer": string, "ideas": [{"name": string, "minutes": number, "kcal": number, "protein": number, "uses": [string], "ingredients": [string], "steps": [string]}]}`;
@@ -4033,7 +4048,7 @@ function logRecipe(id, servings = 1) {
 /* ---------- rendering ---------- */
 const TABS = [["chat", "chat", "Chat", "butter"], ["fridge", "fridge", "At home", "mint"], ["groceries", "cart", "To buy", "pink"], ["recipes", "book", "Recipes", "peach"], ["train", "dumbbell", "Train", "pink"]];
 const PAL = ["peach", "sky", "mint", "pink", "butter", "lilac"];
-function renderAll() { renderHome(); scheduleNudges(); }
+function renderAll() { refreshAim(); renderHome(); scheduleNudges(); }
 function renderDock() {}
 function renderMagnets() {}
 function placeMagnets() {}
@@ -4291,7 +4306,7 @@ async function healthSync() {
 /* ---------- the recomp plan (numbers checked against USDA + your labels) ---------- */
 function applyPlan() {
   const prev = { ...S.settings };
-  S.settings = { ...S.settings, kcal: 1400, deficit: 400, goalMode: "fixed", protein: 105, fiber: 25, fatMax: 50, burnGoal: 1800, stepGoal: 8000, planSet: true, fit: { ...fit(), weekWorkouts: 5, activeMin: 30 } };
+  S.settings = { ...S.settings, kcal: 1400, deficit: 400, goalMode: "fixed", aim: S.settings.aim ? { ...S.settings.aim, auto: false } : null, protein: 105, fiber: 25, fatMax: 50, burnGoal: 1800, stepGoal: 8000, planSet: true, fit: { ...fit(), weekWorkouts: 5, activeMin: 30 } };
   putSettings();
   const R = [
     { name: "Morning drinks", servings: 1, items: [{ name: "Ghee", amount: "14 g (turmeric + splash ACV)", grams: 14 }, { name: "Apple cider vinegar", amount: "15 g", grams: 15 }, { name: "Carrot-orange-ginger juice", amount: "120 g", grams: 120 }, { name: "Coconut water", amount: "60 g", grams: 60 }, { name: "Lemon juice", amount: "15 g", grams: 15 }, { name: "Jeera, ajwain & saunf water", amount: "240 g, strained", kcal: 5, carbs: 1 }] },
@@ -4434,7 +4449,7 @@ function vGoals() {
   h += `<div class="glist">${list.map(x => goalRowHtml(x, T)).join("")}</div>`;
   { const dz = deficitToday(T); if (dz) h += `<div class="defcard"><span class="dstar">${starSVG("d")}</span><span><b>${num(Math.max(0, dz.def))} kcal deficit</b><small>${dz.hit ? "Hit! One day closer ⭐️" : `Goal ${num(dz.target)} · counts once you've eaten and moved`}</small></span><button class="btn sm" data-act="star-preview">Preview</button></div>`; }
   h += `<div class="section-t">Steps from Apple Health</div>${healthCard()}`;
-  h += `<div class="section-t">My goals</div><div class="card stack" style="gap:12px">
+  h += `<div class="section-t">My goals</div><div class="card stack" style="gap:12px">${aimCard()}
     <div class="plan"><div><b>My recomp plan</b><small>Eat 1,400 · burn 1,800 · 105 g protein · 25 g fiber · fat ≤ 50 g · 8,000 steps · 5 workouts a week. Also saves your morning drinks, breakfast bowl and night stack as recipes.</small></div><button class="btn sm" data-act="g-plan">${st.planSet ? "Re-apply" : "Use it"}</button></div>`;
   if (!st.noNumbers) {
     const auto = st.goalMode === "auto" && bodyReady();
@@ -4466,6 +4481,7 @@ function setGoalsFrom(sg, U) {
   if (+sg.week_workouts > 0) { f.weekWorkouts = Math.round(+sg.week_workouts); changes.push(`${f.weekWorkouts} workouts a week`); }
   for (const hb of Array.isArray(sg.habits_add) ? sg.habits_add : []) { if (!hb?.name || (st.habits || []).some(x => normName(x.name) === normName(hb.name))) continue; st.habits = [...(st.habits || []), { id: uid(), name: String(hb.name), target: Math.max(1, Math.round(+hb.target || 1)), unit: hb.unit ? String(hb.unit) : "" }]; changes.push(`new habit: ${hb.name}`); }
   if (!changes.length) return [];
+  if (st.aim?.auto && ["protein", "kcal", "deficit", "fiber", "fat_max", "burn"].some(k => +sg[k] > 0)) st.aim = { ...st.aim, auto: false };
   st.fit = f; S.settings = st; putSettings(); U.settingsPrev = prev;
   return changes;
 }
@@ -4499,7 +4515,7 @@ document.addEventListener("change", e => {
   const t = e.target, f = t.dataset.goalf; if (!f) return;
   const v = Math.round(+t.value); if (!(v > 0)) return;
   if (f === "activeMin" || f === "weekWorkouts") setFit({ [f]: v });
-  else { S.settings = { ...S.settings, [f]: v, ...(f === "kcal" ? { goalMode: "fixed" } : {}) }; putSettings(); renderAll(); }
+  else { const manual = ["kcal", "protein", "fiber", "fatMax", "burnGoal"].includes(f) && aim()?.auto; S.settings = { ...S.settings, [f]: v, ...(f === "kcal" ? { goalMode: "fixed" } : {}), ...(manual ? { aim: { ...aim(), auto: false } } : {}) }; putSettings(); renderAll(); }
   setTimeout(() => { if (SH?.kind === "goals") renderSheet(); }, 0);
 });
 
@@ -4802,6 +4818,132 @@ function showWin(d) {
   const close = () => { el.classList.add("out"); setTimeout(() => { stop(); el.remove(); }, 350); };
   el.addEventListener("click", close);
 }
+
+/* ---------- auto targets: tell it your goal, it works out calories, protein, fiber, fat and burn ----------
+   All maths is done here, never guessed by the AI:
+   - resting burn: Mifflin–St Jeor; daily burn = resting × 1.2 + steps above 2,500 + your planned workouts
+   - deficit: fat loss = pace × 7,700 kcal per kg ÷ 7 (capped at 25% of burn); recomp = 20% of burn; build = +250
+   - protein: 1.8 g per kg of goal weight (1.6 to maintain); fiber: 14 g per 1,000 kcal (25 g minimum);
+     fat: about 30% of calories, never under 0.8 g per kg */
+const AIMS = { lose: "Lose fat", recomp: "Recomp", maintain: "Maintain", gain: "Build" };
+const aim = () => S.settings.aim || null;
+// A normal day for you: resting burn × 1.2 + your step goal above 2,500 + your weekly workouts spread over 7 days (~45 min strength each)
+function expectedBurn() {
+  if (!bodyReady()) return 0;
+  const kg = body().weightKg, steps = stepGoal() || 8000, wk = +fit().weekWorkouts || 3;
+  return r50(bmr() * 1.2 + Math.max(0, steps - 2500) * kcalPerStep() + wk * (5 - 1) * kg * 0.75 / 7);
+}
+const r5 = x => Math.round(x / 5) * 5, r50 = x => Math.round(x / 50) * 50;
+function computePlan(a = aim()) {
+  if (!a || !bodyReady()) return null;
+  const b = body(), kg = b.weightKg, B = bmr();
+  const burn = expectedBurn();
+  const pace = +a.pace || 0.5;
+  let deficit = a.type === "lose" ? Math.min(pace * 7700 / 7, burn * 0.25) : a.type === "recomp" ? burn * 0.2 : a.type === "gain" ? -250 : 0;
+  deficit = r50(deficit);
+  const kcal = Math.max(FLOOR(), Math.round((burn - deficit) / 10) * 10);
+  const tgt = +a.targetKg > 25 ? +a.targetKg : 0;
+  const refKg = tgt && (a.type === "lose" || a.type === "recomp") ? Math.min(kg, Math.max(tgt, kg * 0.85)) : kg;
+  const protein = Math.min(r5(refKg * (a.type === "maintain" ? 1.6 : 1.8)), r5(kcal * 0.4 / 4));
+  const fiber = Math.max(25, r5(kcal / 1000 * 14));
+  const fatMax = r5(Math.max(kcal * 0.3 / 9, kg * 0.8));
+  let weeks = null;
+  if (tgt && a.type === "lose" && kg > tgt) weeks = Math.ceil((kg - tgt) / Math.max(0.1, deficit * 7 / 7700));
+  return { burn, deficit, kcal, protein, fiber, fatMax, weeks, bmr: B };
+}
+// Put the plan into your goals. Calories then follow your activity: burn goal (or more, if you move more) minus the deficit.
+function applyAimPlan(p, quiet) {
+  if (!p) return false;
+  const st = S.settings;
+  const next = { burnGoal: p.burn, deficit: Math.max(0, p.deficit), kcal: p.kcal, protein: p.protein, fiber: p.fiber, fatMax: p.fatMax, goalMode: p.deficit >= 0 ? "auto" : "fixed" };
+  if (Object.keys(next).every(k => st[k] === next[k])) return false;
+  S.settings = { ...st, ...next }; putSettings();
+  if (!quiet) toast(`Targets set: ${num(p.kcal)} kcal, ${p.protein} g protein.`);
+  return true;
+}
+function setAim(patch) {
+  const a = { type: "recomp", pace: 0.5, ...(aim() || {}), ...patch, auto: true };
+  S.settings = { ...S.settings, aim: a }; putSettings();
+  return applyAimPlan(computePlan(a), true), computePlan(a);
+}
+// Keep targets in step with your weight and step/workout goals while auto is on.
+function refreshAim() { const a = aim(); if (a && a.auto) applyAimPlan(computePlan(a), true); }
+function aimCard() {
+  if (!bodyReady()) return `<div class="aimcard"><b>Auto targets</b><small>Add your height, weight, age and sex and the app works out your calories, protein, fiber and fat for you.</small><button class="btn sm" data-act="open" data-sheet="calories">Add body stats</button></div>`;
+  const a = aim() || { type: "recomp", pace: 0.5 }, p = computePlan(a), us = (S.settings.units || "us") === "us";
+  const paces = us ? [[0.23, "½ lb"], [0.45, "1 lb"], [0.68, "1½ lb"]] : [[0.25, "0.25 kg"], [0.5, "0.5 kg"], [0.75, "0.75 kg"]];
+  const tv = +a.targetKg > 25 ? (us ? Math.round(kgToLb(a.targetKg)) : a.targetKg) : "";
+  return `<div class="aimcard">
+    <div class="aimtop"><b>Auto targets</b>${a.auto ? `<span class="aimon">On</span>` : ""}</div>
+    <div class="seg">${Object.entries(AIMS).map(([k, l]) => `<button class="${a.type === k ? "on" : ""}" data-act="aim-type" data-v="${k}">${l}</button>`).join("")}</div>
+    ${a.type === "lose" ? `<div><label class="lbl">Pace per week</label><div class="seg">${paces.map(([v, l]) => `<button class="${Math.abs((+a.pace || 0.5) - v) < 0.05 ? "on" : ""}" data-act="aim-pace" data-v="${v}">${l}</button>`).join("")}</div></div>` : ""}
+    ${a.type === "lose" || a.type === "recomp" ? `<div><label class="lbl" for="aimT">Goal weight (${us ? "lb" : "kg"}, optional)</label><input class="inp" id="aimT" type="number" inputmode="decimal" value="${esc(tv)}" placeholder="${us ? Math.round(kgToLb(body().weightKg)) : body().weightKg}" data-aimt="1"></div>` : ""}
+    ${p ? `<div class="aimres"><p><span>Eat</span><b>${num(p.kcal)} kcal</b></p><p><span>Protein</span><b>${p.protein} g</b></p><p><span>Fiber</span><b>${p.fiber} g+</b></p><p><span>Fat</span><b>≤ ${p.fatMax} g</b></p><p><span>Burn</span><b>${num(p.burn)} kcal</b></p><p><span>${p.deficit >= 0 ? "Deficit" : "Surplus"}</span><b>${num(Math.abs(p.deficit))} kcal</b></p></div>
+    <small>Resting burn ${num(p.bmr)} kcal (Mifflin–St Jeor for ${fmtW(body().weightKg)}), plus your ${num(stepGoal() || 8000)} steps and ${+fit().weekWorkouts || 3} workouts a week. Protein is 1.8 g per kg of goal weight.${p.weeks ? ` At this pace you'd reach ${fmtW(a.targetKg)} in about ${p.weeks} weeks.` : ""}${p.kcal === FLOOR() ? ` Calories won't go below ${num(FLOOR())}.` : ""}</small>` : ""}
+    <button class="btn" data-act="aim-use">${a.auto ? "On · updates when your weight changes" : "Use these targets"}</button>
+  </div>`;
+}
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el || !SH || SH.kind !== "goals") return;
+  const act = el.dataset.act;
+  if (act === "aim-type") { setAim({ type: el.dataset.v }); renderAll(); renderSheet(); }
+  else if (act === "aim-pace") { setAim({ pace: +el.dataset.v }); renderAll(); renderSheet(); }
+  else if (act === "aim-use") { const p = setAim({}); if (p) toast(`Targets set: ${num(p.kcal)} kcal, ${p.protein} g protein.`); renderAll(); renderSheet(); }
+});
+document.addEventListener("change", e => {
+  if (!e.target.dataset.aimt) return;
+  const v = +e.target.value, us = (S.settings.units || "us") === "us";
+  setAim({ targetKg: v > 0 ? Math.round((us ? lbToKg(v) : v) * 10) / 10 : null }); renderAll();
+  setTimeout(() => { if (SH?.kind === "goals") renderSheet(); }, 0);
+});
+
+/* ---------- setup: pick a goal + your body, the app does the maths ---------- */
+const OB_AIMS = [["recomp", "💪", "Body recomp", "Lose fat and build muscle at the same time"], ["lose", "🔥", "Lose weight", "A steady calorie deficit"], ["maintain", "⚖️", "Maintain", "Stay where you are, eat well"], ["gain", "🏋️‍♀️", "Gain weight / build", "A small surplus to build muscle"]];
+function obBody(O) {
+  const us = O.units === "us", lb = +O.lb, kg = us ? lbToKg(lb) : +O.kg, cm = us ? (+O.ft * 12 + +(O.inch || 0)) * 2.54 : +O.cm;
+  return { weightKg: Math.round(kg * 10) / 10, heightCm: Math.round(cm), age: Math.round(+O.age), sex: O.sex };
+}
+function obPlan(O) {
+  const b = obBody(O); if (!(b.weightKg > 25 && b.heightCm > 100 && b.age >= 13)) return null;
+  const keep = S.settings; S.settings = { ...keep, body: b, fit: { ...fit(), weekWorkouts: +O.wk } };
+  try { return computePlan({ type: O.aim, pace: +O.pace || 0.5 }); } finally { S.settings = keep; }
+}
+function obResult(O) {
+  const p = obPlan(O);
+  if (!p) return `<p class="muted tiny" style="margin:0">Fill in your body stats and your targets appear here.</p>`;
+  return `<div class="aimres"><p><span>Eat</span><b>${num(p.kcal)} kcal</b></p><p><span>Protein</span><b>${p.protein} g</b></p><p><span>Fiber</span><b>${p.fiber} g+</b></p><p><span>Fat</span><b>≤ ${p.fatMax} g</b></p><p><span>Burn</span><b>${num(p.burn)} kcal</b></p><p><span>${p.deficit >= 0 ? "Deficit" : "Surplus"}</span><b>${num(Math.abs(p.deficit))} kcal</b></p></div>
+    <p class="muted tiny" style="margin:0">Worked out from your resting burn (Mifflin–St Jeor), 8,000 steps and ${+O.wk} workouts a week. On days you move more, you get to eat more.</p>`;
+}
+function vObAim(O, dots) {
+  const us = O.units === "us";
+  const seg = (act, opts, cur) => `<div class="seg">${opts.map(([v, l]) => `<button class="${String(cur) === String(v) ? "on" : ""}" data-act="${act}" data-v="${v}">${l}</button>`).join("")}</div>`;
+  return `<div class="stack">${dots}<p style="margin:0;font-weight:600">What's your goal?</p>
+    <div class="stack" style="gap:8px">${OB_AIMS.map(([k, e, t, d]) => `<button class="goal ${O.aim === k ? "on" : ""}" data-act="ob-aim" data-v="${k}"><span style="font-size:22px">${e}</span><div><b>${t}</b><small>${d}</small></div><span class="goal-tick">${O.aim === k ? icon("check") : ""}</span></button>`).join("")}</div>
+    ${O.aim === "lose" ? `<div><label class="lbl">Pace per week</label>${seg("ob-pace", us ? [[0.23, "½ lb"], [0.45, "1 lb"], [0.68, "1½ lb"]] : [[0.25, "0.25 kg"], [0.5, "0.5 kg"], [0.75, "0.75 kg"]], O.pace)}</div>` : ""}
+    <div class="section-t">About you</div>
+    <div class="grid2"><div><label class="lbl">Sex</label>${seg("ob-sex", [["f", "Female"], ["m", "Male"]], O.sex)}</div><div><label class="lbl">Units</label>${seg("ob-units", [["us", "lb · ft"], ["metric", "kg · cm"]], O.units)}</div></div>
+    <div class="grid2"><div><label class="lbl" for="obAge">Age</label><input class="inp" id="obAge" type="number" inputmode="numeric" value="${esc(O.age)}" data-ob2="age"></div>
+    ${us ? `<div><label class="lbl" for="obLb">Weight (lb)</label><input class="inp" id="obLb" type="number" inputmode="decimal" value="${esc(O.lb)}" data-ob2="lb"></div>` : `<div><label class="lbl" for="obKg">Weight (kg)</label><input class="inp" id="obKg" type="number" inputmode="decimal" value="${esc(O.kg)}" data-ob2="kg"></div>`}</div>
+    ${us ? `<div class="grid2"><div><label class="lbl" for="obFt">Height (ft)</label><input class="inp" id="obFt" type="number" inputmode="numeric" value="${esc(O.ft)}" data-ob2="ft"></div><div><label class="lbl" for="obIn">(in)</label><input class="inp" id="obIn" type="number" inputmode="numeric" value="${esc(O.inch)}" data-ob2="inch"></div></div>` : `<div><label class="lbl" for="obCm">Height (cm)</label><input class="inp" id="obCm" type="number" inputmode="numeric" value="${esc(O.cm)}" data-ob2="cm"></div>`}
+    <div><label class="lbl">Workouts a week</label>${seg("ob-wk", [[0, "0"], [2, "1–2"], [3, "3"], [4, "4"], [5, "5+"]], O.wk)}</div>
+    <div class="section-t">Your targets</div><div class="card stack" id="obRes" style="gap:10px">${obResult(O)}</div>
+    <div class="grid2"><button class="btn soft" data-act="ob-back">Back</button><button class="btn" data-act="ob-next">Continue</button></div></div>`;
+}
+function obSaveAim(O) {
+  const b = obBody(O); if (!(b.weightKg > 25 && b.heightCm > 100 && b.age >= 13)) return;
+  S.settings = { ...S.settings, body: b, units: O.units, stepGoal: S.settings.stepGoal || 8000, fit: { ...fit(), weekWorkouts: +O.wk } };
+  setAim({ type: O.aim, pace: +O.pace || 0.5 });
+}
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el || SH?.kind !== "welcome") return;
+  const O = SH.ob, k = { "ob-aim": "aim", "ob-pace": "pace", "ob-sex": "sex", "ob-units": "units", "ob-wk": "wk" }[el.dataset.act];
+  if (!k) return;
+  O[k] = el.dataset.v; renderSheet();
+});
+document.addEventListener("input", e => {
+  const f = e.target.dataset?.ob2; if (!f || SH?.kind !== "welcome") return;
+  SH.ob[f] = e.target.value; const r = document.getElementById("obRes"); if (r) r.innerHTML = obResult(SH.ob);
+});
 
 setInterval(() => { if (!SH) renderHome(); }, 10 * 60 * 1000);
 init();
