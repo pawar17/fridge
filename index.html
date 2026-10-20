@@ -3981,6 +3981,7 @@ ${staplesForPrompt()}
 - If I ate one of my saved recipes, set "recipe" to its exact name and "servings" (or "grams" if I weighed my portion), and put only extras in "items". Never repeat the recipe's own ingredients.
 - A recipe (a dish name with ingredients and amounts, "makes 4", "recipe:", "I cooked/meal prepped") goes in save_recipes with every ingredient and its total amount for the whole batch, plus servings (default 1) and cooked_weight_g if I give it. Only also log a meal if I say I ate some.
 - "slot": breakfast, lunch, dinner or snack. Use my words, otherwise the time of day.
+- Branded or named classes and studios (SoulCycle, Bout Fit Club, Barry's, Orangetheory, Solidcore, F45, Rumble, a gym's named class…): add "studio": the studio/class name and "research": true so the app looks up what the class actually involves; still give your best type, minutes and MET. If I didn't give a length, set "minutes_guessed": true.
 - Workouts: "type" is one of ${WTYPES.join(", ")}. Give minutes and a MET from the Compendium of Physical Activities that matches the pace, intensity, incline or weight I describe. Put distance, pace, sets x reps x weight in "details". If minutes are missing, estimate them and say so in details.
 - Other apps (screenshots or pasted text): Strava activity → a workout with distance, pace, elevation in details and the calories it shows as "app_kcal". Hevy workout → a gym workout with each exercise's sets x reps x weight in details, its duration, and calories if shown. MyFitnessPal diary → one meal per section (breakfast, lunch, dinner, snacks) with each food and its calories and macros as shown. Apple Health or Fitness → steps, active_kcal, and any workouts. Set "source" to the app's name on everything you import. Skip anything that matches a meal or workout already logged today (same food or same type and similar time), so nothing is counted twice.
 - Steps → "steps". Active calories from my watch → "active_kcal". My body weight → "weight".
@@ -3997,7 +3998,7 @@ Return JSON only, in this shape (leave out empty fields):
 {"reply": string,
  "meals": [{"name": string, "slot": string, "source": string, "recipe": string|null, "servings": number|null, "grams": number|null, "items": [{"name": string, "brand": string, "amount": string, "grams": number, "kcal": number, "protein": number, "carbs": number, "fat": number, "fiber": number, "needs_lookup": boolean}]}],
  "save_recipes": [{"name": string, "servings": number, "cooked_weight_g": number|null, "source_url": string|null, "items": [same item shape, amounts for the whole batch], "steps": [string]}],
- "workouts": [{"type": string, "name": string, "minutes": number, "met": number, "details": string, "app_kcal": number, "source": string}],
+ "workouts": [{"type": string, "name": string, "minutes": number, "minutes_guessed": boolean, "met": number, "details": string, "app_kcal": number, "source": string, "studio": string, "research": boolean}],
  "steps": number, "active_kcal": number, "weight": {"value": number, "unit": "lb"|"kg"},
  "delete_meal_ids": [string], "delete_workout_ids": [string],
  "bought": [{"name": string, "qty": number, "price": number, "where": string, "shelf_days": number}],
@@ -4021,6 +4022,7 @@ function localParse(text) {
   if ((m = s.match(/^(?:set\s+)?(?:my\s+)?(protein|step|steps|calorie|calories)\s+goal\s+(?:to|is|=)?\s*([\d,]+)/i))) { const v = +m[2].replace(/,/g, ""), k = /protein/i.test(m[1]) ? "protein" : /step/i.test(m[1]) ? "steps" : "kcal"; return { set_goals: { [k]: v }, reply: "Goal updated." }; }
   const hb = (S.settings.habits || []).find(h => tokens(h.name).some(t => t.length > 3 && low.includes(t)));
   if (hb && /\b(drank|did|done|finished|went|read|took|cooked)\b/.test(low) && !/\b(ate|breakfast|lunch|dinner|snack)\b/.test(low)) { const n = (low.match(/(\d+)/) || [])[1]; return { habits_done: [{ name: hb.name, count: n ? +n : undefined }], reply: "Nice." }; }
+  { const c = localClass(s); if (c && !/\b(ate|breakfast|lunch|dinner|snack)\b/.test(low)) return { workouts: [c], reply: `Logged ${c.name}.` }; }
   const it = detectIntent(s);
   if (it?.kind === "steps") return { steps: it.v, reply: "Steps saved." };
   if (it?.kind === "active") return { active_kcal: it.v, reply: "Active calories saved." };
@@ -4071,6 +4073,7 @@ async function chatSend(textArg) {
     try {
       res = await AI.fn.json(chatPrompt(text, img, imp) + (link ? linkPrompt(page, link, text) : ""), { signal: CH.ctl.signal, ...(img ? { images: imgs } : {}), ...(link && !page && AI.via === "gemini" ? { url: true } : {}) });
       if (res && Array.isArray(res.meals) && res.meals.some(m => (m?.items || []).some(x => x?.needs_lookup))) await lookUpItems(res.meals, CH.ctl.signal);
+      if (res && Array.isArray(res.workouts) && res.workouts.some(w => w && (w.research || w.studio))) await researchClasses(res.workouts, CH.ctl.signal);
     } catch (e) {
       if (e?.code === "cancelled") { CH.busy = false; pushMsg({ who: "app", text: "Stopped." }); return; }
       err = ["gemini", "groq", "openrouter"].includes(AI.via) && ["bad_key", "network", "upstream_error", "no_model"].includes(e?.code) ? keyErrText(e) : aiErr(e);
@@ -5042,7 +5045,7 @@ function workoutBurnParts(T) {
     const full = workoutKcal(w), m = WK[w.type] || [];
     // walks/runs/hikes are partly already in your steps, so only the extra counts (same rule as the burn maths)
     const overlap = +a.steps > 0 && ["walk", "run", "hike"].includes(w.type) ? Math.round((+w.min || 0) * (w.type === "run" ? 160 : 105) * spc) : 0;
-    return { id: w.id, label: `${m[1] || "💪"} ${m[2] || w.type} · ${w.min} min`, kcal: Math.max(0, full - overlap), note: overlap ? "on top of its steps" : w.kcal != null ? "from your app" : "" };
+    return { id: w.id, label: `${m[1] || "💪"} ${esc(w.name || m[2] || w.type)} · ${w.min} min`, kcal: Math.max(0, full - overlap), note: overlap ? "on top of its steps" : w.kcal != null ? "from your app" : "" };
   });
 }
 function ledgerCard(T) {
@@ -5092,7 +5095,7 @@ document.addEventListener("click", e => {
   const el = e.target.closest('[data-act="lg-wdel"]'); if (!el) return;
   const T = todayId(), w = (actOf(T).workouts || []).find(x => x.id === el.dataset.id); if (!w) return;
   editAct(T, a => { a.workouts = (a.workouts || []).filter(x => x.id !== w.id); }); refreshSheet();
-  toast(`Removed ${(WK[w.type] || [])[2] || "workout"}.`, () => { editAct(T, a => { a.workouts = [...(a.workouts || []), w]; }); refreshSheet(); });
+  toast(`Removed ${w.name || (WK[w.type] || [])[2] || "workout"}.`, () => { editAct(T, a => { a.workouts = [...(a.workouts || []), w]; }); refreshSheet(); });
 });
 
 /* ---------- paste a recipe link: read the page, save the recipe, log a serving ---------- */
@@ -5130,6 +5133,59 @@ function ldToRes(ld, url, text) {
   const item = { name: `${name} (site nutrition)`, amount: `${serv} servings`, kcal: k * serv, protein: (numIn(n.proteinContent) || 0) * serv, carbs: (numIn(n.carbohydrateContent) || 0) * serv, fat: (numIn(n.fatContent) || 0) * serv, fiber: (numIn(n.fiberContent) || 0) * serv };
   const save = /\b(save|later|don't log|dont log)\b/i.test(text);
   return { reply: `Saved ${name} from the site's own nutrition (${num(k)} kcal a serving).${save ? "" : " Logged 1 serving."} Add an AI key to get it ingredient by ingredient.`, save_recipes: [{ name, servings: serv, items: [item], steps: ldText(ld.recipeInstructions).split("\n").filter(Boolean), source_url: url }], meals: save ? [] : [{ recipe: name, servings: 1 }] };
+}
+
+/* ---------- branded classes (SoulCycle, Bout, Barry's…): look up what the class actually is, then log it ---------- */
+// Well-known formats, used when the AI can't browse. [match, type, name, usual minutes, MET, what it is]
+const STUDIOS = [
+  [/soul ?cycle/i, "cycle", "SoulCycle", 45, 8.5, "45-min rhythm indoor cycling, with a light hand-weights track"],
+  [/peloton/i, "cycle", "Peloton ride", 30, 8.5, "Instructor-led indoor cycling"],
+  [/flywheel|cyclebar|spin class|spin\b/i, "cycle", "Spin class", 45, 8.5, "Instructor-led indoor cycling"],
+  [/barry'?s/i, "hiit", "Barry's", 50, 8.0, "Treadmill sprints alternating with floor strength"],
+  [/orange ?theory|\botf\b/i, "hiit", "Orangetheory", 50, 8.0, "Heart-rate zone intervals: treadmill, rower, floor"],
+  [/f45/i, "hiit", "F45", 45, 8.0, "Team circuit HIIT"],
+  [/rumble/i, "hiit", "Rumble boxing", 45, 7.8, "Boxing-inspired HIIT: heavy bag rounds plus floor strength"],
+  [/boxing|kickbox/i, "hiit", "Boxing class", 45, 7.8, "Bag work and conditioning rounds"],
+  [/solid ?core/i, "pilates", "Solidcore", 50, 4.0, "Slow, high-tension pilates on a reformer-style machine"],
+  [/reformer/i, "pilates", "Reformer pilates", 50, 3.5, "Machine-based pilates"],
+  [/core ?power|hot yoga|bikram/i, "yoga", "Hot yoga", 60, 3.5, "Heated vinyasa flow"],
+  [/barre/i, "pilates", "Barre", 50, 3.5, "Small-range strength and isometric holds at a barre"]
+];
+const studioOf = name => STUDIOS.find(s => s[0].test(String(name || "")));
+async function researchClasses(workouts, signal) {
+  const need = workouts.filter(w => w && (w.research || w.studio));
+  if (!need.length) return;
+  // the AI can search the web: look each class up properly
+  if (AI.via === "gemini" || AI.via === "api") {
+    try {
+      const res = await AI.fn.json(`Look up each of these fitness classes on the web (the studio's own site first). For each one, tell me what actually happens in the class, how long a standard class is, and pick a MET from the Compendium of Physical Activities for that format (e.g. indoor cycling class ≈ 8.5, boxing bag rounds ≈ 5.5–7.8, HIIT circuit ≈ 8, reformer pilates ≈ 3–4). Use the studio's real name.
+${need.map((w, i) => `${i}. ${w.studio || w.name}${w.details ? " (" + w.details + ")" : ""}`).join("\n")}
+Reply JSON: {"classes":[{"i": number, "type": one of ${JSON.stringify(WTYPES)}, "name": string, "minutes": number, "met": number, "about": "one short line on the format", "source": "short site name"}]}`, { web: true, signal });
+      for (const c of res?.classes || []) {
+        const w = need[+c.i]; if (!w) continue;
+        if (WTYPES.includes(c.type)) w.type = c.type;
+        if (c.name) w.name = String(c.name);
+        if (+c.met > 1 && +c.met < 16) w.met = +c.met;
+        if (!(+w.minutes > 0) || w.minutes_guessed) w.minutes = +c.minutes || w.minutes;
+        w.details = [c.about, w.details].filter(Boolean).join(" · ") + (c.source ? ` · looked up on ${c.source}` : "");
+        w.researched = true;
+      }
+    } catch (e) { if (e?.code === "cancelled") throw e; }
+  }
+  // anything still unknown: use the built-in list of well-known studios
+  for (const w of need) {
+    if (w.researched) continue;
+    const s = studioOf(`${w.studio || ""} ${w.name || ""}`); if (!s) continue;
+    w.type = s[1]; w.name = w.name && !/^(class|workout)$/i.test(w.name) ? w.name : s[2]; w.met = s[4];
+    if (!(+w.minutes > 0) || w.minutes_guessed) w.minutes = s[3];
+    w.details = [s[5], w.details].filter(Boolean).join(" · ");
+  }
+}
+// offline: "soulcycle", "bout boxing class 45 min" with no AI key
+function localClass(text) {
+  const s = studioOf(text); if (!s) return null;
+  const m = String(text).match(/(\d{2,3})\s*(?:min|minutes|m\b)/i);
+  return { type: s[1], name: s[2], minutes: m ? +m[1] : s[3], met: s[4], details: s[5] + (m ? "" : ` · assumed a ${s[3]}-min class`) };
 }
 
 setInterval(() => { if (!SH) renderHome(); }, 10 * 60 * 1000);
