@@ -535,62 +535,95 @@ label.lbl{display:block;font-size:13px;font-weight:500;color:var(--ink-2);margin
 .bud-eq i{font-style:normal;font-weight:700;color:var(--ink-2);padding-top:1px;font-size:16px}
 .bud-def{font-size:12.5px;font-weight:600;border-top:1.5px solid var(--line);padding-top:10px}
 .bud-note{margin:0;font-size:12px;font-weight:600;color:var(--ink-2);line-height:1.4}
-/* ===== chat-first layout ===== */
+/* ===== chat-first layout, playful edition ===== */
+:root{--me-ink:#5546d6;--fr:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;--me:#6b5cf0;--spring:cubic-bezier(.34,1.56,.64,1)}
 body{background:var(--wall-1)}
 .app{padding-inline:0}
-.topbar{padding:10px 16px 4px}
-.topbar h1{font-size:24px;font-weight:700;letter-spacing:-.02em}
-.topbar .sub{font-weight:500}
-#budgetStrip{padding:6px 16px 6px;display:flex;flex-direction:column;gap:8px}
-.strip{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:center;width:100%;border:0;border-radius:16px;background:var(--tile);color:var(--ink);padding:12px 14px 12px;text-align:left;box-shadow:0 1px 2px var(--shadow-2)}
-.strip.plain{display:flex;justify-content:space-between;align-items:center}
-.strip.plain span{color:var(--ink-2);font-size:14px}
-.st-main b{display:block;font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.topbar{padding:8px 16px 2px;align-items:center}
+.topbar h1{font-family:var(--fr);font-size:26px;font-weight:700;letter-spacing:-.02em}
+.topbar .sub{font-weight:500;font-size:13px}
+.sticker{display:inline-grid;place-items:center;width:34px;height:34px;flex:none;border-radius:12px;background:var(--c,var(--m-lilac));font-size:18px;line-height:1;transform:rotate(var(--rot,-4deg));box-shadow:inset 0 -2px 0 rgba(0,0,0,.08)}
+.sticker.big{width:46px;height:46px;border-radius:16px;font-size:24px}
+.sticker.sm{width:28px;height:28px;border-radius:10px;font-size:15px}
+.c-peach{--c:var(--m-peach)}.c-sky{--c:var(--m-sky)}.c-mint{--c:var(--m-mint)}.c-pink{--c:var(--m-pink)}.c-butter{--c:var(--m-butter)}.c-lilac{--c:var(--m-lilac)}.c-tomato{--c:var(--m-tomato)}
+.sticker.c-peach,.sticker.c-sky,.sticker.c-mint,.sticker.c-pink,.sticker.c-butter,.sticker.c-lilac,.sticker.c-tomato{background:var(--c)}
+
+/* tabs, now on top */
+.tabbar{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:8px 16px 4px;padding:4px;border-radius:18px;background:var(--soft)}
+.tabbar button{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--ink-2);font-size:11.5px;font-weight:600;padding:6px 2px 5px;border-radius:14px;position:relative;transition:background .25s,color .25s,transform .3s var(--spring);min-width:0}
+.tabbar button > span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-ic{position:relative;display:grid;place-items:center}
+.tabbar svg.i{width:20px;height:20px;stroke-width:2}
+.tabbar button.on{background:var(--tc);color:#1d1d1f;transform:scale(1.03);box-shadow:0 2px 8px -2px color-mix(in srgb,var(--tc) 70%,transparent)}
+.tabbar button:active{transform:scale(.94)}
+.tabbar i{position:absolute;top:-8px;right:-9px;min-width:16px;height:16px;border-radius:8px;background:var(--m-tomato);color:#fff;font-style:normal;font-size:10px;font-weight:700;display:grid;place-items:center;padding:0 4px;box-sizing:border-box}
+
+/* calories card */
+#budgetStrip{padding:6px 16px 4px;display:flex;flex-direction:column;gap:8px}
+#budgetStrip[hidden]{display:none}
+.strip{display:flex;align-items:center;gap:14px;width:100%;border:0;border-radius:22px;background:var(--tile);color:var(--ink);padding:12px 14px;text-align:left;box-shadow:0 1px 2px var(--shadow-2),0 8px 24px -14px var(--shadow)}
+.strip.plain{gap:12px}.strip.plain span:last-child{color:var(--ink-2);font-size:14px;margin-left:auto}
+.st-ring{position:relative;width:62px;height:62px;flex:none}
+.ring{width:62px;height:62px}
+.ring .rt{fill:none;stroke:var(--soft);stroke-width:8}
+.ring .rp{fill:none;stroke:var(--m-mint);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .9s var(--spring)}
+.ring .rp.over{stroke:var(--m-tomato)}
+.st-ring em{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:20px}
+.st-main{flex:1;min-width:0}
+.st-main b{display:block;font-family:var(--fr);font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.05;font-variant-numeric:tabular-nums}
 .st-main span{font-size:12.5px;color:var(--ink-2);font-weight:500}
-.st-side{display:flex;flex-direction:column;gap:1px;align-items:flex-end;font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.st-side{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.st-side > span{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.st-side i{width:8px;height:8px;border-radius:3px;display:block;transform:rotate(45deg)}
+.d-peach{background:var(--m-peach)}.d-sky{background:var(--m-sky)}.d-pink{background:var(--m-pink)}
 .st-side b{color:var(--ink);font-weight:600}
-.st-bar{grid-column:1 / -1;height:5px;border-radius:5px;background:var(--soft);overflow:hidden;margin-top:6px}
-.st-bar i{display:block;height:100%;border-radius:5px;background:var(--ok);transition:width .4s}
-.st-bar i.over{background:var(--bad)}
 .goalsrow{display:flex;align-items:center;gap:10px;border:0;background:none;padding:0 2px;width:100%;text-align:left;color:var(--ink);min-width:0}
 .gcount{font-size:13px;color:var(--ink-2);white-space:nowrap}
-.gcount b{color:var(--ink);font-weight:600}
-.gchips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1;mask-image:linear-gradient(90deg,#000 85%,transparent)}
+.gcount b{color:var(--ink);font-weight:700;font-family:var(--fr)}
+.gchips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1;padding:2px 0;mask-image:linear-gradient(90deg,#000 85%,transparent)}
 .gchips::-webkit-scrollbar{display:none}
-.gc{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-size:12.5px;font-weight:500;color:var(--ink-2);background:var(--tile);border-radius:999px;padding:4px 10px 4px 6px;box-shadow:0 1px 2px var(--shadow-2)}
-.gc i{width:12px;height:12px;border-radius:50%;background:conic-gradient(var(--ink-2) var(--p),var(--line) 0);display:block}
-.gc.ok{color:var(--c-green-i);background:var(--c-green);box-shadow:none}
-.gc svg.i{width:12px;height:12px;stroke-width:3}
+.gc{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-size:12.5px;font-weight:600;color:var(--ink);background:color-mix(in srgb,var(--c) 22%,var(--tile));border-radius:999px;padding:4px 10px 4px 5px}
+.gc i{width:14px;height:14px;border-radius:50%;background:conic-gradient(var(--c) var(--p),color-mix(in srgb,var(--c) 30%,transparent) 0);display:block}
+.gc.ok{background:var(--c);color:#1d1d1f}
+.gc svg.i{width:14px;height:14px;stroke-width:3}
+.gc.pop{animation:gpop .6s var(--spring)}
+@keyframes gpop{40%{transform:scale(1.25) rotate(-4deg)}}
+
 #pane{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:4px 16px 16px}
-.tabbar{display:grid;grid-template-columns:repeat(4,1fr);border-top:.5px solid var(--line);background:color-mix(in srgb,var(--wall-1) 88%,transparent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:6px 4px 4px}
-.tabbar button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink-2);font-size:10.5px;font-weight:500;padding:4px 0;position:relative}
-.tabbar button svg.i{width:23px;height:23px;stroke-width:1.8}
-.tabbar button.on{color:var(--ink)}
-.tabbar button.on svg.i{stroke-width:2.3}
-.tabbar button i{position:absolute;top:0;left:calc(50% + 8px);min-width:16px;height:16px;border-radius:8px;background:var(--bad);color:#fff;font-style:normal;font-size:10.5px;font-weight:600;display:grid;place-items:center;padding:0 4px;box-sizing:border-box}
+#pane.enter > *{animation:paneIn .35s var(--spring)}
+@keyframes paneIn{from{opacity:0;transform:translateY(10px)}}
 
 /* chat */
 .feed{display:flex;flex-direction:column;gap:10px;padding-bottom:6px}
-.daysep{align-self:center;font-size:12px;color:var(--ink-2);font-weight:500;margin:8px 0 2px}
+.daysep{align-self:center;margin:8px 0 2px}
+.daysep span{font-size:12px;color:var(--ink-2);font-weight:600;background:var(--soft);padding:3px 10px;border-radius:999px}
 .msg{display:flex}
+.msg.new{animation:msgIn .45s var(--spring) both}
+.msg.me.new{transform-origin:right bottom}.msg.bot.new{transform-origin:left bottom}
+@keyframes msgIn{from{opacity:0;transform:translateY(14px) scale(.92)}}
 .msg.me{justify-content:flex-end}
-.msg .bub{max-width:82%;background:var(--btn-bg);color:var(--btn-fg);padding:9px 13px;border-radius:19px 19px 5px 19px;font-size:15.5px;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere;-webkit-user-select:text;user-select:text}
+.msg .bub{max-width:82%;background:var(--me);color:#fff;padding:9px 14px;border-radius:20px 20px 6px 20px;font-size:15.5px;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere;-webkit-user-select:text;user-select:text}
 .imgtag{display:inline-flex;align-items:center;gap:4px;font-size:12px;opacity:.85;margin-right:6px}
 .imgtag svg.i{width:13px;height:13px}
-.msg.app .card{max-width:92%;width:92%;box-sizing:border-box;background:var(--tile);border-radius:18px 18px 18px 5px;padding:11px 13px;display:flex;flex-direction:column;gap:9px;box-shadow:0 1px 2px var(--shadow-2)}
-.msg.app .card.undone{opacity:.55}
-.msg.app .card.undone .blk{text-decoration:line-through}
+.msg.bot .card{width:92%;max-width:92%;box-sizing:border-box;background:var(--tile);border-radius:20px 20px 20px 6px;padding:12px 13px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 2px var(--shadow-2),0 6px 18px -12px var(--shadow)}
+.msg.bot .card.undone{opacity:.5}
+.msg.bot .card.undone .bc{text-decoration:line-through}
 .said{margin:0;font-size:15px;line-height:1.4;-webkit-user-select:text;user-select:text}
-.blk{border-top:.5px solid var(--line);padding-top:9px;display:flex;flex-direction:column;gap:4px}
-.said + .blk,.card > .blk:first-child{border-top:0;padding-top:0}
+.blk{display:flex;gap:11px;align-items:flex-start}
+.blk .sticker{margin-top:2px}
+.msg.new .blk .sticker{animation:stk .6s var(--spring) .15s both}
+@keyframes stk{from{transform:scale(0) rotate(-40deg)}}
+.bc{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
 .bh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.bh .btag{flex-basis:100%;font-size:11.5px;font-weight:600;color:var(--ink-2);text-transform:uppercase;letter-spacing:.03em}
+.bh .btag{flex-basis:100%;font-size:12px;font-weight:600;color:var(--ink-2)}
 .bh b{flex:1;font-size:15.5px;font-weight:600;min-width:0}
-.bh strong{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
-.bh strong small{font-size:12px;font-weight:500;color:var(--ink-2)}
-.macros{display:flex;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.bh strong{font-family:var(--fr);font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bh strong small{font-family:var(--f);font-size:12px;font-weight:500;color:var(--ink-2)}
+.macros{display:flex;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.macros span{background:var(--soft);border-radius:999px;padding:2px 8px}
+.macros .mp{background:color-mix(in srgb,var(--m-pink) 28%,var(--tile));color:var(--ink)}
 .items{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-direction:column}
-.items li{display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:14px;border-top:.5px solid var(--line)}
+.items li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;font-size:14px;border-top:.5px solid var(--line)}
 .items li:first-child{border-top:0}
 .items li span{min-width:0}
 .items li em{font-style:normal;color:var(--ink-2)}
@@ -598,124 +631,161 @@ body{background:var(--wall-1)}
 .items li b{font-weight:500;font-variant-numeric:tabular-nums;color:var(--ink-2);white-space:nowrap}
 .bnote{margin:0;font-size:12.5px;color:var(--ink-2)}
 .names{margin:0;font-size:14.5px}
-.useq{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--soft);border-radius:10px;padding:7px 10px;font-size:13px}
-.bact{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:2px}
-.mfoot{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--ink-2);border-top:.5px solid var(--line);padding-top:8px}
-.linkbtn{border:0;background:none;color:var(--c-blue-i);font-weight:600;font-size:13.5px;padding:2px 0}
+.useq{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--soft);border-radius:12px;padding:8px 10px;font-size:13px}
+.useq.pat{background:color-mix(in srgb,var(--m-butter) 30%,var(--tile))}
+.bact{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:2px}
+.mfoot{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--ink-2);padding-top:2px}
+.mfoot .left{background:color-mix(in srgb,var(--m-mint) 26%,var(--tile));color:var(--ink);font-weight:600;padding:3px 10px;border-radius:999px}
+.mfoot .left.over{background:color-mix(in srgb,var(--m-tomato) 26%,var(--tile))}
+.linkbtn{border:0;background:none;color:var(--me-ink);font-weight:600;font-size:13.5px;padding:2px 0}
 .linkbtn.danger{color:var(--bad)}
-.pillbtn{border:0;background:var(--btn-bg);color:var(--btn-fg);font-weight:600;font-size:13.5px;padding:7px 13px;border-radius:999px}
-.idea .ihead{border:0;background:none;padding:0;text-align:left;display:flex;flex-direction:column;gap:2px;color:var(--ink)}
+.pillbtn{border:0;background:var(--me);color:#fff;font-weight:600;font-size:13.5px;padding:7px 14px;border-radius:999px;transition:transform .2s var(--spring)}
+.pillbtn.sm{padding:5px 12px;font-size:12.5px;margin-top:6px;align-self:flex-start}
+.pillbtn:active,.chipbtn:active,.ex button:active,.qchips button:active{transform:scale(.95)}
+.idea{flex-direction:column;gap:4px}
+.idea .ihead{border:0;background:color-mix(in srgb,var(--m-lilac) 18%,var(--tile));border-radius:14px;padding:10px 12px;text-align:left;display:flex;flex-direction:column;gap:2px;color:var(--ink);width:100%}
 .idea .ihead b{font-size:15px;font-weight:600}
 .idea .ihead small{color:var(--ink-2);font-size:12.5px}
+.idea .ibody{padding:0 4px}
 .idea .ibody ul,.idea .ibody ol{margin:6px 0;padding-left:20px;font-size:14px;line-height:1.45}
 .typing{flex-direction:row !important;align-items:center;justify-content:space-between;width:auto !important;max-width:200px !important}
-.dots{display:flex;gap:4px}
-.dots i{width:7px;height:7px;border-radius:50%;background:var(--ink-2);animation:blink 1.2s infinite}
-.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
-@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
-.hello{padding:14px 2px}
-.hello h2{margin:0 0 6px;font-size:22px;font-weight:700;letter-spacing:-.02em}
+.dots{display:flex;gap:5px}
+.dots i{width:9px;height:9px;border-radius:50%;animation:hop 1s infinite var(--spring)}
+.dots i:nth-child(1){background:var(--m-lilac)}.dots i:nth-child(2){background:var(--m-mint);animation-delay:.15s}.dots i:nth-child(3){background:var(--m-peach);animation-delay:.3s}
+@keyframes hop{0%,60%,100%{transform:none}30%{transform:translateY(-6px)}}
+.hello{padding:10px 2px}
+.hello-stk{display:flex;gap:8px;margin-bottom:12px}
+.hello-stk .sticker:nth-child(1){--rot:-8deg}.hello-stk .sticker:nth-child(2){--rot:6deg}.hello-stk .sticker:nth-child(3){--rot:-3deg}
+.hello-stk .sticker{animation:stk .7s var(--spring) both}.hello-stk .sticker:nth-child(2){animation-delay:.1s}.hello-stk .sticker:nth-child(3){animation-delay:.2s}
+.hello h2{margin:0 0 6px;font-family:var(--fr);font-size:24px;font-weight:700;letter-spacing:-.02em}
 .hello p{margin:0 0 12px;color:var(--ink-2);font-size:15px;line-height:1.45}
-.hello .keynote{background:var(--c-amber);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:14px}
+.hello .keynote{background:color-mix(in srgb,var(--m-butter) 35%,var(--tile));color:var(--ink);border-radius:16px;padding:10px 12px;font-size:14px}
 .ex{display:flex;flex-direction:column;gap:8px}
-.ex button{display:flex;gap:10px;align-items:flex-start;text-align:left;border:0;background:var(--tile);border-radius:14px;padding:11px 12px;font-size:14px;color:var(--ink);line-height:1.35;box-shadow:0 1px 2px var(--shadow-2)}
-.ex button span{font-size:18px;line-height:1.1}
+.ex button{display:flex;gap:10px;align-items:center;text-align:left;border:0;background:color-mix(in srgb,var(--c) 20%,var(--tile));border-radius:16px;padding:10px 12px;font-size:14px;color:var(--ink);line-height:1.35;transition:transform .2s var(--spring)}
+.ex button .sticker{background:var(--c)}
 
 /* composer */
-#composer{padding:6px 12px 8px;display:flex;flex-direction:column;gap:6px;background:var(--wall-1)}
+#composer{padding:6px 12px 8px;display:flex;flex-direction:column;gap:8px;background:var(--wall-1)}
 #composer[hidden]{display:none}
+.qchips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;align-items:center}
+.qchips[hidden]{display:none}
+.qchips::-webkit-scrollbar{display:none}
+.qchips .ql{font-size:12.5px;color:var(--ink-2);font-weight:600;white-space:nowrap;padding-left:2px}
+.qchips button{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;border:0;border-radius:999px;background:color-mix(in srgb,var(--c) 30%,var(--tile));color:var(--ink);font-size:13.5px;font-weight:600;padding:6px 12px 6px 8px;transition:transform .2s var(--spring)}
+.qchips button small{color:var(--ink-2);font-weight:500}
 .cbar{display:flex;align-items:flex-end;gap:8px}
-.cbar textarea{flex:1;min-width:0;resize:none;border:.5px solid var(--line);border-radius:20px;background:var(--tile);color:var(--ink);font:inherit;font-size:16px;line-height:1.35;padding:9px 14px;max-height:140px;box-shadow:0 1px 2px var(--shadow-2)}
-.cbar textarea:focus{outline:none;border-color:var(--ink-2)}
-.cplus,.csend{width:38px;height:38px;border-radius:50%;border:0;display:grid;place-items:center;flex:none}
-.cplus{background:var(--tile);color:var(--ink);box-shadow:0 1px 2px var(--shadow-2)}
-.csend{background:var(--line);color:#fff;transition:background .2s}
-.csend.ready{background:var(--btn-bg);color:var(--btn-fg)}
-.csend svg.i{width:18px;height:18px;stroke-width:2.4}
+.cbar textarea{flex:1;min-width:0;resize:none;border:0;border-radius:22px;background:var(--tile);color:var(--ink);font:inherit;font-size:16px;line-height:1.35;padding:10px 15px;max-height:140px;box-shadow:0 1px 2px var(--shadow-2),0 0 0 1px var(--line)}
+.cbar textarea:focus{outline:none;box-shadow:0 0 0 2px var(--me)}
+.cplus,.csend{width:40px;height:40px;border-radius:50%;border:0;display:grid;place-items:center;flex:none;transition:transform .3s var(--spring),background .2s}
+.cplus{background:var(--m-butter);color:#1d1d1f}
+.cplus.open{transform:rotate(45deg)}
+.csend{background:var(--line);color:#fff}
+.csend.ready{background:var(--me);animation:gpop .4s var(--spring)}
+.csend svg.i{width:19px;height:19px;stroke-width:2.6}
 .tray{display:flex;flex-direction:column;gap:6px}
 .tray[hidden]{display:none}
-.tray button,.tray label{display:flex;align-items:center;gap:12px;border:0;background:var(--tile);border-radius:14px;padding:11px 12px;text-align:left;color:var(--ink);cursor:pointer;box-shadow:0 1px 2px var(--shadow-2)}
-.tray svg.i{width:22px;height:22px;color:var(--ink)}
+.tray button,.tray label{display:flex;align-items:center;gap:12px;border:0;background:var(--tile);border-radius:16px;padding:10px 12px;text-align:left;color:var(--ink);cursor:pointer;box-shadow:0 1px 2px var(--shadow-2);animation:msgIn .35s var(--spring) both}
+.tray label{animation-delay:.05s}
 .tray b{display:block;font-weight:600;font-size:14.5px}
 .tray small{display:block;color:var(--ink-2);font-size:12.5px}
 .attach{position:relative;align-self:flex-start}
 .attach[hidden]{display:none}
-.attach img{height:64px;border-radius:12px;display:block}
+.attach img{height:64px;border-radius:14px;display:block}
 .attach button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:var(--ink);color:var(--sheet);display:grid;place-items:center}
 .attach svg.i{width:12px;height:12px}
 
 /* panes */
-.pane-in{display:flex;flex-direction:column;gap:12px;padding-top:6px}
-.ptitle{margin:0;font-size:22px;font-weight:700;letter-spacing:-.02em}
+.pane-in{display:flex;flex-direction:column;gap:12px;padding-top:8px}
+.phead{display:flex;gap:12px;align-items:center}
+.phead p{margin:2px 0 0;font-size:13.5px;color:var(--ink-2);line-height:1.35}
+.ptitle{margin:0;font-family:var(--fr);font-size:24px;font-weight:700;letter-spacing:-.02em}
 .addrow{display:flex;gap:8px}
+.addrow .inp{border-radius:14px}
 .row2{display:flex;gap:8px}
-.row2 .btn{flex:1}
+.chipbtn{flex:1;border:0;border-radius:14px;background:color-mix(in srgb,var(--c) 30%,var(--tile));color:var(--ink);font-weight:600;font-size:14px;padding:11px 10px;transition:transform .2s var(--spring)}
+.chipbtn.wide{width:100%;text-align:left;padding:13px 14px}
 .gtitle{font-size:13px;font-weight:600;color:var(--ink-2);display:flex;justify-content:space-between;align-items:center;margin:6px 2px -4px}
 .gtitle small{font-weight:500}
 .gtitle.warn{color:var(--c-red-i)}
-.group{background:var(--tile);border-radius:14px;overflow:hidden;box-shadow:0 1px 2px var(--shadow-2)}
+.group{background:var(--tile);border-radius:18px;overflow:hidden;box-shadow:0 1px 2px var(--shadow-2)}
 .group.dim{opacity:.6}
-.row-i,.row-l{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;text-align:left;padding:11px 14px;color:var(--ink);border-top:.5px solid var(--line);min-width:0}
+.row-i,.row-l{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;text-align:left;padding:10px 14px;color:var(--ink);border-top:.5px solid var(--line);min-width:0}
 .group > :first-child{border-top:0}
-.row-i .emo{font-size:22px;width:28px;text-align:center;flex:none}
+.row-i .emo{font-size:20px;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;flex:none;background:var(--soft)}
+.row-i .emo.f-ok{background:color-mix(in srgb,var(--m-mint) 30%,var(--tile))}
+.row-i .emo.f-warn{background:color-mix(in srgb,var(--m-butter) 45%,var(--tile))}
+.row-i .emo.f-bad{background:color-mix(in srgb,var(--m-tomato) 30%,var(--tile))}
 .row-i .nm,.row-l .nm{flex:1;min-width:0}
 .row-i b,.row-l b{display:block;font-weight:500;font-size:15px;overflow-wrap:anywhere}
 .row-i b em{font-style:normal;color:var(--ink-2);font-weight:400}
 .row-i small,.row-l small{display:block;font-size:12.5px;color:var(--ink-2)}
-.tickbtn{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--ink-2);background:none;flex:none;display:grid;place-items:center;padding:0}
-.tickbtn.on{background:var(--ok);border-color:var(--ok);color:#fff}
-.tickbtn svg.i{width:13px;height:13px;stroke-width:3}
-.hint,.empty{margin:0;font-size:13px;color:var(--ink-2)}
-.empty{padding:6px 2px}
+.tickbtn{width:26px;height:26px;border-radius:50%;border:2px solid var(--m-pink);background:none;flex:none;display:grid;place-items:center;padding:0;transition:transform .25s var(--spring)}
+.tickbtn:active{transform:scale(.8)}
+.tickbtn.on{background:var(--m-mint);border-color:var(--m-mint);color:#1d1d1f}
+.tickbtn svg.i{width:14px;height:14px;stroke-width:3}
+.hint,.empty{margin:0;font-size:12.5px;color:var(--ink-2);line-height:1.4}
 .chips2{display:flex;flex-wrap:wrap;gap:6px}
-.chips2 button,.chips2 span{border:0;background:var(--tile);border-radius:999px;padding:7px 12px;font-size:13.5px;font-weight:500;color:var(--ink);box-shadow:0 1px 2px var(--shadow-2)}
-.chips2 small{color:var(--ink-2);margin-left:5px;font-weight:400}
+.chips2 button,.chips2 span{border:0;background:color-mix(in srgb,var(--c,var(--m-mint)) 26%,var(--tile));border-radius:999px;padding:7px 12px;font-size:13.5px;font-weight:600;color:var(--ink);transition:transform .2s var(--spring)}
+.chips2 small{color:var(--ink-2);margin-left:5px;font-weight:500}
 .hist .hday{padding:10px 14px;border-top:.5px solid var(--line)}
 .hist .hday:first-child{border-top:0}
-.hist .hday span{font-size:12.5px;color:var(--ink-2);font-weight:500}
+.hist .hday span{font-size:12.5px;color:var(--ink-2);font-weight:600}
 .hist .hday p{margin:2px 0 0;font-size:14.5px}
-.banner2{background:var(--c-amber);border-radius:12px;padding:9px 12px;font-size:13.5px;display:flex;justify-content:space-between;align-items:center}
-.emptycard{background:var(--tile);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;align-items:flex-start;box-shadow:0 1px 2px var(--shadow-2)}
+.banner2{background:color-mix(in srgb,var(--m-butter) 35%,var(--tile));border-radius:14px;padding:9px 12px;font-size:13.5px;display:flex;justify-content:space-between;align-items:center}
+.emptycard{background:var(--tile);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px;align-items:flex-start;box-shadow:0 1px 2px var(--shadow-2)}
 .emptycard p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.45}
-.rcard{background:var(--tile);border-radius:14px;box-shadow:0 1px 2px var(--shadow-2);overflow:hidden}
+.spots{display:flex;flex-direction:column;gap:8px}
+.spot{display:flex;gap:12px;align-items:flex-start;background:color-mix(in srgb,var(--c) 22%,var(--tile));border-radius:18px;padding:12px}
+.spot .sticker{background:var(--c)}
+.spot b{display:block;font-size:14.5px;font-weight:600}
+.spot small{display:block;font-size:13px;color:var(--ink-2);line-height:1.4;margin-top:2px}
+.spot > div{display:flex;flex-direction:column}
+.rcard{background:var(--tile);border-radius:18px;box-shadow:0 1px 2px var(--shadow-2);overflow:hidden}
 .rhead{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;text-align:left;padding:12px 14px;color:var(--ink)}
+.rhead .sticker{background:var(--c)}
 .rhead .nm{flex:1;min-width:0}
 .rhead b{display:block;font-size:16px;font-weight:600}
 .rhead small{display:block;font-size:12.5px;color:var(--ink-2)}
-.rhead strong{text-align:right;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
-.rhead strong small{font-size:11px;font-weight:500}
+.rhead small.made{color:var(--ink);font-weight:500}
+.rhead strong{text-align:right;font-family:var(--fr);font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+.rhead strong small{font-family:var(--f);font-size:11px;font-weight:500}
 .rbody{padding:0 14px 12px;display:flex;flex-direction:column;gap:8px}
 .rbody .gtitle{margin:4px 0 -2px}
 .steps{margin:0;padding-left:20px;font-size:14px;line-height:1.45}
-.rcook{display:flex;align-items:center;gap:10px;justify-content:space-between;background:var(--soft);border-radius:12px;padding:8px 10px;font-size:13.5px}
+.rcook{display:flex;align-items:center;gap:10px;justify-content:space-between;background:var(--soft);border-radius:14px;padding:8px 10px;font-size:13.5px}
 .stepper.sm button{width:30px;height:30px;font-size:16px}
 
 /* goals sheet */
 .gweek{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.gweek button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;border-radius:12px;color:var(--ink-2)}
+.gweek button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;border-radius:14px;color:var(--ink-2)}
 .gweek button.on{background:var(--soft);color:var(--ink)}
-.gweek small{font-size:11.5px;font-weight:500}
-.gdot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12.5px;font-weight:600;background:var(--soft);color:var(--ink-2);font-variant-numeric:tabular-nums}
-.gdot.some{background:var(--c-amber);color:var(--c-amber-i)}
-.gdot.all{background:var(--ok);color:#fff}
-.gdot.none{background:transparent;border:1px dashed var(--line)}
+.gweek small{font-size:11.5px;font-weight:600}
+.gdot{width:32px;height:32px;border-radius:12px;display:grid;place-items:center;font-size:13px;font-weight:700;font-family:var(--fr);background:var(--soft);color:var(--ink-2);font-variant-numeric:tabular-nums;transform:rotate(-4deg)}
+.gweek button:nth-child(even) .gdot{transform:rotate(4deg)}
+.gdot.some{background:var(--m-butter);color:#1d1d1f}
+.gdot.all{background:var(--m-mint);color:#1d1d1f}
+.gdot.none{background:transparent;border:1.5px dashed var(--line)}
 .ghead{display:flex;justify-content:space-between;align-items:baseline}
-.ghead b{font-size:17px;font-weight:600}
+.ghead b{font-family:var(--fr);font-size:18px;font-weight:700}
 .ghead span{font-size:13.5px;color:var(--ink-2)}
-.glist{display:flex;flex-direction:column;background:var(--soft);border-radius:14px;overflow:hidden}
+.glist{display:flex;flex-direction:column;background:var(--soft);border-radius:18px;overflow:hidden}
 .grow{display:flex;align-items:center;gap:12px;padding:11px 12px;border-top:.5px solid var(--line)}
 .grow:first-child{border-top:0}
-.gmark{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;flex:none;color:#fff}
-.grow.ok .gmark{background:var(--ok);border-color:var(--ok)}
-.grow.miss .gmark{border-color:var(--bad)}
-.gmark svg.i{width:13px;height:13px;stroke-width:3}
+.gmark{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex:none;color:#1d1d1f;transition:transform .3s var(--spring)}
+.grow.ok .gmark{background:var(--m-mint);border-color:var(--m-mint)}
+.grow.miss .gmark{border-color:var(--m-tomato)}
+.gmark svg.i{width:14px;height:14px;stroke-width:3}
 .grow .nm{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 .grow b{font-weight:500;font-size:15px}
 .grow small{font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
-.gbar{height:4px;border-radius:4px;background:var(--line);overflow:hidden;display:block}
-.gbar i{display:block;height:100%;background:var(--ink-2);border-radius:4px}
-.grow.ok .gbar i{background:var(--ok)}
-.grow.miss .gbar i{background:var(--bad)}
+.gbar{height:6px;border-radius:6px;background:var(--line);overflow:hidden;display:block}
+.gbar i{display:block;height:100%;background:var(--m-lilac);border-radius:6px;transition:width .6s var(--spring)}
+.grow.ok .gbar i{background:var(--m-mint)}
+.grow.miss .gbar i{background:var(--m-tomato)}
+@media (prefers-reduced-motion: reduce){.msg.new,.msg.new .blk .sticker,.hello-stk .sticker,#pane.enter > *,.tray button,.tray label,.csend.ready,.gc.pop{animation:none}.dots i{animation-duration:2s}}
+
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--me-ink:#b8b0ff}}
+:root[data-theme="dark"]{--me-ink:#b8b0ff}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -746,10 +816,10 @@ body{background:var(--wall-1)}
     <div><h1 id="greet">Today</h1><div class="sub" id="todayLabel"></div></div>
     <button class="icon-btn" data-act="open" data-sheet="settings" aria-label="Settings"><svg class="i"><use href="#i-sliders"/></svg></button>
   </header>
+  <nav class="tabbar" id="tabbar" aria-label="Sections"></nav>
   <div id="budgetStrip"></div>
   <main id="pane" aria-live="polite"></main>
   <div id="composer"></div>
-  <nav class="tabbar" id="tabbar" aria-label="Sections"></nav>
 </div>
 
 <div class="backdrop" id="backdrop" data-act="close-sheet"></div>
@@ -3101,7 +3171,7 @@ function initApiAI() {
 const webOn = () => AI.via === "gemini" || AI.via === "api";
 
 /* ---------- chat store ---------- */
-const CH = { msgs: [], tab: "chat", draft: "", img: null, imgUrl: "", busy: false, ctl: null, tray: false, fzone: "all", openRec: "", saveT: null, stick: true };
+const CH = { seen: new Set(), msgs: [], tab: "chat", draft: "", img: null, imgUrl: "", busy: false, ctl: null, tray: false, fzone: "all", openRec: "", saveT: null, stick: true };
 function chatLoaded(list) { CH.msgs = Array.isArray(list) ? list : []; renderAll(); }
 function chatInit() {
   if (store.db) store.db.doc("chat/main").get().then(x => chatLoaded(x.exists ? x.data().msgs : [])).catch(() => chatLoaded([]));
@@ -3229,7 +3299,7 @@ function applyActions(res) {
     const fridgeNames = []; m.items.forEach(x => { if (x.rid) return; const it = fridgeMatch(canon(x.name)); if (it && !fridgeNames.includes(it.name)) fridgeNames.push(it.name); });
     const meal = { id: uid(), name: m.name, kcal: m.kcal, protein: m.protein, carbs: m.carbs, fat: m.fat, slot: m.slot, portion: 1, src: "chat", items: m.items.map(({ look, ...x }) => x), uses: [] };
     editDay(T, d => d.meals.push(meal)); U.meals.push(meal.id); track("logs"); track("logMs", 1500);
-    blocks.push({ k: "meal", id: meal.id, name: meal.name, slot: meal.slot, kcal: meal.kcal, protein: meal.protein, carbs: meal.carbs, fat: meal.fat, items: meal.items, fridge: fridgeNames, note: m.recipeNote || "", guess: m.items.some(x => x.look) });
+    blocks.push(mealBlock(meal, { fridge: fridgeNames, note: m.recipeNote || "", guess: m.items.some(x => x.look), pattern: patternNote(meal) }));
   }
   const kg = body()?.weightKg || 65;
   for (const w of res.workouts || []) {
@@ -3290,6 +3360,7 @@ function chatContext() {
   return `Today is ${fmtDay(T)}, ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}. Default meal slot right now: ${slotNow()}.
 About me: ${bodyReady() ? `${b.sex === "f" ? "female" : "male"}, ${b.age} y, ${Math.round(b.heightCm)} cm, ${b.weightKg} kg` : "body stats not set (assume 65 kg)"}. I use ${us ? "US units (lb, oz, cups)" : "metric units"}.
 Today: ${S.settings.noNumbers ? "(they prefer not to see calorie numbers in replies)" : `${num(eaten)} of ${num(goal)} kcal eaten, protein goal ${S.settings.protein} g`}.
+Meals I eat often (reuse these exact names when I eat them again): ${mealLibrary().sort((a, b) => b.count - a.count).slice(0, 15).map(e => `"${e.name}" (${e.count}×, ~${e.kcal} kcal, usually ${Object.entries(e.slots).sort((a, b) => b[1] - a[1])[0][0]})`).join(", ") || "(none yet)"}
 My saved recipes (numbers per serving):
 ${recs.join("\n") || "(none yet)"}
 Meals logged today:
@@ -3311,7 +3382,7 @@ ${chatContext()}
 My message: """${text || "(no text)"}"""${hasImg ? "\nA photo is attached. If it shows food I ate, log it as a meal and estimate each component's amount. If it shows groceries or a receipt, treat them as bought." : ""}
 
 How to read it:
-- Meals: one entry per meal. Break it into items and estimate EACH item separately with USDA-style values. Use the exact weight or amount I give (grams, oz, cups, slices). If I name a brand, use that product's label (e.g. Dave's Killer Bread, Fage, Chobani, Trader Joe's, Quest). If I give no amount, assume one normal portion and write what you assumed in "amount". Weights are as eaten unless I say raw. Restaurant or chain food: use the chain's official nutrition; if you are not sure of it, still estimate and set "needs_lookup": true.
+- Meals: one entry per meal. If it's a meal I've had before, use the same name as before so the app can spot my patterns. Break it into items and estimate EACH item separately with USDA-style values. Use the exact weight or amount I give (grams, oz, cups, slices). If I name a brand, use that product's label (e.g. Dave's Killer Bread, Fage, Chobani, Trader Joe's, Quest). If I give no amount, assume one normal portion and write what you assumed in "amount". Weights are as eaten unless I say raw. Restaurant or chain food: use the chain's official nutrition; if you are not sure of it, still estimate and set "needs_lookup": true.
 - If I ate one of my saved recipes, set "recipe" to its exact name and "servings" (or "grams" if I weighed my portion), and put only extras in "items". Never repeat the recipe's own ingredients.
 - A recipe (a dish name with ingredients and amounts, "makes 4", "recipe:", "I cooked/meal prepped") goes in save_recipes with every ingredient and its total amount for the whole batch, plus servings (default 1) and cooked_weight_g if I give it. Only also log a meal if I say I ate some.
 - "slot": breakfast, lunch, dinner or snack. Use my words, otherwise the time of day.
@@ -3425,7 +3496,8 @@ function logRecipe(id, servings = 1) {
 }
 
 /* ---------- rendering ---------- */
-const TABS = [["chat", "chat", "Chat"], ["fridge", "fridge", "Fridge"], ["groceries", "cart", "Groceries"], ["recipes", "book", "Recipes"]];
+const TABS = [["chat", "chat", "Chat", "lilac"], ["fridge", "fridge", "At home", "mint"], ["groceries", "cart", "To buy", "pink"], ["recipes", "book", "Recipes", "butter"]];
+const PAL = ["peach", "sky", "mint", "pink", "butter", "lilac"];
 function renderAll() { renderHome(); scheduleNudges(); }
 function renderDock() {}
 function renderMagnets() {}
@@ -3434,30 +3506,54 @@ function renderInside() {}
 function renderHome() {
   const T = todayId();
   const tabs = $("#tabbar"); if (!tabs) return;
-  tabs.innerHTML = TABS.map(([k, ic, l]) => `<button class="${CH.tab === k ? "on" : ""}" data-act="tab" data-t="${k}" aria-label="${l}"${CH.tab === k ? ' aria-current="page"' : ""}>${icon(ic)}<span>${l}</span>${k === "groceries" && (S.shopping.items || []).filter(x => !x.done).length ? `<i>${(S.shopping.items || []).filter(x => !x.done).length}</i>` : ""}</button>`).join("");
-  $("#budgetStrip").innerHTML = stripHtml(T) + goalsRow(T);
+  const need = (S.shopping.items || []).filter(x => !x.done).length;
+  tabs.innerHTML = TABS.map(([k, ic, l, col]) => `<button class="${CH.tab === k ? "on" : ""}" style="--tc:var(--m-${col})" data-act="tab" data-t="${k}" aria-label="${l}"${CH.tab === k ? ' aria-current="page"' : ""}><span class="tb-ic">${icon(ic)}${k === "groceries" && need ? `<i>${need}</i>` : ""}</span><span>${l}</span></button>`).join("");
+  const bs = $("#budgetStrip"); bs.hidden = CH.tab !== "chat"; bs.innerHTML = CH.tab === "chat" ? stripHtml(T) + goalsRow(T) : "";
+  countUp();
+  celebrateGoals(T);
   const pane = $("#pane"), stick = CH.tab === "chat" && (CH.stick || pane.scrollHeight - pane.scrollTop - pane.clientHeight < 80);
-  const prevTop = pane.scrollTop;
+  const prevTop = pane.scrollTop, switched = pane.dataset.tab !== CH.tab;
   pane.innerHTML = CH.tab === "chat" ? paneChat() : CH.tab === "fridge" ? paneFridge() : CH.tab === "groceries" ? paneGroceries() : paneRecipes();
-  pane.dataset.tab = CH.tab;
-  if (stick) { pane.scrollTop = pane.scrollHeight; CH.stick = false; } else pane.scrollTop = prevTop;
+  pane.dataset.tab = CH.tab; pane.classList.toggle("enter", switched); if (switched) setTimeout(() => pane.classList.remove("enter"), 400);
+  if (stick) { pane.scrollTop = pane.scrollHeight; CH.stick = false; } else pane.scrollTop = switched ? 0 : prevTop;
   const comp = $("#composer"); comp.hidden = CH.tab !== "chat";
   if (CH.tab === "chat") renderComposer();
 }
+function ringSvg(frac, over) {
+  const r = 25, C = 2 * Math.PI * r, f = clamp(frac || 0, 0, 1);
+  return `<svg class="ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="${r}" class="rt"/><circle cx="32" cy="32" r="${r}" class="rp ${over ? "over" : ""}" style="stroke-dasharray:${C.toFixed(1)};stroke-dashoffset:${(C * (1 - f)).toFixed(1)}" transform="rotate(-90 32 32)"/></svg>`;
+}
 function stripHtml(T) {
-  if (S.settings.noNumbers) return `<button class="strip plain" data-act="open" data-sheet="calories"><b>Today</b><span>${(dayOf(T).meals || []).length} meals · ${workoutsOn(T).length} workouts</span>${icon("check")}</button>`;
+  if (S.settings.noNumbers) return `<button class="strip plain" data-act="open" data-sheet="calories"><span class="sticker c-butter">🍽️</span><b>Today</b><span>${(dayOf(T).meals || []).length} meals · ${workoutsOn(T).length} workouts</span></button>`;
   const eaten = kcalOf(T), goal = goalFor(T), left = goal - eaten, b = bodyReady() ? burnFor(T) : null, prot = Math.round(proteinOf(T));
   return `<button class="strip" data-act="open" data-sheet="calories" aria-label="Calories today, ${num(Math.abs(left))} ${left >= 0 ? "left" : "over"}">
-    <div class="st-main"><b class="${left < 0 ? "t-bad" : ""}">${num(Math.abs(left))}</b><span>${left >= 0 ? "kcal left" : "kcal over"}</span></div>
-    <div class="st-side"><span><b>${num(eaten)}</b> eaten</span><span>${b ? `<b>${num(b.total)}</b> burned` : `<b>${num(goal)}</b> goal`}</span><span><b>${prot}</b>/${S.settings.protein} g protein</span></div>
-    <div class="st-bar"><i class="${left < 0 ? "over" : ""}" style="width:${clamp(eaten / Math.max(goal, 1) * 100, 0, 100)}%"></i></div></button>`;
+    <span class="st-ring">${ringSvg(eaten / Math.max(goal, 1), left < 0)}<em>${left < 0 ? "😬" : eaten ? "🔥" : "🌱"}</em></span>
+    <span class="st-main"><b class="${left < 0 ? "t-bad" : ""}" data-to="${Math.abs(left)}">${num(Math.abs(left))}</b><span>${left >= 0 ? "kcal left today" : "kcal over today"}</span></span>
+    <span class="st-side"><span><i class="d-peach"></i><b>${num(eaten)}</b> eaten</span><span><i class="d-sky"></i><b>${num(b ? b.total : goal)}</b> ${b ? "burned" : "goal"}</span><span><i class="d-pink"></i><b>${prot}</b>/${S.settings.protein} g protein</span></span></button>`;
+}
+function countUp() {
+  const el = $("#budgetStrip .st-main b"); if (!el) return;
+  const to = +el.dataset.to, from = CH.prevLeft; CH.prevLeft = to;
+  if (from == null || from === to || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const t0 = performance.now(), d = 650;
+  const step = t => { const p = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - p, 3); el.textContent = num(from + (to - from) * e); if (p < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+function celebrateGoals(T) {
+  const done = goalList(T).filter(x => x.done).map(x => x.id), prev = CH.prevGoals; CH.prevGoals = done;
+  if (!prev || T !== CH.prevGoalsDay) { CH.prevGoalsDay = T; return; }
+  const fresh = done.filter(id => !prev.includes(id)); if (!fresh.length) return;
+  const g = goalList(T).find(x => x.id === fresh[0]);
+  setTimeout(() => { const chip = document.querySelector(`.gc[data-g="${CSS.escape(fresh[0])}"]`) || $(".goalsrow"); if (chip) { const r = chip.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 30); chip.classList.add("pop"); } }, 120);
+  toast(done.length === goalList(T).length ? "Every goal hit today! 🎉" : `Goal hit: ${g?.label || "nice"} 🎉`);
 }
 function renderComposer() {
   const c = $("#composer"); if (!c || c.dataset.ready) { syncComposer(); return; }
   c.dataset.ready = "1";
-  c.innerHTML = `<div class="tray" id="tray" hidden>
-      <button data-act="ch-scan">${icon("camera")}<span><b>Scan receipt or order</b><small>Paper receipt or grocery-app screenshots</small></span></button>
-      <label for="chImg">${icon("image")}<span><b>Photo of my meal or groceries</b><small id="chImgNote">Needs the AI key</small></span><input type="file" id="chImg" accept="image/*" hidden></label>
+  c.innerHTML = `<div class="qchips" id="qchips"></div>
+    <div class="tray" id="tray" hidden>
+      <button data-act="ch-scan"><span class="sticker c-sky">🧾</span><span><b>Scan receipt or order</b><small>Paper receipt or grocery-app screenshots</small></span></button>
+      <label for="chImg"><span class="sticker c-peach">📸</span><span><b>Photo of my meal or groceries</b><small id="chImgNote">Needs the AI key</small></span><input type="file" id="chImg" accept="image/*" hidden></label>
     </div>
     <div class="attach" id="chAttach" hidden></div>
     <div class="cbar"><button class="cplus" data-act="ch-tray" aria-label="Scan or add a photo">${icon("plus")}</button>
@@ -3468,9 +3564,16 @@ function renderComposer() {
 function syncComposer() {
   const t = $("#chIn"); if (t && document.activeElement !== t && t.value !== CH.draft) { t.value = CH.draft; autoGrow(t); }
   const tray = $("#tray"); if (tray) tray.hidden = !CH.tray;
+  $("#composer .cplus")?.classList.toggle("open", CH.tray);
   const note = $("#chImgNote"); if (note) note.textContent = aiOn() ? "It reads the photo and logs it" : "Needs the AI key (Settings)";
   const at = $("#chAttach"); if (at) { at.hidden = !CH.imgUrl; at.innerHTML = CH.imgUrl ? `<img src="${CH.imgUrl}" alt="Attached photo"><button data-act="ch-unimg" aria-label="Remove photo">${icon("x")}</button>` : ""; }
   const s = $("#composer .csend"); if (s) { s.disabled = CH.busy; s.classList.toggle("ready", !!(CH.draft.trim() || CH.img)); }
+  const q = $("#qchips"); if (q) {
+    const slot = slotNow(), sug = S.ready ? suggestMeals(slot, 4) : [];
+    const show = sug.length && !CH.draft.trim() && !CH.tray && !CH.busy;
+    q.hidden = !show;
+    if (show) q.innerHTML = `<span class="ql">Again?</span>` + sug.map((e, i) => `<button data-act="relog" data-key="${esc(e.key)}" style="--c:var(--m-${PAL[i % PAL.length]})"><span>${esc(dishEmoji(e.name))}</span>${esc(e.name)}${S.settings.noNumbers ? "" : `<small>${num(e.kcal)}</small>`}</button>`).join("");
+  }
 }
 const EXAMPLES = [
   ["Breakfast: 2 eggs, 1 slice Dave's Killer Bread, 10 g butter", "🍳"],
@@ -3483,47 +3586,44 @@ const EXAMPLES = [
 ];
 function dayLabel(id) { const d = diffDays(id, todayId()); return d === 0 ? "Today" : d === 1 ? "Yesterday" : fmtShort(id); }
 function paneChat() {
-  const msgs = CH.msgs.slice(-60);
+  const msgs = CH.msgs.slice(-60), now = Date.now();
   let h = `<div class="feed">`;
   if (!msgs.length) {
-    h += `<div class="hello"><h2>Hi${S.settings.name ? " " + esc(S.settings.name) : ""}. Just tell me.</h2><p>Type what you ate (with grams and brands if you have them), a recipe to save, a workout, or groceries you bought. I'll track the calories and keep everything organised.</p>
+    h += `<div class="hello"><div class="hello-stk"><span class="sticker big c-lilac">💬</span><span class="sticker big c-mint">🥑</span><span class="sticker big c-butter">🏃</span></div><h2>Just tell me.</h2><p>What you ate (grams and brands help), a recipe to save, a workout, or groceries you bought. I'll do the tracking.</p>
       ${aiOn() ? "" : `<p class="keynote">For exact numbers per ingredient, paste your Gemini API key here as a message. It stays on this phone.</p>`}
-      <div class="ex">${EXAMPLES.map(([t, e]) => `<button data-act="ch-example" data-t="${esc(t)}"><span>${e}</span>${esc(t)}</button>`).join("")}</div></div>`;
+      <div class="ex">${EXAMPLES.map(([t, e], i) => `<button data-act="ch-example" data-t="${esc(t)}" style="--c:var(--m-${PAL[i % PAL.length]})"><span class="sticker sm">${e}</span>${esc(t)}</button>`).join("")}</div></div>`;
   }
   let lastDay = "";
   for (const m of msgs) {
-    if (m.day !== lastDay) { h += `<div class="daysep">${esc(dayLabel(m.day || todayId()))}</div>`; lastDay = m.day; }
-    h += m.who === "me" ? `<div class="msg me"><div class="bub">${m.img ? `<span class="imgtag">${icon("image")}Photo</span>` : ""}${esc(m.text)}</div></div>` : appMsg(m);
+    if (m.day !== lastDay) { h += `<div class="daysep"><span>${esc(dayLabel(m.day || todayId()))}</span></div>`; lastDay = m.day; }
+    const fresh = !CH.seen.has(m.id) && now - (m.t || 0) < 3000 ? " new" : ""; CH.seen.add(m.id);
+    h += m.who === "me" ? `<div class="msg me${fresh}"><div class="bub">${m.img ? `<span class="imgtag">${icon("image")}Photo</span>` : ""}${esc(m.text)}</div></div>` : appMsg(m, fresh);
   }
-  if (CH.busy) h += `<div class="msg app"><div class="card typing"><span class="dots"><i></i><i></i><i></i></span><button class="linkbtn" data-act="ch-stop">Stop</button></div></div>`;
+  if (CH.busy) h += `<div class="msg bot new"><div class="card typing"><span class="dots"><i></i><i></i><i></i></span><button class="linkbtn" data-act="ch-stop">Stop</button></div></div>`;
   return h + `</div>`;
 }
 function itemRow(x, nn) { return `<li><span>${esc(x.name)}${x.brand ? ` <em>${esc(x.brand)}</em>` : ""}${x.amt ? `<small>${esc(x.amt)}</small>` : ""}</span>${nn ? "" : `<b>${x.kcal ? num(x.kcal) : "?"}</b>`}</li>`; }
+const BLK = { meal: ["peach", "🍽️"], recipe: ["butter", "📖"], workout: ["sky", "🏃"], steps: ["sky", "👟"], active: ["sky", "⌚"], weight: ["lilac", "⚖️"], bought: ["mint", "🛍️"], have: ["mint", "🧊"], list: ["pink", "📝"], unlist: ["pink", "✔️"], used: ["mint", "😋"], tossed: ["tomato", "🗑️"], removed: ["tomato", "↩️"], goals: ["lilac", "🎯"], habits: ["sky", "💧"] };
+const BLK_TAG = { bought: "Bought · now At home", have: "Now At home", list: "Added To buy", unlist: "Off the To buy list", used: "Used up", tossed: "Tossed", removed: "Removed", goals: "Goals updated", habits: "Habits", steps: "Steps", active: "Apple Health", weight: "Weight" };
 function blockHtml(b, m) {
-  const nn = S.settings.noNumbers;
+  const nn = S.settings.noNumbers, [col, emo0] = BLK[b.k] || ["lilac", "✨"];
+  const wrap = (inner, emo = emo0) => `<div class="blk k-${b.k}"><span class="sticker c-${col}" style="--rot:${((b.name || b.k).length % 5) * 3 - 6}deg">${emo}</span><div class="bc">${inner}</div></div>`;
   switch (b.k) {
-    case "meal": return `<div class="blk meal"><div class="bh"><span class="btag">${cap(b.slot || "meal")}</span><b>${esc(b.name)}</b>${nn ? "" : `<strong>${num(b.kcal)}<small> kcal</small></strong>`}</div>
-      ${nn ? "" : `<div class="macros"><span>${num(b.protein)} g protein</span><span>${num(b.carbs)} g carbs</span><span>${num(b.fat)} g fat</span></div>`}
+    case "meal": return wrap(`<div class="bh"><span class="btag">${cap(b.slot || "meal")}</span><b>${esc(b.name)}</b>${nn ? "" : `<strong>${num(b.kcal)}<small> kcal</small></strong>`}</div>
+      ${nn ? "" : `<div class="macros"><span class="mp">${num(b.protein)} g protein</span><span>${num(b.carbs)} g carbs</span><span>${num(b.fat)} g fat</span></div>`}
       ${(b.items || []).length > 1 || (b.items?.[0]?.amt) ? `<ul class="items">${b.items.map(x => itemRow(x, nn)).join("")}</ul>` : ""}
       ${b.note ? `<p class="bnote">${esc(b.note)}</p>` : ""}${b.guess ? `<p class="bnote">Some numbers are estimates. Correct me in a message if you know better.</p>` : ""}
-      ${b.fridge?.length && !m.undone && !b.usedDone ? `<div class="useq"><span>From your fridge: ${esc(b.fridge.join(", "))}?</span><button class="linkbtn" data-act="ch-use" data-mid="${esc(m.id)}" data-bid="${esc(b.id)}">Mark used</button></div>` : ""}</div>`;
-    case "recipe": return `<div class="blk"><div class="bh"><span class="btag">${b.updated ? "Recipe updated" : "Recipe saved"}</span><b>${esc(b.name)}</b>${nn ? "" : `<strong>${num(b.per.kcal)}<small> kcal/serving</small></strong>`}</div>
-      <div class="macros"><span>${b.servings} serving${b.servings === 1 ? "" : "s"}</span>${nn ? "" : `<span>${num(b.per.protein)} g protein each</span><span>${num(b.total.kcal)} kcal total</span>`}</div>
-      ${m.undone ? "" : `<div class="bact"><button class="pillbtn" data-act="rec-log1" data-id="${esc(b.id)}">Log a serving</button><button class="linkbtn" data-act="rec-view" data-id="${esc(b.id)}">See ingredients</button></div>`}</div>`;
-    case "workout": return `<div class="blk"><div class="bh"><span class="btag">Workout</span><b>${esc(b.emoji || "")} ${esc(b.name)} · ${b.min} min</b>${nn ? "" : `<strong>${num(b.kcal)}<small> kcal</small></strong>`}</div>${b.details ? `<p class="bnote">${esc(b.details)}</p>` : ""}${b.est && !nn ? `<p class="bnote">Add your weight in Today for an exact burn.</p>` : ""}</div>`;
-    case "steps": return `<div class="blk"><div class="bh"><span class="btag">Steps</span><b>${num(b.v)} steps</b>${nn || !bodyReady() ? "" : `<strong>${num(Math.max(0, b.v - 2500) * kcalPerStep())}<small> kcal</small></strong>`}</div></div>`;
-    case "active": return `<div class="blk"><div class="bh"><span class="btag">Apple Health</span><b>${num(b.v)} active kcal</b></div></div>`;
-    case "weight": return `<div class="blk"><div class="bh"><span class="btag">Weight</span><b>${b.v} ${esc(b.unit)}</b></div></div>`;
-    case "bought": return `<div class="blk"><div class="bh"><span class="btag">Bought · in your fridge</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
-    case "have": return `<div class="blk"><div class="bh"><span class="btag">Now tracking</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
-    case "list": return `<div class="blk"><div class="bh"><span class="btag">Added to grocery list</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
-    case "unlist": return `<div class="blk"><div class="bh"><span class="btag">Off the list</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
-    case "used": return `<div class="blk"><div class="bh"><span class="btag">Used up</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
-    case "tossed": return `<div class="blk"><div class="bh"><span class="btag">Tossed</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
-    case "goals": return `<div class="blk"><div class="bh"><span class="btag">Goals updated</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
-    case "habits": return `<div class="blk"><div class="bh"><span class="btag">Habits</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
-    case "removed": return `<div class="blk"><div class="bh"><span class="btag">Removed</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
+      ${b.pattern && !m.undone ? `<div class="useq pat"><span>${esc(b.pattern)}</span>${b.saved ? `<span class="t-ok">Saved ✓</span>` : `<button class="linkbtn" data-act="save-from-meal" data-mid="${esc(m.id)}" data-bid="${esc(b.id)}">Save as recipe</button>`}</div>` : ""}
+      ${b.fridge?.length && !m.undone && !b.usedDone ? `<div class="useq"><span>From At home: ${esc(b.fridge.join(", "))}?</span><button class="linkbtn" data-act="ch-use" data-mid="${esc(m.id)}" data-bid="${esc(b.id)}">Mark used</button></div>` : ""}`, dishEmoji(b.name));
+    case "recipe": return wrap(`<div class="bh"><span class="btag">${b.updated ? "Recipe updated" : "Recipe saved"}</span><b>${esc(b.name)}</b>${nn ? "" : `<strong>${num(b.per.kcal)}<small> kcal/serving</small></strong>`}</div>
+      <div class="macros"><span>${b.servings} serving${b.servings === 1 ? "" : "s"}</span>${nn ? "" : `<span class="mp">${num(b.per.protein)} g protein each</span><span>${num(b.total.kcal)} kcal total</span>`}</div>
+      ${m.undone ? "" : `<div class="bact"><button class="pillbtn" data-act="rec-log1" data-id="${esc(b.id)}">Log a serving</button><button class="linkbtn" data-act="rec-view" data-id="${esc(b.id)}">See recipe</button></div>`}`);
+    case "workout": return wrap(`<div class="bh"><span class="btag">Workout</span><b>${esc(b.name)} · ${b.min} min</b>${nn ? "" : `<strong>${num(b.kcal)}<small> kcal</small></strong>`}</div>${b.details ? `<p class="bnote">${esc(b.details)}</p>` : ""}${b.est && !nn ? `<p class="bnote">Add your weight (tap the calorie card) for an exact burn.</p>` : ""}`, b.emoji || emo0);
+    case "steps": return wrap(`<div class="bh"><span class="btag">Steps</span><b>${num(b.v)} steps</b>${nn || !bodyReady() ? "" : `<strong>${num(Math.max(0, b.v - 2500) * kcalPerStep())}<small> kcal</small></strong>`}</div>`);
+    case "active": return wrap(`<div class="bh"><span class="btag">Apple Health</span><b>${num(b.v)} active kcal</b></div>`);
+    case "weight": return wrap(`<div class="bh"><span class="btag">Weight</span><b>${b.v} ${esc(b.unit)}</b></div>`);
   }
+  if (b.names) return wrap(`<div class="bh"><span class="btag">${esc(BLK_TAG[b.k] || b.k)}</span></div><p class="names">${esc(b.names.join(", "))}</p>`);
   return "";
 }
 function ideaHtml(r, m, i) {
@@ -3532,32 +3632,32 @@ function ideaHtml(r, m, i) {
     ${open ? `<div class="ibody">${r.ingredients?.length ? `<ul>${r.ingredients.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}${r.steps?.length ? `<ol>${r.steps.map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : ""}
       <div class="bact"><button class="pillbtn" data-act="ch-idea-log" data-mid="${esc(m.id)}" data-i="${i}">I made this</button><button class="linkbtn" data-act="ch-idea-save" data-mid="${esc(m.id)}" data-i="${i}">${isSaved(r) ? "Saved" : "Save idea"}</button></div></div>` : ""}</div>`;
 }
-function appMsg(m) {
+function appMsg(m, fresh = "") {
   const blocks = (m.blocks || []).map(b => blockHtml(b, m)).join(""), ideas = (m.ideas || []).map((r, i) => ideaHtml(r, m, i)).join("");
   const T = m.day || todayId(), showLeft = m.tracked && !m.undone && !S.settings.noNumbers && T === todayId() && m === [...CH.msgs].reverse().find(x => x.tracked && !x.undone);
   const left = goalFor(T) - kcalOf(T);
-  return `<div class="msg app"><div class="card ${m.undone ? "undone" : ""}">${m.text ? `<p class="said">${esc(m.text)}</p>` : ""}${blocks}${ideas}
-    ${showLeft || (m.undo && !m.undone) || m.undone || m.retry ? `<div class="mfoot">${showLeft ? `<span>${left >= 0 ? `${num(left)} kcal left today` : `${num(-left)} kcal over today`}</span>` : "<span></span>"}${m.undone ? `<span class="muted">Undone</span>` : m.undo ? `<button class="linkbtn" data-act="ch-undo" data-mid="${esc(m.id)}">Undo</button>` : ""}${m.retry ? `<button class="linkbtn" data-act="ch-retry" data-mid="${esc(m.id)}">Edit and resend</button>` : ""}</div>` : ""}</div></div>`;
+  return `<div class="msg bot${fresh}"><div class="card ${m.undone ? "undone" : ""}">${m.text ? `<p class="said">${esc(m.text)}</p>` : ""}${blocks}${ideas}
+    ${showLeft || (m.undo && !m.undone) || m.undone || m.retry ? `<div class="mfoot">${showLeft ? `<span class="left ${left < 0 ? "over" : ""}">${left >= 0 ? `${num(left)} kcal left today` : `${num(-left)} kcal over today`}</span>` : "<span></span>"}${m.undone ? `<span class="muted">Undone</span>` : m.undo ? `<button class="linkbtn" data-act="ch-undo" data-mid="${esc(m.id)}">Undo</button>` : ""}${m.retry ? `<button class="linkbtn" data-act="ch-retry" data-mid="${esc(m.id)}">Edit and resend</button>` : ""}</div>` : ""}</div></div>`;
 }
-
 /* ---------- Fridge tab ---------- */
 const ZONE_GROUP = z => z === "freezer" ? "freezer" : z === "pantry" ? "pantry" : "fridge";
 function itemRowHtml(i) {
   const l = lifeInfo(i);
-  return `<button class="row-i" data-act="item" data-id="${esc(i.id)}"><span class="emo">${esc(i.emoji || "🛒")}</span><span class="nm"><b>${esc(i.name)}${(i.qty || 1) > 1 ? ` <em>×${i.qty}</em>` : ""}</b><small>${esc(ZONE_SHORT[i.zone] || "")}${i.boughtAt ? ` · since ${fmtShort(i.boughtAt)}` : ""}</small></span><span class="pill ${l.cls}">${esc(l.label)}</span></button>`;
+  return `<button class="row-i" data-act="item" data-id="${esc(i.id)}"><span class="emo f-${l.cls}">${esc(i.emoji || "🛒")}</span><span class="nm"><b>${esc(i.name)}${(i.qty || 1) > 1 ? ` <em>×${i.qty}</em>` : ""}</b><small>${esc(ZONE_SHORT[i.zone] || "")}${i.boughtAt ? ` · since ${fmtShort(i.boughtAt)}` : ""}</small></span><span class="pill ${l.cls}">${esc(l.label)}</span></button>`;
 }
+function phead(col, emo, title, sub) { return `<div class="phead"><span class="sticker big c-${col}">${emo}</span><div><h2 class="ptitle">${title}</h2><p>${sub}</p></div></div>`; }
 function paneFridge() {
   const all = S.items.filter(i => i.status === "fresh"), z = CH.fzone;
   const shown = all.filter(i => z === "all" || ZONE_GROUP(i.zone) === z).sort((a, b) => daysLeft(a) - daysLeft(b));
   const soon = shown.filter(i => i.zone !== "pantry" && daysLeft(i) <= 3), rest = shown.filter(i => !soon.includes(i));
   const cnt = k => all.filter(i => k === "all" || ZONE_GROUP(i.zone) === k).length;
-  let h = `<div class="pane-in"><h2 class="ptitle">What I have</h2>
-    <form class="addrow" id="fridgeAdd"><input class="inp" id="fridgeIn" placeholder="Add food, e.g. 2 avocados, milk" autocomplete="off" enterkeyhint="done"><button class="btn sm">Add</button></form>
-    <div class="row2"><button class="btn soft sm" data-act="ch-scan">${icon("camera")}Scan receipt</button><button class="btn soft sm" data-act="open" data-sheet="scan" data-mode="photo">${icon("image")}Fridge photo</button></div>
+  let h = `<div class="pane-in">${phead("mint", "🧊", "At home", "Food you already have. What goes bad first is at the top.")}
+    <form class="addrow" id="fridgeAdd"><input class="inp" id="fridgeIn" placeholder="I have… e.g. 2 avocados, milk" autocomplete="off" enterkeyhint="done"><button class="btn sm">Add</button></form>
+    <div class="row2"><button class="chipbtn" data-act="ch-scan" style="--c:var(--m-sky)">🧾 Scan receipt</button><button class="chipbtn" data-act="open" data-sheet="scan" data-mode="photo" style="--c:var(--m-peach)">📸 Fridge photo</button></div>
     <div class="seg">${[["all", "All"], ["fridge", "Fridge"], ["freezer", "Freezer"], ["pantry", "Pantry"]].map(([k, l]) => `<button class="${z === k ? "on" : ""}" data-act="fzone" data-z="${k}">${l} ${cnt(k) ? `<small>${cnt(k)}</small>` : ""}</button>`).join("")}</div>`;
   if (S.items.some(i => i.example)) h += `<div class="banner2">This is example food. <button class="linkbtn" data-act="clear-examples">Clear examples</button></div>`;
-  if (!shown.length) h += `<p class="empty">Nothing here yet. Type above, scan a receipt, or tell the chat “bought eggs and spinach”.</p>`;
-  if (soon.length) h += `<div class="gtitle warn">Eat soon</div><div class="group">${soon.map(itemRowHtml).join("")}</div>`;
+  if (!shown.length) h += `<div class="emptycard"><span class="sticker big c-mint">🥕</span><p>Nothing here yet. Add above, scan a receipt, or tick items on your To buy list when you shop.</p></div>`;
+  if (soon.length) h += `<div class="gtitle warn">⏰ Eat soon</div><div class="group">${soon.map(itemRowHtml).join("")}</div>`;
   if (rest.length) h += `<div class="gtitle">${soon.length ? "Everything else" : "All good"}</div><div class="group">${rest.map(itemRowHtml).join("")}</div>`;
   return h + `</div>`;
 }
@@ -3575,21 +3675,19 @@ function paneGroceries() {
   const due = restockDue().filter(r => !open.some(x => nameMatch(x.name, r.name)));
   const recentUsed = []; S.items.filter(i => i.status !== "fresh" && i.closedAt >= addDays(todayId(), -21) && !act.some(a => nameMatch(a.name, i.name)) && !open.some(x => nameMatch(x.name, i.name)) && !due.some(r => nameMatch(r.name, i.name))).forEach(i => { if (!recentUsed.some(u => nameMatch(u.name, i.name))) recentUsed.push(i); });
   const again = [...due.map(r => ({ name: r.name, why: `every ~${r.every}d` })), ...recentUsed.slice(0, 8).map(i => ({ name: i.name, why: "ran out" }))].slice(0, 10);
-  let h = `<div class="pane-in"><h2 class="ptitle">Grocery list</h2>
-    <form class="addrow" id="listAdd"><input class="inp" id="listIn" placeholder="Add items, e.g. oat milk, lemons" autocomplete="off" enterkeyhint="done"><button class="btn sm">Add</button></form>`;
-  h += open.length ? `<div class="group">${open.map(x => { const home = act.filter(a => nameMatch(a.name, x.name)); return `<div class="row-l"><button class="tickbtn" data-act="list-tick" data-id="${esc(x.id)}" aria-label="Bought ${esc(x.name)}"></button><span class="nm"><b>${esc(x.name)}</b>${home.length ? `<small class="t-ok">You have ${esc(home[0].name)} (${esc(lifeInfo(home[0]).label.toLowerCase())})</small>` : ""}</span><button class="x-btn" data-act="list-del" data-id="${esc(x.id)}" aria-label="Remove ${esc(x.name)}">${icon("x")}</button></div>`; }).join("")}</div><p class="hint">Tick an item when you buy it and it moves into your fridge.</p>`
-    : `<p class="empty">Your list is empty. Add above, or tell the chat “add oat milk to my list”.</p>`;
-  if (done.length) h += `<div class="gtitle">Bought <button class="linkbtn" data-act="shop-clear">Clear</button></div><div class="group dim">${done.map(x => `<div class="row-l"><span class="tickbtn on">${icon("check")}</span><span class="nm"><b>${esc(x.name)}</b></span></div>`).join("")}</div>`;
-  if (again.length) h += `<div class="gtitle">Buy again</div><div class="chips2">${again.map(a => `<button data-act="list-again" data-name="${esc(a.name)}">+ ${esc(a.name)}<small>${esc(a.why)}</small></button>`).join("")}</div>`;
-  h += `<button class="btn soft block" data-act="ch-scan">${icon("camera")}Scan a receipt or order screenshots</button>`;
-  // purchase history
+  let h = `<div class="pane-in">${phead("pink", "📝", "To buy", "Your shopping list. Tick it at the store and it moves to At home.")}
+    <form class="addrow" id="listAdd"><input class="inp" id="listIn" placeholder="I need… e.g. oat milk, lemons" autocomplete="off" enterkeyhint="done"><button class="btn sm">Add</button></form>`;
+  h += open.length ? `<div class="group">${open.map(x => { const home = act.filter(a => nameMatch(a.name, x.name)); return `<div class="row-l"><button class="tickbtn" data-act="list-tick" data-id="${esc(x.id)}" aria-label="Bought ${esc(x.name)}"></button><span class="nm"><b>${esc(x.name)}</b>${home.length ? `<small class="t-ok">Already At home: ${esc(home[0].name)}</small>` : ""}</span><button class="x-btn" data-act="list-del" data-id="${esc(x.id)}" aria-label="Remove ${esc(x.name)}">${icon("x")}</button></div>`; }).join("")}</div>`
+    : `<div class="emptycard"><span class="sticker big c-pink">🛒</span><p>Nothing to buy. Add above, or tell the chat “add oat milk to my list”.</p></div>`;
+  if (done.length) h += `<div class="gtitle">Bought, moved to At home <button class="linkbtn" data-act="shop-clear">Clear</button></div><div class="group dim">${done.map(x => `<div class="row-l"><span class="tickbtn on">${icon("check")}</span><span class="nm"><b>${esc(x.name)}</b></span></div>`).join("")}</div>`;
+  if (again.length) h += `<div class="gtitle">Buy again</div><div class="chips2">${again.map((a, i) => `<button data-act="list-again" data-name="${esc(a.name)}" style="--c:var(--m-${PAL[i % PAL.length]})">+ ${esc(a.name)}<small>${esc(a.why)}</small></button>`).join("")}</div>`;
   const since = addDays(todayId(), -30), bought = S.items.filter(i => i.boughtAt && i.boughtAt >= since && !["have", "example"].includes(i.source) && !i.example).sort((a, b) => b.boughtAt.localeCompare(a.boughtAt));
   if (bought.length) {
     const spend = bought.reduce((s, i) => s + (+i.price || 0), 0), byDay = {}; bought.forEach(i => (byDay[i.boughtAt] = byDay[i.boughtAt] || []).push(i));
     const freq = {}; S.items.filter(i => i.boughtAt && !i.example && i.source !== "have").forEach(i => { const k = canon(i.name) || normName(i.name); (freq[k] = freq[k] || { name: i.name, n: 0 }).n += 1; });
     const top = Object.values(freq).filter(f => f.n > 1).sort((a, b) => b.n - a.n).slice(0, 6);
     h += `<div class="gtitle">What I've bought <small>last 30 days${spend ? ` · ${money(spend)}` : ""}</small></div><div class="group hist">${Object.keys(byDay).slice(0, 10).map(d => `<div class="hday"><span>${esc(dayLabel(d))}</span><p>${esc(byDay[d].map(i => i.name + ((i.qty || 1) > 1 ? " ×" + i.qty : "")).join(", "))}</p></div>`).join("")}</div>`;
-    if (top.length) h += `<div class="gtitle">Bought most often</div><div class="chips2 static">${top.map(f => `<span>${esc(f.name)}<small>${f.n}×</small></span>`).join("")}</div>`;
+    if (top.length) h += `<div class="gtitle">Bought most often</div><div class="chips2 static">${top.map((f, i) => `<span style="--c:var(--m-${PAL[i % PAL.length]})">${esc(f.name)}<small>${f.n}×</small></span>`).join("")}</div>`;
   }
   return h + `</div>`;
 }
@@ -3603,20 +3701,64 @@ function listTick(id) {
 
 /* ---------- Recipes tab ---------- */
 function paneRecipes() {
-  const L = myRecipes(), nn = S.settings.noNumbers, ideas = savedRecipes();
-  let h = `<div class="pane-in"><h2 class="ptitle">My recipes</h2>`;
-  if (!L.length) h += `<div class="emptycard"><p>Type a recipe in Chat and it's saved here with calories per serving. Then just say “had a serving of my chili”.</p><button class="pillbtn" data-act="ch-example" data-t="${esc(EXAMPLES[1][0])}">Try an example</button></div>`;
-  for (const r of L) {
-    const open = CH.openRec === r.id;
-    h += `<div class="rcard"><button class="rhead" data-act="rec-toggle" data-id="${esc(r.id)}" aria-expanded="${open}"><span class="nm"><b>${esc(r.name)}</b><small>${r.servings} serving${r.servings === 1 ? "" : "s"}${nn ? "" : ` · ${num(r.per.protein)} g protein each`}</small></span>${nn ? "" : `<strong>${num(r.per.kcal)}<small>kcal/serving</small></strong>`}</button>
+  const L = myRecipes(), nn = S.settings.noNumbers, ideas = savedRecipes(), spot = spotted();
+  let h = `<div class="pane-in">${phead("butter", "📖", "Recipes", "Your own recipes, with calories per serving, plus patterns in what you eat.")}`;
+  if (spot.length) h += `<div class="gtitle">✨ Patterns I noticed</div><div class="spots">${spot.map((p, i) => `<div class="spot" style="--c:var(--m-${p.col || PAL[i % PAL.length]})"><span class="sticker">${p.emo}</span><div><b>${esc(p.t)}</b><small>${esc(p.s)}</small>${p.act ? `<button class="pillbtn sm" ${p.act}>${esc(p.btn)}</button>` : ""}</div></div>`).join("")}</div>`;
+  h += `<div class="gtitle">My recipes${L.length ? ` · ${L.length}` : ""}</div>`;
+  if (!L.length) h += `<div class="emptycard"><span class="sticker big c-butter">🍲</span><p>Type a recipe in Chat, with amounts, and it's saved here with calories per serving. Then just say “had a serving of my chili”.</p><button class="pillbtn" data-act="ch-example" data-t="${esc(EXAMPLES[1][0])}">Try an example</button></div>`;
+  for (const [i, r] of L.entries()) {
+    const open = CH.openRec === r.id, st = recipeStats(r);
+    h += `<div class="rcard" style="--c:var(--m-${PAL[i % PAL.length]})"><button class="rhead" data-act="rec-toggle" data-id="${esc(r.id)}" aria-expanded="${open}"><span class="sticker">${esc(dishEmoji(r.name))}</span><span class="nm"><b>${esc(r.name)}</b><small>${r.servings} serving${r.servings === 1 ? "" : "s"}${nn ? "" : ` · ${num(r.per.protein)} g protein each`}</small><small class="made">${st.n ? `Eaten ${st.n}× · last ${esc(dayLabel(st.last).toLowerCase())}` : "Not logged yet"}</small></span>${nn ? "" : `<strong>${num(r.per.kcal)}<small>kcal/serving</small></strong>`}</button>
       ${open ? `<div class="rbody"><div class="gtitle">Ingredients · whole batch</div><ul class="items">${r.items.map(x => itemRow(x, nn)).join("")}</ul>${!nn ? `<p class="bnote">Batch: ${num(r.total.kcal)} kcal · ${num(r.total.protein)} g protein · ${num(r.total.carbs)} g carbs · ${num(r.total.fat)} g fat${r.cookedG ? ` · ${num(r.cookedG)} g cooked` : ""}</p>` : ""}
         ${r.steps?.length ? `<div class="gtitle">Steps</div><ol class="steps">${r.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
         <div class="rcook"><span>Servings</span><div class="stepper"><button data-act="rec-serv2" data-d="-0.5" aria-label="Fewer">−</button><output>${fmtServ(CH.serv || 1)}</output><button data-act="rec-serv2" data-d="0.5" aria-label="More">+</button></div><button class="btn sm" data-act="rec-log1" data-id="${esc(r.id)}">Log it</button></div>
         <div class="bact"><button class="linkbtn" data-act="rec-edit" data-id="${esc(r.id)}">Change it in chat</button><button class="linkbtn danger" data-act="rec-del" data-id="${esc(r.id)}">Delete</button></div></div>` : ""}</div>`;
   }
-  h += `<div class="gtitle">Ideas</div><button class="btn soft block" data-act="open" data-sheet="recipes">${icon("spark")}What can I make with my fridge?</button>`;
-  if (ideas.length) h += `<div class="group">${ideas.slice(0, 20).map(s => `<button class="row-i" data-act="open" data-sheet="recipes" data-tab="saved"><span class="nm"><b>${esc(s.name)}</b><small>${s.minutes || 15} min${nn ? "" : ` · ${num(s.kcal)} kcal`}</small></span></button>`).join("")}</div>`;
+  h += `<div class="gtitle">Ideas</div><button class="chipbtn wide" data-act="open" data-sheet="recipes" style="--c:var(--m-lilac)">💡 What can I make with what's At home?</button>`;
+  if (ideas.length) h += `<div class="group">${ideas.slice(0, 20).map(s => `<button class="row-i" data-act="open" data-sheet="recipes" data-tab="saved"><span class="emo">${esc(dishEmoji(s.name))}</span><span class="nm"><b>${esc(s.name)}</b><small>${s.minutes || 15} min${nn ? "" : ` · ${num(s.kcal)} kcal`}</small></span></button>`).join("")}</div>`;
+  h += `<p class="hint">${S.mode === "db" ? "Recipes are saved to your Claude account, so they're the same everywhere you open this page." : "Recipes are saved on this phone with the rest of your data. Back them up from Settings → Your data."}</p>`;
   return h + `</div>`;
+}
+/* ---------- patterns ---------- */
+function recipeStats(r) {
+  let n = 0, last = "";
+  for (const id in S.days) (S.days[id].meals || []).forEach(m => { if ((m.items || []).some(x => x.rid === r.id) || normName(m.name) === normName(r.name)) { n++; if (id > last) last = id; } });
+  return { n, last };
+}
+function lastMeal(key) { let src = null, sid = ""; for (const id in S.days) (S.days[id].meals || []).forEach(m => { if (normName(m.name) === key && id >= sid) { src = m; sid = id; } }); return src; }
+const emptyU = () => ({ meals: [], workouts: [], items: [], itemPrev: [], recipes: [], recipePrev: [], delMeals: [], delWorkouts: [], act: null, body: null, shopPrev: null });
+function mealBlock(meal, extra = {}) { return { k: "meal", id: meal.id, name: meal.name, slot: meal.slot, kcal: meal.kcal, protein: meal.protein, carbs: meal.carbs || 0, fat: meal.fat || 0, items: meal.items || [], ...extra }; }
+function patternNote(meal) {
+  const e = mealLibrary().find(x => x.key === normName(meal.name));
+  if (!e || e.count < 3 || (meal.items || []).length < 2 || (meal.items || []).some(x => x.rid) || myRecipes().some(r => normName(r.name) === e.key)) return "";
+  return `You've had this ${e.count} times. Save it as a recipe and log it in one tap next time.`;
+}
+function relogMeal(key) {
+  const src = lastMeal(key); if (!src) return;
+  const p = +src.portion || 1, T = todayId();
+  const meal = { ...clean(src), id: uid(), slot: slotNow(), portion: 1, src: "again", kcal: Math.round(src.kcal / p), protein: Math.round((src.protein || 0) / p), uses: [] };
+  if (src.carbs != null) meal.carbs = Math.round(src.carbs / p); if (src.fat != null) meal.fat = Math.round(src.fat / p);
+  editDay(T, d => d.meals.push(meal)); track("logs"); track("logMs", 900);
+  pushMsg({ who: "me", text: `Had ${meal.name} again` });
+  const U = emptyU(); U.meals.push(meal.id);
+  pushMsg({ who: "app", text: "Logged your usual.", blocks: [mealBlock(meal, { pattern: patternNote(meal) })], undo: U, tracked: true });
+}
+function spotted() {
+  const out = [], lib = mealLibrary();
+  lib.filter(e => e.count >= 2 && !myRecipes().some(r => normName(r.name) === e.key)).sort((a, b) => b.count - a.count).forEach(e => {
+    const m = lastMeal(e.key); if (!m || (m.items || []).length < 2 || (m.items || []).some(x => x.rid) || out.length >= 2) return;
+    out.push({ emo: dishEmoji(e.name), t: `You've had ${e.name} ${e.count}×`, s: "Save it as a recipe so it logs in one tap.", act: `data-act="save-pattern" data-key="${esc(e.key)}"`, btn: "Save as recipe" });
+  });
+  const top = myRecipes().map(r => ({ r, ...recipeStats(r) })).filter(x => x.n >= 2).sort((a, b) => b.n - a.n)[0];
+  if (top) out.push({ emo: "🏆", t: `Your favourite: ${top.r.name}`, s: `Eaten ${top.n}× · last ${dayLabel(top.last).toLowerCase()}.`, col: "butter" });
+  const P = patterns(), go = P.filter(p => p.ic === "spark");
+  if (go.length) out.push({ emo: "⭐️", t: "Your go-to meals", s: go.map(p => p.t.replace(/^Go-to /, "").replace(":", " →")).join(" · ") + ". They show up first as one-tap chips in Chat.", col: "lilac" });
+  P.filter(p => p.ic !== "spark").slice(0, 3).forEach(p => out.push({ emo: { spark: "⭐️", alert: "📈", flame: "💪", leaf: "🥀", cart: "🛒" }[p.ic] || "✨", t: p.t, s: p.s, col: { violet: "lilac", amber: "butter", red: "tomato", pink: "pink" }[p.c] }));
+  return out.slice(0, 6);
+}
+function saveFromMeal(m) {
+  const items = (m.items || []).map(x => ({ name: x.name, brand: x.brand, amount: x.amt, grams: x.g, kcal: x.kcal, protein: x.protein, carbs: x.carbs, fat: x.fat }));
+  return saveRecipe({ name: m.name, servings: 1, items }).rec;
 }
 
 /* ---------- events for the new screens ---------- */
@@ -3637,6 +3779,9 @@ document.addEventListener("click", e => {
     case "ch-idea": CH.openRec = CH.openRec === el.dataset.k ? "" : el.dataset.k; renderAll(); break;
     case "ch-idea-save": { const r = msg()?.ideas?.[+el.dataset.i]; if (r) { const was = isSaved(r); toggleSave({ ...r, useNames: r.uses }); toast(was ? "Removed from saved ideas." : "Saved to Recipes."); renderAll(); } break; }
     case "ch-idea-log": { const r = msg()?.ideas?.[+el.dataset.i]; if (!r) break; const out = applyActions({ meals: [{ name: r.name, slot: slotNow(), items: [{ name: r.name, amount: "1 serving", kcal: r.kcal, protein: r.protein }] }] }); const b = out.blocks[0]; if (b && r.uses?.length) b.fridge = r.uses.map(n => fridgeMatch(canon(n))?.name).filter(Boolean); pushMsg({ who: "app", text: `Logged ${r.name}.`, blocks: out.blocks, undo: out.undo, tracked: true }); break; }
+    case "relog": relogMeal(el.dataset.key); break;
+    case "save-pattern": { const m = lastMeal(el.dataset.key); if (!m) break; const r = saveFromMeal(m); renderAll(); toast(`Saved ${r.name} as a recipe.`); break; }
+    case "save-from-meal": { const mm = msg(), b = mm?.blocks?.find(x => x.id === el.dataset.bid); if (!b) break; const r = saveFromMeal(b); b.saved = true; chatSave(); renderAll(); toast(`Saved ${r.name}. Find it in Recipes.`); break; }
     case "fzone": CH.fzone = el.dataset.z; renderAll(); break;
     case "list-tick": listTick(el.dataset.id); break;
     case "list-del": { const prev = S.shopping.items.map(i => ({ ...i })); S.shopping = { ...S.shopping, items: S.shopping.items.filter(x => x.id !== el.dataset.id) }; putShopping(); renderAll(); toast("Removed.", () => { S.shopping = { ...S.shopping, items: prev }; putShopping(); renderAll(); }); break; }
@@ -3676,10 +3821,11 @@ function goalList(T) {
   for (const h of S.settings.habits || []) { const c = habitCount(h, T), t = h.target || 1; g.push({ id: "h:" + h.id, hid: h.id, label: h.name, val: t > 1 ? `${c} of ${t} ${h.unit || ""}`.trim() : c ? "done" : "not yet", done: c >= t, frac: c / t, habit: true, target: t }); }
   return g;
 }
+const GOAL_COL = { kcal: "butter", protein: "pink", steps: "sky", active: "peach", week: "lilac" };
 function goalsRow(T) {
   const g = goalList(T); if (!g.length) return "";
   const done = g.filter(x => x.done).length;
-  return `<button class="goalsrow" data-act="open" data-sheet="goals" aria-label="Goals: ${done} of ${g.length} hit today"><span class="gcount"><b>${done}/${g.length}</b> goals</span><span class="gchips">${g.map(x => `<span class="gc ${x.done ? "ok" : ""}">${x.done ? icon("check") : `<i style="--p:${Math.round(clamp(x.frac || 0, 0, 1) * 100)}%"></i>`}${esc(x.label)}</span>`).join("")}</span></button>`;
+  return `<button class="goalsrow" data-act="open" data-sheet="goals" aria-label="Goals: ${done} of ${g.length} hit today"><span class="gcount"><b>${done}/${g.length}</b> goals</span><span class="gchips">${g.map(x => `<span class="gc ${x.done ? "ok" : ""}" data-g="${esc(x.id)}" style="--c:var(--m-${GOAL_COL[x.id] || "mint"})">${x.done ? icon("check") : `<i style="--p:${Math.round(clamp(x.frac || 0, 0, 1) * 100)}%"></i>`}${esc(x.label)}</span>`).join("")}</span></button>`;
 }
 function goalRowHtml(x, T) {
   const today = T === todayId();
