@@ -535,6 +535,187 @@ label.lbl{display:block;font-size:13px;font-weight:500;color:var(--ink-2);margin
 .bud-eq i{font-style:normal;font-weight:700;color:var(--ink-2);padding-top:1px;font-size:16px}
 .bud-def{font-size:12.5px;font-weight:600;border-top:1.5px solid var(--line);padding-top:10px}
 .bud-note{margin:0;font-size:12px;font-weight:600;color:var(--ink-2);line-height:1.4}
+/* ===== chat-first layout ===== */
+body{background:var(--wall-1)}
+.app{padding-inline:0}
+.topbar{padding:10px 16px 4px}
+.topbar h1{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.topbar .sub{font-weight:500}
+#budgetStrip{padding:6px 16px 6px;display:flex;flex-direction:column;gap:8px}
+.strip{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:center;width:100%;border:0;border-radius:16px;background:var(--tile);color:var(--ink);padding:12px 14px 12px;text-align:left;box-shadow:0 1px 2px var(--shadow-2)}
+.strip.plain{display:flex;justify-content:space-between;align-items:center}
+.strip.plain span{color:var(--ink-2);font-size:14px}
+.st-main b{display:block;font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.st-main span{font-size:12.5px;color:var(--ink-2);font-weight:500}
+.st-side{display:flex;flex-direction:column;gap:1px;align-items:flex-end;font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.st-side b{color:var(--ink);font-weight:600}
+.st-bar{grid-column:1 / -1;height:5px;border-radius:5px;background:var(--soft);overflow:hidden;margin-top:6px}
+.st-bar i{display:block;height:100%;border-radius:5px;background:var(--ok);transition:width .4s}
+.st-bar i.over{background:var(--bad)}
+.goalsrow{display:flex;align-items:center;gap:10px;border:0;background:none;padding:0 2px;width:100%;text-align:left;color:var(--ink);min-width:0}
+.gcount{font-size:13px;color:var(--ink-2);white-space:nowrap}
+.gcount b{color:var(--ink);font-weight:600}
+.gchips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1;mask-image:linear-gradient(90deg,#000 85%,transparent)}
+.gchips::-webkit-scrollbar{display:none}
+.gc{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-size:12.5px;font-weight:500;color:var(--ink-2);background:var(--tile);border-radius:999px;padding:4px 10px 4px 6px;box-shadow:0 1px 2px var(--shadow-2)}
+.gc i{width:12px;height:12px;border-radius:50%;background:conic-gradient(var(--ink-2) var(--p),var(--line) 0);display:block}
+.gc.ok{color:var(--c-green-i);background:var(--c-green);box-shadow:none}
+.gc svg.i{width:12px;height:12px;stroke-width:3}
+#pane{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:4px 16px 16px}
+.tabbar{display:grid;grid-template-columns:repeat(4,1fr);border-top:.5px solid var(--line);background:color-mix(in srgb,var(--wall-1) 88%,transparent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:6px 4px 4px}
+.tabbar button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink-2);font-size:10.5px;font-weight:500;padding:4px 0;position:relative}
+.tabbar button svg.i{width:23px;height:23px;stroke-width:1.8}
+.tabbar button.on{color:var(--ink)}
+.tabbar button.on svg.i{stroke-width:2.3}
+.tabbar button i{position:absolute;top:0;left:calc(50% + 8px);min-width:16px;height:16px;border-radius:8px;background:var(--bad);color:#fff;font-style:normal;font-size:10.5px;font-weight:600;display:grid;place-items:center;padding:0 4px;box-sizing:border-box}
+
+/* chat */
+.feed{display:flex;flex-direction:column;gap:10px;padding-bottom:6px}
+.daysep{align-self:center;font-size:12px;color:var(--ink-2);font-weight:500;margin:8px 0 2px}
+.msg{display:flex}
+.msg.me{justify-content:flex-end}
+.msg .bub{max-width:82%;background:var(--btn-bg);color:var(--btn-fg);padding:9px 13px;border-radius:19px 19px 5px 19px;font-size:15.5px;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere;-webkit-user-select:text;user-select:text}
+.imgtag{display:inline-flex;align-items:center;gap:4px;font-size:12px;opacity:.85;margin-right:6px}
+.imgtag svg.i{width:13px;height:13px}
+.msg.app .card{max-width:92%;width:92%;box-sizing:border-box;background:var(--tile);border-radius:18px 18px 18px 5px;padding:11px 13px;display:flex;flex-direction:column;gap:9px;box-shadow:0 1px 2px var(--shadow-2)}
+.msg.app .card.undone{opacity:.55}
+.msg.app .card.undone .blk{text-decoration:line-through}
+.said{margin:0;font-size:15px;line-height:1.4;-webkit-user-select:text;user-select:text}
+.blk{border-top:.5px solid var(--line);padding-top:9px;display:flex;flex-direction:column;gap:4px}
+.said + .blk,.card > .blk:first-child{border-top:0;padding-top:0}
+.bh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.bh .btag{flex-basis:100%;font-size:11.5px;font-weight:600;color:var(--ink-2);text-transform:uppercase;letter-spacing:.03em}
+.bh b{flex:1;font-size:15.5px;font-weight:600;min-width:0}
+.bh strong{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bh strong small{font-size:12px;font-weight:500;color:var(--ink-2)}
+.macros{display:flex;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.items{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-direction:column}
+.items li{display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:14px;border-top:.5px solid var(--line)}
+.items li:first-child{border-top:0}
+.items li span{min-width:0}
+.items li em{font-style:normal;color:var(--ink-2)}
+.items li small{display:block;color:var(--ink-2);font-size:12px}
+.items li b{font-weight:500;font-variant-numeric:tabular-nums;color:var(--ink-2);white-space:nowrap}
+.bnote{margin:0;font-size:12.5px;color:var(--ink-2)}
+.names{margin:0;font-size:14.5px}
+.useq{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--soft);border-radius:10px;padding:7px 10px;font-size:13px}
+.bact{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:2px}
+.mfoot{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--ink-2);border-top:.5px solid var(--line);padding-top:8px}
+.linkbtn{border:0;background:none;color:var(--c-blue-i);font-weight:600;font-size:13.5px;padding:2px 0}
+.linkbtn.danger{color:var(--bad)}
+.pillbtn{border:0;background:var(--btn-bg);color:var(--btn-fg);font-weight:600;font-size:13.5px;padding:7px 13px;border-radius:999px}
+.idea .ihead{border:0;background:none;padding:0;text-align:left;display:flex;flex-direction:column;gap:2px;color:var(--ink)}
+.idea .ihead b{font-size:15px;font-weight:600}
+.idea .ihead small{color:var(--ink-2);font-size:12.5px}
+.idea .ibody ul,.idea .ibody ol{margin:6px 0;padding-left:20px;font-size:14px;line-height:1.45}
+.typing{flex-direction:row !important;align-items:center;justify-content:space-between;width:auto !important;max-width:200px !important}
+.dots{display:flex;gap:4px}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--ink-2);animation:blink 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.hello{padding:14px 2px}
+.hello h2{margin:0 0 6px;font-size:22px;font-weight:700;letter-spacing:-.02em}
+.hello p{margin:0 0 12px;color:var(--ink-2);font-size:15px;line-height:1.45}
+.hello .keynote{background:var(--c-amber);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:14px}
+.ex{display:flex;flex-direction:column;gap:8px}
+.ex button{display:flex;gap:10px;align-items:flex-start;text-align:left;border:0;background:var(--tile);border-radius:14px;padding:11px 12px;font-size:14px;color:var(--ink);line-height:1.35;box-shadow:0 1px 2px var(--shadow-2)}
+.ex button span{font-size:18px;line-height:1.1}
+
+/* composer */
+#composer{padding:6px 12px 8px;display:flex;flex-direction:column;gap:6px;background:var(--wall-1)}
+#composer[hidden]{display:none}
+.cbar{display:flex;align-items:flex-end;gap:8px}
+.cbar textarea{flex:1;min-width:0;resize:none;border:.5px solid var(--line);border-radius:20px;background:var(--tile);color:var(--ink);font:inherit;font-size:16px;line-height:1.35;padding:9px 14px;max-height:140px;box-shadow:0 1px 2px var(--shadow-2)}
+.cbar textarea:focus{outline:none;border-color:var(--ink-2)}
+.cplus,.csend{width:38px;height:38px;border-radius:50%;border:0;display:grid;place-items:center;flex:none}
+.cplus{background:var(--tile);color:var(--ink);box-shadow:0 1px 2px var(--shadow-2)}
+.csend{background:var(--line);color:#fff;transition:background .2s}
+.csend.ready{background:var(--btn-bg);color:var(--btn-fg)}
+.csend svg.i{width:18px;height:18px;stroke-width:2.4}
+.tray{display:flex;flex-direction:column;gap:6px}
+.tray[hidden]{display:none}
+.tray button,.tray label{display:flex;align-items:center;gap:12px;border:0;background:var(--tile);border-radius:14px;padding:11px 12px;text-align:left;color:var(--ink);cursor:pointer;box-shadow:0 1px 2px var(--shadow-2)}
+.tray svg.i{width:22px;height:22px;color:var(--ink)}
+.tray b{display:block;font-weight:600;font-size:14.5px}
+.tray small{display:block;color:var(--ink-2);font-size:12.5px}
+.attach{position:relative;align-self:flex-start}
+.attach[hidden]{display:none}
+.attach img{height:64px;border-radius:12px;display:block}
+.attach button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:var(--ink);color:var(--sheet);display:grid;place-items:center}
+.attach svg.i{width:12px;height:12px}
+
+/* panes */
+.pane-in{display:flex;flex-direction:column;gap:12px;padding-top:6px}
+.ptitle{margin:0;font-size:22px;font-weight:700;letter-spacing:-.02em}
+.addrow{display:flex;gap:8px}
+.row2{display:flex;gap:8px}
+.row2 .btn{flex:1}
+.gtitle{font-size:13px;font-weight:600;color:var(--ink-2);display:flex;justify-content:space-between;align-items:center;margin:6px 2px -4px}
+.gtitle small{font-weight:500}
+.gtitle.warn{color:var(--c-red-i)}
+.group{background:var(--tile);border-radius:14px;overflow:hidden;box-shadow:0 1px 2px var(--shadow-2)}
+.group.dim{opacity:.6}
+.row-i,.row-l{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;text-align:left;padding:11px 14px;color:var(--ink);border-top:.5px solid var(--line);min-width:0}
+.group > :first-child{border-top:0}
+.row-i .emo{font-size:22px;width:28px;text-align:center;flex:none}
+.row-i .nm,.row-l .nm{flex:1;min-width:0}
+.row-i b,.row-l b{display:block;font-weight:500;font-size:15px;overflow-wrap:anywhere}
+.row-i b em{font-style:normal;color:var(--ink-2);font-weight:400}
+.row-i small,.row-l small{display:block;font-size:12.5px;color:var(--ink-2)}
+.tickbtn{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--ink-2);background:none;flex:none;display:grid;place-items:center;padding:0}
+.tickbtn.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.tickbtn svg.i{width:13px;height:13px;stroke-width:3}
+.hint,.empty{margin:0;font-size:13px;color:var(--ink-2)}
+.empty{padding:6px 2px}
+.chips2{display:flex;flex-wrap:wrap;gap:6px}
+.chips2 button,.chips2 span{border:0;background:var(--tile);border-radius:999px;padding:7px 12px;font-size:13.5px;font-weight:500;color:var(--ink);box-shadow:0 1px 2px var(--shadow-2)}
+.chips2 small{color:var(--ink-2);margin-left:5px;font-weight:400}
+.hist .hday{padding:10px 14px;border-top:.5px solid var(--line)}
+.hist .hday:first-child{border-top:0}
+.hist .hday span{font-size:12.5px;color:var(--ink-2);font-weight:500}
+.hist .hday p{margin:2px 0 0;font-size:14.5px}
+.banner2{background:var(--c-amber);border-radius:12px;padding:9px 12px;font-size:13.5px;display:flex;justify-content:space-between;align-items:center}
+.emptycard{background:var(--tile);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;align-items:flex-start;box-shadow:0 1px 2px var(--shadow-2)}
+.emptycard p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.45}
+.rcard{background:var(--tile);border-radius:14px;box-shadow:0 1px 2px var(--shadow-2);overflow:hidden}
+.rhead{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;text-align:left;padding:12px 14px;color:var(--ink)}
+.rhead .nm{flex:1;min-width:0}
+.rhead b{display:block;font-size:16px;font-weight:600}
+.rhead small{display:block;font-size:12.5px;color:var(--ink-2)}
+.rhead strong{text-align:right;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+.rhead strong small{font-size:11px;font-weight:500}
+.rbody{padding:0 14px 12px;display:flex;flex-direction:column;gap:8px}
+.rbody .gtitle{margin:4px 0 -2px}
+.steps{margin:0;padding-left:20px;font-size:14px;line-height:1.45}
+.rcook{display:flex;align-items:center;gap:10px;justify-content:space-between;background:var(--soft);border-radius:12px;padding:8px 10px;font-size:13.5px}
+.stepper.sm button{width:30px;height:30px;font-size:16px}
+
+/* goals sheet */
+.gweek{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.gweek button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;border-radius:12px;color:var(--ink-2)}
+.gweek button.on{background:var(--soft);color:var(--ink)}
+.gweek small{font-size:11.5px;font-weight:500}
+.gdot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12.5px;font-weight:600;background:var(--soft);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.gdot.some{background:var(--c-amber);color:var(--c-amber-i)}
+.gdot.all{background:var(--ok);color:#fff}
+.gdot.none{background:transparent;border:1px dashed var(--line)}
+.ghead{display:flex;justify-content:space-between;align-items:baseline}
+.ghead b{font-size:17px;font-weight:600}
+.ghead span{font-size:13.5px;color:var(--ink-2)}
+.glist{display:flex;flex-direction:column;background:var(--soft);border-radius:14px;overflow:hidden}
+.grow{display:flex;align-items:center;gap:12px;padding:11px 12px;border-top:.5px solid var(--line)}
+.grow:first-child{border-top:0}
+.gmark{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;flex:none;color:#fff}
+.grow.ok .gmark{background:var(--ok);border-color:var(--ok)}
+.grow.miss .gmark{border-color:var(--bad)}
+.gmark svg.i{width:13px;height:13px;stroke-width:3}
+.grow .nm{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.grow b{font-weight:500;font-size:15px}
+.grow small{font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.gbar{height:4px;border-radius:4px;background:var(--line);overflow:hidden;display:block}
+.gbar i{display:block;height:100%;background:var(--ink-2);border-radius:4px}
+.grow.ok .gbar i{background:var(--ok)}
+.grow.miss .gbar i{background:var(--bad)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -552,6 +733,11 @@ label.lbl{display:block;font-size:13px;font-weight:500;color:var(--ink-2);margin
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
   <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l1-4.1A8 8 0 1 1 20 12z"/></symbol>
+  <symbol id="i-fridge" viewBox="0 0 24 24"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M5 9.5h14M8.5 5.5v2M8.5 12.5v3"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m21 16-5-5-9 9"/></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4 2.8 19.5h18.4z"/><path d="M12 10v4M12 17h.01"/></symbol>
 </svg>
 
@@ -560,44 +746,10 @@ label.lbl{display:block;font-size:13px;font-weight:500;color:var(--ink-2);margin
     <div><h1 id="greet">Today</h1><div class="sub" id="todayLabel"></div></div>
     <button class="icon-btn" data-act="open" data-sheet="settings" aria-label="Settings"><svg class="i"><use href="#i-sliders"/></svg></button>
   </header>
-
-  <div class="fridge-wrap">
-    <div class="fridge" id="fridge">
-      <section class="comp freezer" id="comp-freezer">
-        <div class="inside" id="inside-freezer"></div>
-        <div class="glow"></div>
-        <div class="door">
-          <div class="face front" id="door-freezer">
-            <button class="handle h-freezer" data-act="toggle" data-comp="freezer" aria-label="Open freezer"><span class="hit"></span></button>
-            <div class="magnet gloss badge" id="mag-score" data-mag="score" data-act="open" data-sheet="insights" role="button" tabindex="0" aria-label="Your weekly progress"></div>
-            <div class="magnet gloss badge" id="mag-lab" data-mag="lab" data-act="open" data-sheet="fitness" role="button" tabindex="0" aria-label="Fitness and activity"></div>
-          </div>
-          <div class="face back"></div>
-        </div>
-      </section>
-
-      <section class="comp main" id="comp-main">
-        <div class="inside" id="inside-main"></div>
-        <div class="glow"></div>
-        <div class="door">
-          <div class="face front" id="door-main">
-            <button class="handle h-main" data-act="toggle" data-comp="main" aria-label="Open fridge"><span class="hit"></span></button>
-            <div class="magnet paper" id="mag-eat" data-mag="eat" data-act="toggle" data-comp="main" role="button" tabindex="0" aria-label="Eat first list, opens the fridge"></div>
-            <div class="magnet gloss" id="mag-cal" data-mag="cal" data-act="open" data-sheet="calories" role="button" tabindex="0" aria-label="Calories today"></div>
-            <div class="magnet paper lined" id="mag-habits" data-mag="habits" data-act="open" data-sheet="habits" role="button" tabindex="0" aria-label="Today's habits"></div>
-            <div class="magnet gloss badge" id="mag-cook" data-mag="cook" data-act="open" data-sheet="recipes" role="button" tabindex="0" aria-label="Cook tonight"></div>
-            <div class="magnet gloss badge" id="mag-scan" data-mag="scan" data-act="open" data-sheet="scan" role="button" tabindex="0" aria-label="Scan a receipt or fridge photo"><div class="cam"></div><b>Scan</b><small>receipt · order</small></div>
-            <div class="magnet paper" id="mag-shop" data-mag="shop" data-act="open" data-sheet="shopping" role="button" tabindex="0" aria-label="Shopping list"></div>
-          </div>
-          <div class="face back"></div>
-        </div>
-      </section>
-    </div>
-    <div class="feet"><i></i><i></i></div>
-  </div>
-  <div class="floor" aria-hidden="true"></div>
-
-  <div class="dock" id="dock"></div>
+  <div id="budgetStrip"></div>
+  <main id="pane" aria-live="polite"></main>
+  <div id="composer"></div>
+  <nav class="tabbar" id="tabbar" aria-label="Sections"></nav>
 </div>
 
 <div class="backdrop" id="backdrop" data-act="close-sheet"></div>
@@ -830,7 +982,7 @@ function makeExamples(T) {
 
 async function init() {
   const h = new Date().getHours();
-  $("#greet").textContent = h < 5 ? "Late night snack?" : h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
+  $("#greet").textContent = "Today";
   $("#todayLabel").textContent = fmtDay(todayId());
   renderAll();
   let db = null, user = null;
@@ -840,7 +992,7 @@ async function init() {
     initAI();
   } else initApiAI();
   if (db) startDb(db); else startLocal();
-  showHint();
+  chatInit();
 }
 function startLocal() {
   store.db = null; S.mode = "local";
@@ -878,6 +1030,8 @@ function aiErr(e) {
   if (["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"].includes(c)) { AI.off = true; return "Claude isn't allowed on this page right now, so this part is off. Everything else still works by hand."; }
   if (c === "images_unavailable") { AI.images = false; return "Photos can't be sent from this view."; }
   if (c === "bad_key") return "Your API key didn't work. Check it in Settings.";
+  if (c === "network") return "Couldn't reach the AI. Check your connection.";
+  if (c === "no_model") return "The AI model isn't available for this key.";
   if (c === "no_credits") return "Your Anthropic account is out of credits. Add some at console.anthropic.com → Billing.";
   if (c === "rate_limited") return "Claude is busy or you've reached your usage limit. Try again in a little while.";
   if (c === "image_rejected") return "That photo couldn't be read. Try a JPG or PNG under 20 MB.";
@@ -1073,7 +1227,7 @@ function apiSampler(key) {
   fn.limits = async () => ({ images: { maxCount: 5 } });
   return fn;
 }
-function initApiAI() {
+function old_initApiAI() {
   const k = apiKey();
   if (k) { AI.fn = apiSampler(k); AI.images = true; AI.off = false; AI.via = "api"; } else { AI.fn = null; AI.via = "none"; }
   AI.ready = true; refreshSheet();
@@ -1563,7 +1717,7 @@ function parseOrderShot(lines) {
 // Burn = resting burn (Mifflin-St Jeor BMR)
 //      + Apple Health active energy if you paste it (base ×1.1 for digestion),
 //        otherwise base ×1.2 for everyday life + steps beyond 2,500 × your per-step cost + workouts (MET).
-const WORKOUTS = [["walk", "🚶", "Walk", 3.5], ["run", "🏃", "Run", 9.8], ["gym", "🏋️", "Weights", 5.0], ["yoga", "🧘", "Yoga", 2.5], ["pilates", "🤸", "Pilates", 3.0], ["cycle", "🚴", "Cycling", 7.5], ["hiit", "🔥", "HIIT", 8.0], ["dance", "💃", "Dance", 5.5], ["swim", "🏊", "Swim", 7.0], ["hike", "🥾", "Hike", 6.0], ["sport", "🎾", "Sports", 7.0]];
+const WORKOUTS = [["walk", "🚶", "Walk", 3.5], ["run", "🏃", "Run", 9.8], ["gym", "🏋️", "Weights", 5.0], ["yoga", "🧘", "Yoga", 2.5], ["pilates", "🤸", "Pilates", 3.0], ["cycle", "🚴", "Cycling", 7.5], ["hiit", "🔥", "HIIT", 8.0], ["dance", "💃", "Dance", 5.5], ["swim", "🏊", "Swim", 7.0], ["hike", "🥾", "Hike", 6.0], ["sport", "🎾", "Sports", 7.0], ["other", "💪", "Workout", 4.0]];
 const WK = Object.fromEntries(WORKOUTS.map(w => [w[0], w]));
 const body = () => S.settings.body || null;
 const bodyReady = () => { const b = body(); return !!(b && b.weightKg > 25 && b.heightCm > 100 && b.age >= 13 && (b.sex === "f" || b.sex === "m")); };
@@ -1852,7 +2006,7 @@ function renderLogMatches() {
   if (brand) h += `<button class="build-cta" data-act="build-open" data-v="${brand}"${/kid/i.test(q) && brand === "naya" ? ` data-t="kids"` : / roll|wrap/i.test(q) && brand === "naya" ? ` data-t="roll"` : /burrito/i.test(q) ? ` data-t="burrito"` : /salad/i.test(q) ? ` data-t="salad"` : ""}><span>${brand === "naya" ? "🥙" : "🌯"}</span><div><b>Build your ${brand === "naya" ? "Naya" : "Chipotle"} order</b><small>Exact numbers from their official nutrition guide${/kid/i.test(q) && brand === "naya" ? ", kids meal" : ""}</small></div>${icon("plus")}</button>`;
   L.dbHits = foodSearch(q, 6);
   if (L.dbHits.length) h += `<div class="section-t" style="margin:6px 0 0">Look up</div><div class="list">${L.dbHits.map((f, i) => `<div class="li"><button class="sugg-btn" data-act="log-db" data-i="${i}"><div class="main"><b>${esc(f.n)}</b><small>${f.src ? `<span class="why-tag">${esc(f.src)}</span>` : ""}${esc(f.s)}${nn ? "" : ` · ${num(f.k * L.portion)} kcal · ${num(f.p * L.portion)} g protein`}</small></div><span class="add-circle ${L.logged["db" + f.key] ? "done" : ""}">${icon(L.logged["db" + f.key] ? "check" : "plus")}</span></button></div>`).join("")}</div>`;
-  h += `<div class="row" style="margin-top:8px">${aiOn() ? `<button class="btn accent sm" data-act="log-ai">${icon("spark")}Look up “${esc(q.length > 22 ? q.slice(0, 22) + "…" : q)}”${AI.via === "api" ? " on the web" : ""}</button>` : ""}</div>`;
+  h += `<div class="row" style="margin-top:8px">${aiOn() ? `<button class="btn accent sm" data-act="log-ai">${icon("spark")}Look up “${esc(q.length > 22 ? q.slice(0, 22) + "…" : q)}”${webOn() ? " on the web" : ""}</button>` : ""}</div>`;
   if (!hits.length && !L.dbHits.length && !brand && !aiOn()) h += `<p class="muted tiny" style="margin:4px 0 0">Not in the built-in list. Tap “Enter numbers myself”, or add an AI key in Settings to look up any restaurant dish.</p>`;
   el.innerHTML = h;
 }
@@ -1996,13 +2150,12 @@ document.addEventListener("visibilitychange", () => { if (document.visibilitySta
 
 /* ---------- home: fridge, magnets, food ---------- */
 const MAG_DEFAULT = { eat: [11, 4], cal: [60, 4], habits: [58, 38], cook: [20.5, 53], scan: [20.5, 76], shop: [58, 70], score: [72, 14], lab: [47, 20] };
-function renderAll() { renderMagnets(); renderDock(); renderInside("main"); renderInside("freezer"); placeMagnets(); scheduleNudges(); }
-function placeMagnets() {
+function old_placeMagnets() {
   const pos = { ...MAG_DEFAULT, ...(S.settings.mags2 || {}) };
   document.querySelectorAll(".magnet[data-mag]").forEach(m => { if (m.classList.contains("dragging")) return; const p = pos[m.dataset.mag] || [10, 10]; m.style.left = p[0] + "%"; m.style.top = p[1] + "%"; });
 }
 const pin = c => `<span class="pin gloss" style="--mc:var(${c})"></span>`;
-function renderMagnets() {
+function old_renderMagnets() {
   const T = todayId(), act = active();
   const soon = act.filter(i => i.zone !== "pantry" || daysLeft(i) <= 2).sort((a, b) => daysLeft(a) - daysLeft(b)).filter(i => daysLeft(i) <= 4);
   const nc = S.ready ? needsCheck().length : 0;
@@ -2036,7 +2189,7 @@ function renderMagnets() {
     $("#mag-lab").innerHTML = `<span class="move-ring">${ringsSvg(T, 44)}</span><b>${evening && F.summaryOn !== false ? "Your day" : st ? (st >= 1000 ? (st / 1000).toFixed(1) + "k" : st) : "Move"}</b><small>${evening && F.summaryOn !== false ? "summary ✨" : st ? "steps" : "log activity"}</small>`;
     $("#mag-lab").dataset.sheet = evening && F.summaryOn !== false ? "summary" : "fitness"; }
 }
-function renderDock() {
+function old_renderDock() {
   const slot = slotNow(), top = S.ready ? suggestMeals(slot, 1)[0] : null;
   $("#dock").innerHTML = `<div class="dock-row"><button class="askbar" data-act="open" data-sheet="quick">${icon("search")}<span>Add food, log a meal, steps, or ask…</span></button><label class="qcam big" for="homePhotos" aria-label="Add from a receipt or order screenshots">${icon("camera")}<input type="file" id="homePhotos" accept="image/*" multiple hidden></label></div><div class="dock-row">` + (top ? `<button class="usual" data-act="quick-log" data-key="${esc(top.key)}" data-slot="${slot}" aria-label="Log ${esc(top.name)}"><span class="u-e">${esc(dishEmoji(top.name))}</span><div class="u-txt"><small>${esc(top.why || "Your usual " + slot)}</small><b>${esc(top.name)}</b></div>${S.settings.noNumbers ? "" : `<span class="u-k">${num(top.kcal)}</span>`}<span class="u-plus">${icon("plus")}</span></button>` : "")
     + `<button class="log-btn" data-act="open" data-sheet="log" style="${top ? "" : "flex:1;justify-content:center;padding:13px"}">${icon("plus")}Log meal</button></div>`;
@@ -2052,7 +2205,7 @@ function food3d(i) {
   const l = lifeInfo(i), d = daysLeft(i);
   return `<button class="food3d ${d <= 1 && d >= 0 ? "soon" : ""} ${d < 0 ? "gone" : ""}" data-act="item" data-id="${esc(i.id)}" aria-label="${esc(i.name)}, ${l.label}. Swipe right if eaten, left if tossed."><span class="fe">${esc(i.emoji || guess(i.name).emoji)}</span>${i.qty > 1 ? `<span class="qty">×${i.qty}</span>` : ""}<span class="fn">${esc(i.name)}</span><span class="fd ${l.cls}">${l.short}</span></button>`;
 }
-function renderInside(comp) {
+function old_renderInside(comp) {
   const zones = comp === "freezer" ? ["freezer"] : ["top", "middle", "bottom", "crisper", "door"];
   const list = active().filter(i => zones.includes(i.zone)).sort((a, b) => daysLeft(a) - daysLeft(b));
   const TAGS = { top: "Dairy & eggs", middle: "Ready to eat", bottom: "Meat & fish", crisper: "Crisper · fruit & veg", door: "Door", freezer: "Frozen" };
@@ -2153,7 +2306,7 @@ function showHint() {
 }
 function dismissHint() { const h = $("#hint"); if (h) { h.remove(); try { localStorage.setItem("fridge.hint", "1"); } catch (_) {} } }
 /* ---------- sheets ---------- */
-const TITLES = { scan: "Scan", item: "Food", add: "Add food", recipes: "Cook tonight", calories: "Calories & activity", log: "Log a meal", habits: "Habits", shopping: "Shopping", insights: "Your progress", settings: "Settings", pantry: "Pantry", check: "Fridge check", welcome: "Welcome", quick: "Add or ask", fitness: "Fitness", summary: "Your day" };
+const TITLES = { scan: "Scan", item: "Food", add: "Add food", recipes: "Cook tonight", calories: "Calories & activity", log: "Log a meal", habits: "Habits", shopping: "Shopping", insights: "Your progress", settings: "Settings", pantry: "Pantry", check: "Fridge check", welcome: "Welcome", quick: "Add or ask", fitness: "Fitness", summary: "Your day", goals: "Goals" };
 function openSheet(kind, opts = {}, src) {
   const go = () => {
     SH = { kind, ...opts };
@@ -2168,6 +2321,9 @@ function openSheet(kind, opts = {}, src) {
     if (kind === "check") SH.check = { ids: needsCheck().map(i => i.id), i: 0 };
     if (kind === "insights") SH.tab = opts.tab || "week";
     if (kind === "welcome") SH.ob = { step: 0, goals: { waste: true, rebuy: true, deficit: true, habits: false }, kcal: S.settings.kcal || 1600, protein: S.settings.protein || 100, noNumbers: false, nudge: true };
+    if (kind === "goals") SH.goal = { day: opts.day || todayId(), hn: "", ht: 1 };
+    if (kind === "scan" && opts.mode) SH.scan.mode = opts.mode;
+    if (kind === "recipes" && opts.tab === "saved") { SH.rec.tab = "saved"; SH.rec.tonight = SH.rec.list; }
     if (kind === "settings") SH.set = { confirmReset: false, newHabit: "", newTarget: 1 };
     renderSheet(true);
     $("#backdrop").classList.add("show"); $("#sheet").classList.add("show");
@@ -2196,7 +2352,7 @@ function renderSheet(reset) {
   if (SH.kind === "item") { const it = S.items.find(x => x.id === SH.id); t = it ? it.name : "Food"; }
   $("#sheetTitle").textContent = t;
   $("#sheetEmo").textContent = SH.kind === "item" ? (S.items.find(x => x.id === SH.id)?.emoji || "🥫") : ({ scan: "📸", add: "🛒", recipes: "🍲", calories: "🔥", log: "🍽️", habits: "✅", shopping: "📝", insights: "✨", settings: "⚙️", pantry: "🧺", check: "🔎", welcome: "👋", quick: "✍️", fitness: "🏃", summary: "🌙" })[SH.kind] || "";
-  body.innerHTML = ({ scan: vScan, item: vItem, add: vAdd, recipes: vRecipes, calories: vCalories, log: vLog, habits: vHabits, shopping: vShopping, insights: vInsights, settings: vSettings, pantry: vPantry, check: vCheck, welcome: vWelcome, quick: vQuick, fitness: vFitness, summary: vSummary })[SH.kind]();
+  body.innerHTML = ({ scan: vScan, item: vItem, add: vAdd, recipes: vRecipes, calories: vCalories, log: vLog, habits: vHabits, shopping: vShopping, insights: vInsights, settings: vSettings, pantry: vPantry, check: vCheck, welcome: vWelcome, quick: vQuick, fitness: vFitness, summary: vSummary, goals: vGoals })[SH.kind]();
   body.scrollTop = reset ? 0 : top;
   if (SH.kind === "shopping") renderHave();
   if (SH.kind === "log") { if (reset && SH.log.q && !SH.log.build) { const qq = SH.log.q, br = /naya/i.test(qq) ? "naya" : /chipotle/i.test(qq) ? "chipotle" : ""; if (br) SH.log.build = newBuild(br, br === "naya" && /kid/i.test(qq) ? "kids" : br === "naya" && /roll|wrap/i.test(qq) ? "roll" : /burrito/i.test(qq) ? "burrito" : /salad/i.test(qq) ? "salad" : undefined); } renderLogMatches(); }
@@ -2265,9 +2421,9 @@ async function logAI(file) {
   renderSheet();
   try {
     const prompt = (file ? `This is a photo of a meal someone is about to eat.` : `Someone ate: ${JSON.stringify(q)}.`) +
-      ` Give nutrition for one serving${file ? " of what's on the plate" : ""}. If it's from a restaurant chain or a packaged product, use that brand's official published nutrition${AI.via === "api" ? " (search the web for it)" : " as best you know it"}; otherwise estimate a typical adult portion. If it is clearly one of their past dishes, use that exact name: ${JSON.stringify(known)}.
+      ` Give nutrition for one serving${file ? " of what's on the plate" : ""}. If it's from a restaurant chain or a packaged product, use that brand's official published nutrition${webOn() ? " (search the web for it)" : " as best you know it"}; otherwise estimate a typical adult portion. If it is clearly one of their past dishes, use that exact name: ${JSON.stringify(known)}.
 Reply with ONLY JSON: {"name": short tidy dish name, "kcal": integer, "protein": integer grams, "carbs": integer grams, "fat": integer grams, "source": "official brand data" or "estimate" plus the site if you used one, "detail": one short line breaking down the main parts}`;
-    const res = await AI.fn.json(prompt, file ? { images: [file], signal: L.ctl.signal } : { modelTier: AI.via === "api" ? "default" : "quick", web: AI.via === "api", signal: L.ctl.signal });
+    const res = await AI.fn.json(prompt, file ? { images: [file], signal: L.ctl.signal } : { modelTier: webOn() ? "default" : "quick", web: webOn(), signal: L.ctl.signal });
     if (!SH || SH.log !== L) return;
     const name = String(res?.name || q || "Meal").slice(0, 80), lib = mealLibrary().find(e => e.key === normName(name));
     L.est = { name, kcal: Math.round((lib ? lib.kcal : Number(res?.kcal) || 0) * L.portion), protein: Math.round((lib ? lib.protein : Number(res?.protein) || 0) * L.portion), carbs: res?.carbs != null ? Math.round(+res.carbs * L.portion) : null, fat: res?.fat != null ? Math.round(+res.fat * L.portion) : null, source: res?.source ? String(res.source).slice(0, 80) : "", detail: res?.detail ? String(res.detail) : "", known: !!lib };
@@ -2384,7 +2540,7 @@ function scanAdd() {
   if (add.length && (S.shopping.items || []).length) { S.shopping = { ...S.shopping, items: S.shopping.items.map(x => !x.done && add.some(r => nameMatch(r.name, x.name)) ? { ...x, done: true } : x) }; putShopping(); }
   closeSheet(); renderAll();
   toast(`${add.length ? `Added ${add.length} item${add.length === 1 ? "" : "s"}` : "Fridge updated"}${miss.length ? `, ${miss.length} marked used` : ""}.${learnedN ? ` Learned ${learnedN} fix${learnedN === 1 ? "" : "es"} for next time.` : ""}`);
-  if (add.some(r => !["pantry", "freezer"].includes(r.zone))) setTimeout(() => toggleComp("main", true), 350);
+  if (add.length) { CH.tab = "fridge"; renderAll(); }
 }
 
 /* ----- item ----- */
@@ -2641,15 +2797,15 @@ function vSettings() {
   const st = S.settings, s = SH.set;
   let h = `<div class="stack">`;
   if (!window.claude) {
-    const on = AI.via === "api", t = SH.set.keyTest;
+    const on = AI.via === "gemini" || AI.via === "api", t = SH.set.keyTest, cur = readKey(KEYS.g) || readKey(KEYS.a);
     h += `<div class="section-t">AI</div><div class="card stack" style="gap:10px">
-      <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b>Claude API key</b><span class="pill ${on ? "ok" : "muted"}">${on ? "On" : "Off"}</span></div>
-      <div class="muted tiny">Adds plate & fridge photos, recipe ideas from what you have, and restaurant lookups on the web. Receipts and everything else work without it.</div>
-      ${on ? "" : `<ol class="tiny" style="margin:0;padding-left:18px;line-height:1.6"><li>Go to <b>console.anthropic.com</b> and sign in.</li><li>Add a few dollars under <b>Billing</b>.</li><li>Open <b>API keys</b> → <b>Create key</b>, then copy it.</li><li>Paste it below and tap Save.</li></ol>`}
-      <input class="inp" id="setKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-ant-…" value="${esc(apiKey())}">
-      <div class="row"><button class="btn sm" data-act="set-key">${apiKey() ? "Update" : "Save"}</button>${on ? `<button class="btn soft sm" data-act="test-key" ${t === "…" ? "disabled" : ""}>${t === "…" ? "Testing…" : "Test"}</button><button class="btn soft sm" data-act="clear-key">Remove</button>` : ""}</div>
-      ${t && t !== "…" ? `<div class="tiny ${t === "ok" ? "t-ok" : ""}" style="font-weight:600;${t === "ok" ? "" : "color:var(--c-red-i)"}">${t === "ok" ? "Working. AI features are on." : esc(t)}</div>` : ""}
-      <div class="muted tiny">Stored only on this phone and sent only to Anthropic.</div></div>`;
+      <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b>AI key</b><span class="pill ${on ? "ok" : "muted"}">${on ? (AI.via === "gemini" ? "Gemini on" : "Claude on") : "Off"}</span></div>
+      <div class="muted tiny">Reads your chat messages into meals, recipes, workouts and groceries with calories for every ingredient. Works with a Google Gemini key or an Anthropic key.</div>
+      ${on ? "" : `<ol class="tiny" style="margin:0;padding-left:18px;line-height:1.6"><li>Open <b>aistudio.google.com</b> and sign in with Google.</li><li>Tap <b>Get API key</b> → <b>Create API key</b>, then copy it.</li><li>Paste it below (or straight into the chat) and tap Save.</li></ol>`}
+      <input class="inp" id="setKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste key" value="${esc(cur)}">
+      <div class="row"><button class="btn sm" data-act="set-key">${cur ? "Update" : "Save"}</button>${on ? `<button class="btn soft sm" data-act="test-key" ${t === "…" ? "disabled" : ""}>${t === "…" ? "Testing…" : "Test"}</button><button class="btn soft sm" data-act="clear-key">Remove</button>` : ""}</div>
+      ${t && t !== "…" ? `<div class="tiny ${t === "ok" ? "t-ok" : ""}" style="font-weight:600;${t === "ok" ? "" : "color:var(--c-red-i)"}">${t === "ok" ? "Working. AI is on." : esc(t)}</div>` : ""}
+      <div class="muted tiny">Stored only on this phone and sent only to ${AI.via === "api" ? "Anthropic" : "Google"}. It's never part of the app's code.</div></div>`;
   }
   h += `<div class="section-t">Goals</div><div class="grid2"><div><label class="lbl" for="setK">Daily calories</label><input class="inp" id="setK" type="number" inputmode="numeric" value="${esc(st.kcal)}" data-setf="kcal"></div><div><label class="lbl" for="setP">Protein (g)</label><input class="inp" id="setP" type="number" inputmode="numeric" value="${esc(st.protein)}" data-setf="protein"></div></div>
     <div class="card row" style="justify-content:space-between;flex-wrap:nowrap"><div><b>Hide numbers</b><div class="muted tiny">Log meals without seeing calorie counts.</div></div><button class="switch ${st.noNumbers ? "on" : ""}" data-act="set-nonum" role="switch" aria-checked="${!!st.noNumbers}" aria-label="Hide numbers"></button></div>
@@ -2703,7 +2859,7 @@ document.addEventListener("click", e => {
   const a = el.dataset.act;
   switch (a) {
     case "toggle": toggleComp(el.dataset.comp); break;
-    case "open": { const k = el.dataset.sheet, opts = el.dataset.zone ? { zone: el.dataset.zone } : {}; if (el.dataset.text) opts.text = el.dataset.text; if (SH) { closeSheet(); setTimeout(() => openSheet(k, opts), 200); } else openSheet(k, opts, el); break; }
+    case "open": { const k = el.dataset.sheet, opts = el.dataset.zone ? { zone: el.dataset.zone } : {}; if (el.dataset.mode) opts.mode = el.dataset.mode; if (el.dataset.tab) opts.tab = el.dataset.tab; if (el.dataset.text) opts.text = el.dataset.text; if (SH) { closeSheet(); setTimeout(() => openSheet(k, opts), 200); } else openSheet(k, opts, el); break; }
     case "close-sheet": closeSheet(); break;
     case "item": openSheet("item", { id: el.dataset.id }); break;
     case "habit-tap": habitStep(el.dataset.id, 1); break;
@@ -2765,15 +2921,13 @@ document.addEventListener("click", e => {
     case "ob-nudge": SH.ob.nudge = !SH.ob.nudge; renderSheet(); break;
     case "ob-finish": obFinish(el.dataset.start); break;
     case "set-nudge": { const on = !S.settings.nudge; S.settings = { ...S.settings, nudge: on }; putSettings(); if (on && Native?.LN) Promise.resolve(Native.LN.requestPermissions()).catch(() => {}).finally(scheduleNudges); else scheduleNudges(); renderSheet(); break; }
-    case "clear-key": { try { localStorage.removeItem("fridge.apikey"); } catch (_) {} SH.set.keyTest = ""; initApiAI(); renderSheet(); toast("Key removed."); break; }
+    case "clear-key": { saveAnyKey(""); SH.set.keyTest = ""; renderSheet(); toast("Key removed."); break; }
     case "test-key": {
       if (!AI.fn) break; SH.set.keyTest = "…"; renderSheet();
-      AI.fn("Reply with the single word: ok", { modelTier: "quick" }).then(() => { SH.set.keyTest = "ok"; }).catch(e => {
-        SH.set.keyTest = e?.code === "bad_key" ? "That key was rejected. Copy it again from console.anthropic.com." : e?.code === "no_credits" ? "The key works, but the account has no credits. Add some under Billing." : e?.code === "rate_limited" ? "Anthropic is busy. Try again in a minute." : "Couldn't reach Anthropic. Check your connection.";
-      }).finally(() => refreshSheet());
+      AI.fn("Reply with the single word: ok", { modelTier: "quick" }).then(() => { SH.set.keyTest = "ok"; }).catch(e => { SH.set.keyTest = AI.via === "gemini" ? keyErrText(e) : e?.code === "bad_key" ? "That key was rejected. Copy it again from console.anthropic.com." : e?.code === "no_credits" ? "The key works, but the account has no credits." : "Couldn't reach Anthropic. Check your connection."; }).finally(() => refreshSheet());
       break;
     }
-    case "set-key": { SH.set.keyTest = ""; const v = ($("#setKey")?.value || "").trim(); try { if (v) localStorage.setItem("fridge.apikey", v); else localStorage.removeItem("fridge.apikey"); } catch (_) {} initApiAI(); renderSheet(); toast(v ? "Key saved on this phone." : "Key removed."); break; }
+    case "set-key": { SH.set.keyTest = ""; const v = ($("#setKey")?.value || "").trim(); saveAnyKey(v); renderSheet(); toast(v ? "Key saved on this phone." : "Key removed."); break; }
     case "replay-welcome": closeSheet(); setTimeout(() => openSheet("welcome"), 250); break;
     case "backup-save": saveBackup(); break;
     case "backup-copy": copyBackup(); break;
@@ -2868,7 +3022,737 @@ document.addEventListener("change", e => {
   if (d.shopdone) { S.shopping = { ...S.shopping, items: S.shopping.items.map(x => x.id === d.shopdone ? { ...x, done: t.checked } : x) }; putShopping(); renderAll(); renderSheet(); return; }
   if (d.setf) { const v = Math.round(Number(t.value)); if (v > 0) { S.settings = { ...S.settings, [d.setf]: v }; putSettings(); renderAll(); } return; }
 });
-setInterval(() => { if (!SH) renderDock(); }, 10 * 60 * 1000);
+/* ===================== Chat-first home ===================== */
+/* Keys live only in this phone's storage. They are never part of the code. */
+const KEYS = { g: "fridge.gkey", a: "fridge.apikey" };
+const readKey = k => { try { return localStorage.getItem(k) || ""; } catch (_) { return ""; } };
+const writeKey = (k, v) => { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (_) {} };
+const KEY_RE = /^(AIza[\w-]{30,}|AQ\.[\w.-]{30,}|sk-ant-[\w-]{20,})$/;
+function saveAnyKey(v) {
+  v = String(v || "").trim();
+  if (!v) { writeKey(KEYS.g, ""); writeKey(KEYS.a, ""); }
+  else if (/^sk-ant-/.test(v)) writeKey(KEYS.a, v);
+  else writeKey(KEYS.g, v);
+  initApiAI();
+}
+
+/* ---------- Gemini ---------- */
+function geminiSampler(key) {
+  const MODELS = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-2.0-flash"];
+  const URLS = { gl: m => `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, vx: m => `https://aiplatform.googleapis.com/v1/publishers/google/models/${m}:generateContent` };
+  let pref = null; try { pref = JSON.parse(localStorage.getItem("fridge.gem") || "null"); } catch (_) {}
+  async function once(ep, model, body, signal) {
+    let res;
+    try { res = await fetch(URLS[ep](model), { method: "POST", signal, headers: { "content-type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(body) }); }
+    catch (e) { throw { code: e?.name === "AbortError" ? "cancelled" : "network", message: String(e) }; }
+    const txt = await res.text(); let j = null; try { j = JSON.parse(txt); } catch (_) {}
+    if (!res.ok) {
+      const msg = String(j?.error?.message || txt || "");
+      const code = res.status === 429 ? "rate_limited"
+        : res.status === 404 || (res.status === 400 && /model|not found|not supported/i.test(msg) && !/api key/i.test(msg)) ? "no_model"
+        : res.status === 401 || res.status === 403 || /api key|api_key|unauthenticated|credential/i.test(msg) ? "bad_key" : "upstream_error";
+      throw { code, status: res.status, message: msg };
+    }
+    const c = j?.candidates?.[0];
+    if (!c) throw { code: "upstream_error", message: j?.promptFeedback?.blockReason || "No answer" };
+    return { text: (c.content?.parts || []).filter(p => p.text && !p.thought).map(p => p.text).join(""), truncated: c.finishReason === "MAX_TOKENS" };
+  }
+  async function call(input, o = {}) {
+    const parts = [{ text: String(input) }];
+    const imgs = o.images ? (o.images instanceof Blob ? [o.images] : Array.from(o.images)) : [];
+    for (const f of imgs) parts.push({ inlineData: { mimeType: "image/jpeg", data: await toJpeg(f) } });
+    const gen = { temperature: 0.2, maxOutputTokens: 8192 };
+    if (o.json && !o.web) gen.responseMimeType = "application/json";
+    const body = { contents: [{ role: "user", parts }], generationConfig: gen };
+    if (o.web) body.tools = [{ googleSearch: {} }];
+    const eps = /^AIza/.test(key) ? ["gl"] : ["gl", "vx"];
+    if (pref && eps.includes(pref[0])) eps.sort((a, b) => (b === pref[0]) - (a === pref[0]));
+    let last = null;
+    for (const ep of eps) {
+      const models = pref && pref[0] === ep ? [pref[1], ...MODELS.filter(m => m !== pref[1])] : MODELS;
+      for (const m of models) {
+        try {
+          const r = await once(ep, m, body, o.signal);
+          if (!pref || pref[0] !== ep || pref[1] !== m) { pref = [ep, m]; try { localStorage.setItem("fridge.gem", JSON.stringify(pref)); } catch (_) {} }
+          return r;
+        } catch (e) {
+          last = e;
+          if (e.code === "cancelled" || e.code === "rate_limited") throw e;
+          if (o.web && e.code === "upstream_error") return call(input, { ...o, web: false });
+          if (e.code === "no_model") continue;
+          break; // bad key or network on this endpoint: try the other endpoint
+        }
+      }
+    }
+    throw last || { code: "upstream_error" };
+  }
+  const fn = (i, o) => call(i, o);
+  fn.json = async (i, o = {}) => { const { text } = await call(i + "\n\nReply with only the JSON value and nothing else.", { ...o, json: true }); const v = parseLoose(text); if (v === undefined) throw { code: "invalid_json", text }; return v; };
+  fn.limits = async () => ({ images: { maxCount: 5 } });
+  return fn;
+}
+function initApiAI() {
+  const g = readKey(KEYS.g), a = readKey(KEYS.a);
+  if (g) { AI.fn = geminiSampler(g); AI.via = "gemini"; }
+  else if (a) { AI.fn = apiSampler(a); AI.via = "api"; }
+  else { AI.fn = null; AI.via = "none"; }
+  AI.images = !!AI.fn; AI.off = false; AI.ready = true; refreshSheet(); if (typeof renderAll === "function" && S.ready) renderAll();
+}
+const webOn = () => AI.via === "gemini" || AI.via === "api";
+
+/* ---------- chat store ---------- */
+const CH = { msgs: [], tab: "chat", draft: "", img: null, imgUrl: "", busy: false, ctl: null, tray: false, fzone: "all", openRec: "", saveT: null, stick: true };
+function chatLoaded(list) { CH.msgs = Array.isArray(list) ? list : []; renderAll(); }
+function chatInit() {
+  if (store.db) store.db.doc("chat/main").get().then(x => chatLoaded(x.exists ? x.data().msgs : [])).catch(() => chatLoaded([]));
+  else { let l = []; try { l = JSON.parse(localStorage.getItem("fridge.chat") || "[]"); } catch (_) {} chatLoaded(l); }
+}
+function chatSave() {
+  clearTimeout(CH.saveT);
+  CH.saveT = setTimeout(() => {
+    const keep = CH.msgs.slice(-(store.db ? 80 : 200));
+    if (store.db) queue("chat/main", () => store.db.doc("chat/main").set(clean({ msgs: keep })));
+    else { try { localStorage.setItem("fridge.chat", JSON.stringify(keep)); } catch (_) {} }
+  }, 300);
+}
+function pushMsg(m) { CH.msgs.push({ id: uid(), t: Date.now(), day: todayId(), ...m }); CH.stick = true; chatSave(); renderAll(); return CH.msgs[CH.msgs.length - 1]; }
+
+/* ---------- my recipes ---------- */
+const myRecipes = () => Array.isArray(LRN.data.mine) ? LRN.data.mine : [];
+function findRecipe(name) {
+  const n = normName(name); if (!n) return null;
+  const L = myRecipes();
+  return L.find(r => normName(r.name) === n) || L.find(r => normName(r.name).includes(n) || n.includes(normName(r.name))) || L.find(r => nameMatch(r.name, name)) || null;
+}
+const r0 = v => Math.max(0, Math.round(+v || 0)), r1 = v => Math.max(0, Math.round((+v || 0) * 10) / 10);
+function sumItems(items) { return items.reduce((t, x) => ({ kcal: t.kcal + (+x.kcal || 0), protein: t.protein + (+x.protein || 0), carbs: t.carbs + (+x.carbs || 0), fat: t.fat + (+x.fat || 0) }), { kcal: 0, protein: 0, carbs: 0, fat: 0 }); }
+const roundM = t => ({ kcal: r0(t.kcal), protein: r0(t.protein), carbs: r0(t.carbs), fat: r0(t.fat) });
+function normItem(x) {
+  const g = +x.grams || null;
+  return { name: String(x.name || "").trim(), brand: x.brand ? String(x.brand).trim() : "", amt: x.amount ? String(x.amount).trim() : g ? `${Math.round(g)} g` : "", g, kcal: r0(x.kcal), protein: r1(x.protein), carbs: r1(x.carbs), fat: r1(x.fat), look: !!x.needs_lookup };
+}
+const fmtServ = f => { const r = Math.round(f * 100) / 100; return r === 0.5 ? "½" : r === 1.5 ? "1½" : String(r); };
+function saveRecipe(r) {
+  const items = (Array.isArray(r.items) ? r.items : []).filter(x => x && x.name).map(normItem);
+  const servings = Math.max(1, +r.servings || 1), total = sumItems(items);
+  const per = roundM({ kcal: total.kcal / servings, protein: total.protein / servings, carbs: total.carbs / servings, fat: total.fat / servings });
+  const old = findRecipe(r.name);
+  const rec = { id: old && normName(old.name) === normName(r.name) ? old.id : uid(), name: String(r.name).trim(), servings, cookedG: +r.cooked_weight_g || +r.cookedG || null, items, steps: Array.isArray(r.steps) ? r.steps.map(String) : [], total: roundM(total), per, t: Date.now() };
+  LRN.data.mine = [rec, ...myRecipes().filter(x => x.id !== rec.id)].slice(0, 120); saveLearn();
+  return { rec, replaced: old && old.id === rec.id ? old : null };
+}
+
+/* ---------- applying what the message said ---------- */
+const WTYPES = WORKOUTS.map(w => w[0]);
+function zoneForWhere(name, where) { return where === "freezer" ? "freezer" : where === "pantry" ? "pantry" : (() => { const z = zoneFor(name); return z === "freezer" || z === "pantry" ? "middle" : z; })(); }
+function addToFridge(list, source, U) {
+  const T = todayId(), added = [];
+  for (const b of list) {
+    const name = titleCase(String(b.name || b).trim()); if (!name) continue;
+    const g = guess(name), learned = personalLife(name);
+    const days = learned ? learned.days : +b.shelf_days > 0 ? Math.round(+b.shelf_days) : shelfLifeFor(name);
+    const it = { id: uid(), name, emoji: g.emoji, cat: g.cat, zone: b.zone || zoneForWhere(name, b.where), qty: Math.max(1, Math.min(99, Math.round(+b.qty || 1))), unit: "pc", price: +b.price || null, boughtAt: T, expiresAt: addDays(T, days), status: "fresh", source };
+    putItem(it); U.items.push(it.id); added.push(it);
+  }
+  if (added.length && (S.shopping.items || []).length) {
+    if (!U.shopPrev) U.shopPrev = S.shopping.items.map(x => ({ ...x }));
+    S.shopping = { ...S.shopping, items: S.shopping.items.map(x => !x.done && added.some(a => nameMatch(a.name, x.name)) ? { ...x, done: true } : x) }; putShopping();
+  }
+  return added;
+}
+function closeByName(names, status, U) {
+  const T = todayId(), done = [];
+  for (const n of names) {
+    const it = active().concat(S.items.filter(i => i.status === "fresh" && i.zone === "pantry")).filter(i => nameMatch(i.name, n) || canon(i.name) === canon(n)).sort((a, b) => daysLeft(a) - daysLeft(b))[0];
+    if (!it) continue; U.itemPrev.push({ ...it }); putItem({ ...it, status, qty: status === "used" ? 0 : it.qty, closedAt: T }); done.push(it.name);
+  }
+  return done;
+}
+function listAdd(names, U) {
+  const add = [];
+  for (const raw of names) { const n = titleCase(String(raw || "").trim()); if (!n || (S.shopping.items || []).some(x => !x.done && nameMatch(x.name, n)) || add.some(a => nameMatch(a, n))) continue; add.push(n); }
+  if (!add.length) return [];
+  if (!U.shopPrev) U.shopPrev = (S.shopping.items || []).map(x => ({ ...x }));
+  S.shopping = { ...S.shopping, items: [...(S.shopping.items || []), ...add.map(name => ({ id: uid(), name, done: false }))] }; putShopping();
+  return add;
+}
+function listRemove(names, U) {
+  const before = S.shopping.items || [], gone = before.filter(x => names.some(n => nameMatch(x.name, n)));
+  if (!gone.length) return [];
+  if (!U.shopPrev) U.shopPrev = before.map(x => ({ ...x }));
+  S.shopping = { ...S.shopping, items: before.filter(x => !gone.includes(x)) }; putShopping();
+  return gone.map(x => x.name);
+}
+function mealSlot(s) { s = String(s || "").toLowerCase(); return SLOTS.includes(s) ? s : slotNow(); }
+function buildMeal(m) {
+  let items = (Array.isArray(m.items) ? m.items : []).filter(x => x && x.name).map(normItem);
+  const rec = m.recipe ? findRecipe(m.recipe) : null; let recipeNote = "";
+  if (rec) {
+    let f = +m.servings || 0;
+    if (+m.grams > 0 && rec.cookedG) f = (+m.grams / rec.cookedG) * rec.servings;
+    else if (+m.grams > 0 && !f) recipeNote = `Add the cooked weight to “${rec.name}” to log by grams. I logged 1 serving.`;
+    if (!(f > 0)) f = 1;
+    const p = rec.per;
+    items = [{ name: rec.name, brand: "", amt: `${fmtServ(f)} serving${f === 1 ? "" : "s"}${+m.grams > 0 ? ` · ${Math.round(+m.grams)} g` : ""}`, kcal: r0(p.kcal * f), protein: r1(p.protein * f), carbs: r1(p.carbs * f), fat: r1(p.fat * f), rid: rec.id }, ...items];
+  }
+  const tot = roundM(sumItems(items));
+  return { name: String(m.name || rec?.name || items.map(x => x.name).join(", ") || "Meal").trim(), slot: mealSlot(m.slot), items, ...tot, recipeNote };
+}
+async function lookUpItems(meals, signal) {
+  if (AI.via !== "gemini" && AI.via !== "api") return;
+  const need = []; meals.forEach(m => (m.items || []).forEach(x => { if (x && x.needs_lookup && x.name) need.push(x); }));
+  if (!need.length) return;
+  try {
+    const res = await AI.fn.json(`Find the official published nutrition for each of these restaurant or packaged foods. Search the web for the brand's own nutrition page.
+${need.map((x, i) => `${i}. ${x.brand ? x.brand + " " : ""}${x.name}${x.amount ? " (" + x.amount + ")" : ""}`).join("\n")}
+Reply JSON: {"items":[{"i": number, "kcal": number, "protein": number, "carbs": number, "fat": number, "source": "short site name"}]}`, { web: true, signal });
+    (res?.items || []).forEach(r => { const x = need[+r.i]; if (!x || !(+r.kcal > 0)) return; Object.assign(x, { kcal: +r.kcal, protein: +r.protein || 0, carbs: +r.carbs || 0, fat: +r.fat || 0, needs_lookup: false }); });
+  } catch (e) { if (e?.code === "cancelled") throw e; }
+}
+function applyActions(res) {
+  const T = todayId(), U = { meals: [], workouts: [], items: [], itemPrev: [], recipes: [], recipePrev: [], delMeals: [], delWorkouts: [], act: null, body: null, shopPrev: null };
+  const blocks = [];
+  const keepAct = () => { if (!U.act) U.act = { ...(actOf(T)) }; };
+  // corrections first
+  const delM = (res.delete_meal_ids || []).map(String), delW = (res.delete_workout_ids || []).map(String);
+  if (delM.length) { const gone = (dayOf(T).meals || []).filter(m => delM.includes(m.id)); if (gone.length) { U.delMeals = gone.map(m => ({ ...m })); editDay(T, d => { d.meals = d.meals.filter(m => !delM.includes(m.id)); }); blocks.push({ k: "removed", names: gone.map(m => m.name) }); } }
+  if (delW.length) { const gone = workoutsOn(T).filter(w => delW.includes(w.id)); if (gone.length) { keepAct(); editDay(T, d => { d.act = { ...(d.act || {}), workouts: (d.act?.workouts || []).filter(w => !delW.includes(w.id)) }; }); blocks.push({ k: "removed", names: gone.map(w => w.name || WK[w.type]?.[2] || "Workout") }); } }
+  // recipes before meals, so "made X and had a serving" works
+  for (const r of res.save_recipes || []) {
+    if (!r || !r.name) continue;
+    const { rec, replaced } = saveRecipe(r); U.recipes.push(rec.id); if (replaced) U.recipePrev.push(replaced);
+    blocks.push({ k: "recipe", id: rec.id, name: rec.name, servings: rec.servings, per: rec.per, total: rec.total, n: rec.items.length, updated: !!replaced });
+  }
+  for (const m0 of res.meals || []) {
+    if (!m0) continue;
+    const m = buildMeal(m0); if (!m.items.length && !m.kcal) continue;
+    const fridgeNames = []; m.items.forEach(x => { if (x.rid) return; const it = fridgeMatch(canon(x.name)); if (it && !fridgeNames.includes(it.name)) fridgeNames.push(it.name); });
+    const meal = { id: uid(), name: m.name, kcal: m.kcal, protein: m.protein, carbs: m.carbs, fat: m.fat, slot: m.slot, portion: 1, src: "chat", items: m.items.map(({ look, ...x }) => x), uses: [] };
+    editDay(T, d => d.meals.push(meal)); U.meals.push(meal.id); track("logs"); track("logMs", 1500);
+    blocks.push({ k: "meal", id: meal.id, name: meal.name, slot: meal.slot, kcal: meal.kcal, protein: meal.protein, carbs: meal.carbs, fat: meal.fat, items: meal.items, fridge: fridgeNames, note: m.recipeNote || "", guess: m.items.some(x => x.look) });
+  }
+  const kg = body()?.weightKg || 65;
+  for (const w of res.workouts || []) {
+    if (!w) continue;
+    const type = WTYPES.includes(w.type) ? w.type : "other", min = Math.max(1, Math.round(+w.minutes || 0) || 30);
+    const met = +w.met > 1 ? +w.met : (WK[type]?.[3] || 4), kcal = Math.round((met - 1) * kg * min / 60);
+    const wo = { id: uid(), type, min, kcal, met, name: String(w.name || WK[type][2]).trim(), details: w.details ? String(w.details) : "" };
+    keepAct(); editDay(T, d => { d.act = { ...(d.act || {}), workouts: [...(d.act?.workouts || []), wo] }; }); U.workouts.push(wo.id);
+    blocks.push({ k: "workout", name: wo.name, emoji: WK[type][1], min, kcal, details: wo.details, est: !bodyReady() });
+  }
+  if (+res.steps > 0) { keepAct(); editDay(T, d => { d.act = { ...(d.act || {}), steps: Math.round(+res.steps) }; }); blocks.push({ k: "steps", v: Math.round(+res.steps) }); }
+  if (+res.active_kcal > 0) { keepAct(); editDay(T, d => { d.act = { ...(d.act || {}), active: Math.round(+res.active_kcal) }; }); blocks.push({ k: "active", v: Math.round(+res.active_kcal) }); }
+  if (res.weight && +res.weight.value > 0 && body()) {
+    const unit = /kg/i.test(res.weight.unit || "") ? "kg" : /lb|pound/i.test(res.weight.unit || "") ? "lb" : (S.settings.units || "us") === "us" ? "lb" : "kg";
+    U.body = { ...body() }; const kg2 = unit === "kg" ? +res.weight.value : lbToKg(+res.weight.value);
+    S.settings = { ...S.settings, body: { ...body(), weightKg: Math.round(kg2 * 10) / 10 } }; putSettings();
+    blocks.push({ k: "weight", v: +res.weight.value, unit });
+  }
+  const bought = addToFridge(res.bought || [], "bought", U); if (bought.length) blocks.push({ k: "bought", names: bought.map(i => i.name + (i.qty > 1 ? " ×" + i.qty : "")) });
+  const have = addToFridge(res.have || [], "have", U); if (have.length) blocks.push({ k: "have", names: have.map(i => i.name + (i.qty > 1 ? " ×" + i.qty : "")) });
+  const used = closeByName(res.used_up || [], "used", U); if (used.length) blocks.push({ k: "used", names: used });
+  const tossed = closeByName(res.tossed || [], "tossed", U); if (tossed.length) blocks.push({ k: "tossed", names: tossed });
+  const added = listAdd(res.grocery_add || [], U); if (added.length) blocks.push({ k: "list", names: added });
+  const off = listRemove(res.remove_from_list || [], U); if (off.length) blocks.push({ k: "unlist", names: off });
+  const gch = setGoalsFrom(res.set_goals, U); if (gch.length) blocks.push({ k: "goals", names: gch });
+  const hab = habitsFrom(res.habits_done, U); if (hab.length) blocks.push({ k: "habits", names: hab });
+  const ideas = (Array.isArray(res.ideas) ? res.ideas : []).filter(r => r && r.name).slice(0, 3).map(r => ({ name: String(r.name), minutes: +r.minutes || 15, kcal: r0(r.kcal), protein: r0(r.protein), uses: Array.isArray(r.uses) ? r.uses.map(String) : [], ingredients: Array.isArray(r.ingredients) ? r.ingredients.map(String) : [], steps: Array.isArray(r.steps) ? r.steps.map(String) : [] }));
+  const any = blocks.length > 0;
+  return { blocks, ideas, undo: any ? U : null, tracked: blocks.some(b => ["meal", "workout", "steps", "active", "removed", "habits"].includes(b.k)) };
+}
+function undoMsg(msg) {
+  const U = msg.undo; if (!U || msg.undone) return;
+  const T = msg.day || todayId();
+  editDay(T, d => {
+    d.meals = (d.meals || []).filter(m => !U.meals.includes(m.id)).concat(U.delMeals || []);
+    if (U.habitsPrev) d.habits = U.habitsPrev;
+    if (U.act) d.act = U.act; else if (U.workouts.length) d.act = { ...(d.act || {}), workouts: (d.act?.workouts || []).filter(w => !U.workouts.includes(w.id)) };
+  });
+  U.items.forEach(id => removeItem(id));
+  (U.itemPrev || []).forEach(p => putItem(p));
+  if (U.shopPrev) { S.shopping = { ...S.shopping, items: U.shopPrev }; putShopping(); }
+  if (U.recipes.length) { LRN.data.mine = myRecipes().filter(r => !U.recipes.includes(r.id)).concat(U.recipePrev || []); saveLearn(); }
+  if (U.settingsPrev) { S.settings = U.settingsPrev; putSettings(); }
+  if (U.body) { S.settings = { ...S.settings, body: U.body }; putSettings(); }
+  msg.undone = true; chatSave(); renderAll(); refreshSheet();
+}
+
+/* ---------- the prompt ---------- */
+function chatContext() {
+  const T = todayId(), b = body(), us = (S.settings.units || "us") === "us";
+  const recs = myRecipes().slice(0, 40).map(r => `- "${r.name}": ${r.servings} serving${r.servings === 1 ? "" : "s"}, per serving ${r.per.kcal} kcal, ${r.per.protein} g protein${r.cookedG ? `, whole batch weighs ${r.cookedG} g cooked` : ""}`);
+  const meals = (dayOf(T).meals || []).map(m => `- id ${m.id}: ${m.name} (${m.slot || "snack"}, ${m.kcal} kcal)`);
+  const wos = workoutsOn(T).map(w => `- id ${w.id}: ${w.name || WK[w.type]?.[2] || w.type}, ${w.min} min`);
+  const fridge = S.items.filter(i => i.status === "fresh").sort((a, c) => daysLeft(a) - daysLeft(c)).slice(0, 70).map(i => `${i.name}${i.qty > 1 ? " ×" + i.qty : ""}${i.zone === "pantry" ? " (pantry)" : i.zone === "freezer" ? " (freezer)" : daysLeft(i) <= 3 ? ` (${daysLeft(i) < 0 ? "past date" : daysLeft(i) + "d left"})` : ""}`);
+  const list = (S.shopping.items || []).filter(x => !x.done).map(x => x.name);
+  const recent = CH.msgs.slice(-8).map(m => `${m.who === "me" ? "Me" : "App"}: ${m.who === "me" ? m.text : (m.text || "") + (m.blocks || []).map(x => x.k === "meal" ? ` [logged ${x.name} ${x.kcal} kcal]` : x.k === "workout" ? ` [logged ${x.name} ${x.min} min]` : x.k === "recipe" ? ` [saved recipe ${x.name}]` : "").join("")}`).join("\n");
+  const goal = goalFor(T), eaten = kcalOf(T), gl = goalList(T);
+  return `Today is ${fmtDay(T)}, ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}. Default meal slot right now: ${slotNow()}.
+About me: ${bodyReady() ? `${b.sex === "f" ? "female" : "male"}, ${b.age} y, ${Math.round(b.heightCm)} cm, ${b.weightKg} kg` : "body stats not set (assume 65 kg)"}. I use ${us ? "US units (lb, oz, cups)" : "metric units"}.
+Today: ${S.settings.noNumbers ? "(they prefer not to see calorie numbers in replies)" : `${num(eaten)} of ${num(goal)} kcal eaten, protein goal ${S.settings.protein} g`}.
+My saved recipes (numbers per serving):
+${recs.join("\n") || "(none yet)"}
+Meals logged today:
+${meals.join("\n") || "(none)"}
+Workouts logged today:
+${wos.join("\n") || "(none)"}
+In my fridge/pantry: ${fridge.join(", ") || "(empty)"}
+My grocery list: ${list.join(", ") || "(empty)"}
+My goals today: ${gl.map(x => `${x.label} ${x.val}${x.done ? " (hit)" : ""}`).join("; ")}
+My daily habits: ${(S.settings.habits || []).map(h => `"${h.name}"${(h.target || 1) > 1 ? ` target ${h.target} ${h.unit || ""}` : ""}`).join(", ") || "(none)"}
+Recent chat:
+${recent || "(none)"}`;
+}
+function chatPrompt(text, hasImg) {
+  return `You are the assistant inside "Fridge", my personal food, fitness and grocery tracker. Turn my message into actions the app will save. Be accurate with nutrition: this is how I track a calorie deficit.
+
+${chatContext()}
+
+My message: """${text || "(no text)"}"""${hasImg ? "\nA photo is attached. If it shows food I ate, log it as a meal and estimate each component's amount. If it shows groceries or a receipt, treat them as bought." : ""}
+
+How to read it:
+- Meals: one entry per meal. Break it into items and estimate EACH item separately with USDA-style values. Use the exact weight or amount I give (grams, oz, cups, slices). If I name a brand, use that product's label (e.g. Dave's Killer Bread, Fage, Chobani, Trader Joe's, Quest). If I give no amount, assume one normal portion and write what you assumed in "amount". Weights are as eaten unless I say raw. Restaurant or chain food: use the chain's official nutrition; if you are not sure of it, still estimate and set "needs_lookup": true.
+- If I ate one of my saved recipes, set "recipe" to its exact name and "servings" (or "grams" if I weighed my portion), and put only extras in "items". Never repeat the recipe's own ingredients.
+- A recipe (a dish name with ingredients and amounts, "makes 4", "recipe:", "I cooked/meal prepped") goes in save_recipes with every ingredient and its total amount for the whole batch, plus servings (default 1) and cooked_weight_g if I give it. Only also log a meal if I say I ate some.
+- "slot": breakfast, lunch, dinner or snack. Use my words, otherwise the time of day.
+- Workouts: "type" is one of ${WTYPES.join(", ")}. Give minutes and a MET from the Compendium of Physical Activities that matches the pace, intensity, incline or weight I describe. Put distance, pace, sets x reps x weight in "details". If minutes are missing, estimate them and say so in details.
+- Steps → "steps". Active calories from my watch → "active_kcal". My body weight → "weight".
+- Corrections ("actually 2 slices", "remove the latte", "that run was 40 min"): put the old id in delete_meal_ids / delete_workout_ids and add the corrected entry.
+- Groceries: bought/got/picked up → bought (it goes into my fridge). "I have", "there's X in my fridge/pantry" → have. "add X to my list", "need X", "buy X" → grocery_add. Finished, used up, ran out of → used_up (also grocery_add if I say I need more). Threw out, tossed, went bad → tossed. "Got X" for list items also counts as bought. For bought/have items give qty, price if I said it, "where" (fridge, freezer or pantry) and "shelf_days" (typical days it stays good there).
+- Goals: "set my protein goal to 120 g", "10k steps a day", "4 workouts a week", "500 calorie deficit", "1600 calories a day", "add a habit: read 20 min" → set_goals. Doing a habit ("drank 3 glasses of water", "read today") → habits_done with the habit's exact name, count = total for today (set "add": true if they say "another"/"2 more").
+- Questions ("what can I make?", "how am I doing?", "is this healthy?") → "answer" (1-3 short sentences using my data). For cooking ideas add up to 3 "ideas" that use food in my fridge, soonest-expiring first, high protein, fitting my calories left.
+- "reply": one short, warm sentence about what you saved. No calorie math in it, the app shows the numbers.
+- Only include what my message says. Never invent meals or workouts.
+
+Return JSON only, in this shape (leave out empty fields):
+{"reply": string,
+ "meals": [{"name": string, "slot": string, "recipe": string|null, "servings": number|null, "grams": number|null, "items": [{"name": string, "brand": string, "amount": string, "grams": number, "kcal": number, "protein": number, "carbs": number, "fat": number, "needs_lookup": boolean}]}],
+ "save_recipes": [{"name": string, "servings": number, "cooked_weight_g": number|null, "items": [same item shape, amounts for the whole batch], "steps": [string]}],
+ "workouts": [{"type": string, "name": string, "minutes": number, "met": number, "details": string}],
+ "steps": number, "active_kcal": number, "weight": {"value": number, "unit": "lb"|"kg"},
+ "delete_meal_ids": [string], "delete_workout_ids": [string],
+ "bought": [{"name": string, "qty": number, "price": number, "where": string, "shelf_days": number}],
+ "have": [same as bought], "grocery_add": [string], "remove_from_list": [string], "used_up": [string], "tossed": [string],
+ "set_goals": {"protein": number, "steps": number, "kcal": number, "deficit": number, "active_min": number, "week_workouts": number, "habits_add": [{"name": string, "target": number, "unit": string}]},
+ "habits_done": [{"name": string, "count": number, "add": boolean}],
+ "answer": string, "ideas": [{"name": string, "minutes": number, "kcal": number, "protein": number, "uses": [string], "ingredients": [string], "steps": [string]}]}`;
+}
+
+/* ---------- no-AI fallback: understands the common phrasings ---------- */
+const splitNames = s => String(s || "").split(/\s*(?:,|\n|;|\+|&|\band\b)\s*/i).map(x => x.replace(/^(some|a|an|the|more)\s+/i, "").replace(/[.!]+$/, "").trim()).filter(x => /[a-z]/i.test(x));
+function localParse(text) {
+  const s = text.trim(), low = s.toLowerCase(), out = {}; let m;
+  if ((m = s.match(/^(?:please\s+)?(?:add|put)\s+(.+?)\s+(?:to|on)\s+(?:my\s+|the\s+)?(?:grocery\s+|shopping\s+)?list\.?$/i)) || (m = s.match(/^(?:i\s+)?(?:need(?:\s+to\s+buy)?|buy|to buy|list)\s*[:\-]?\s+(.+)$/i))) { out.grocery_add = splitNames(m[1]); out.reply = "Added to your list."; return out; }
+  if ((m = s.match(/^(?:i\s+)?(?:just\s+)?(?:bought|got|picked up|purchased|grocery haul:?)\s+(.+)$/i))) { out.bought = parseQuick(m[1]).map(x => ({ name: x.name, qty: x.qty })); out.reply = "Put away. It's in your fridge now."; return out; }
+  if ((m = s.match(/^(?:i\s+(?:already\s+)?have|have|in my (?:fridge|pantry|freezer)\s*:?)\s+(.+)$/i))) { const where = /freezer/.test(low) ? "freezer" : /pantry/.test(low) ? "pantry" : "fridge"; out.have = parseQuick(m[1].replace(/\s+in (?:my|the) (?:fridge|pantry|freezer)$/i, "")).map(x => ({ name: x.name, qty: x.qty, where })); out.reply = "Got it, tracking those."; return out; }
+  if ((m = s.match(/^(?:i\s+)?(?:finished|used up|ran out of|am out of|out of)\s+(?:the\s+)?(.+)$/i))) { out.used_up = splitNames(m[1]); if (/ran out|out of/.test(low)) out.grocery_add = out.used_up.slice(); out.reply = "Marked as used up."; return out; }
+  if ((m = s.match(/^(?:i\s+)?(?:threw out|tossed|binned|threw away)\s+(?:the\s+)?(.+)$/i))) { out.tossed = splitNames(m[1]); out.reply = "Marked as tossed."; return out; }
+  if ((m = s.match(/^(?:set\s+)?(?:my\s+)?(protein|step|steps|calorie|calories)\s+goal\s+(?:to|is|=)?\s*([\d,]+)/i))) { const v = +m[2].replace(/,/g, ""), k = /protein/i.test(m[1]) ? "protein" : /step/i.test(m[1]) ? "steps" : "kcal"; return { set_goals: { [k]: v }, reply: "Goal updated." }; }
+  const hb = (S.settings.habits || []).find(h => tokens(h.name).some(t => t.length > 3 && low.includes(t)));
+  if (hb && /\b(drank|did|done|finished|went|read|took|cooked)\b/.test(low) && !/\b(ate|breakfast|lunch|dinner|snack)\b/.test(low)) { const n = (low.match(/(\d+)/) || [])[1]; return { habits_done: [{ name: hb.name, count: n ? +n : undefined }], reply: "Nice." }; }
+  const it = detectIntent(s);
+  if (it?.kind === "steps") return { steps: it.v, reply: "Steps saved." };
+  if (it?.kind === "active") return { active_kcal: it.v, reply: "Active calories saved." };
+  if (it?.kind === "weight") return { weight: { value: it.v, unit: it.unit }, reply: "Weight updated." };
+  if (it?.kind === "workout") return { workouts: [{ type: it.type, minutes: it.min, name: WK[it.type][2] }], reply: "Workout saved." };
+  if (/^recipe\b|\bmakes\s+\d+\s+servings?\b/i.test(s)) return { reply: "", answer: "Saving recipes with calories needs the AI key in Settings. Paste your key here in the chat and try again." };
+  if (isQuestion(s) && (/\?\s*$/.test(s) || !(/^(breakfast|lunch|dinner|snack)\b\s*[:\-]/i.test(s) || /\b(ate|had|eating)\b/i.test(s)))) { const ideas = basicRecipes().slice(0, 3).map(r => ({ name: r.name, minutes: r.minutes, kcal: r.kcal, protein: r.protein, uses: (r.useIds || []).map(id => S.items.find(i => i.id === id)?.name).filter(Boolean), ingredients: r.ingredients || [], steps: r.steps || [] })); return { answer: ideas.length ? "Here's what you can make with what you have." : "Add some food to your fridge and I'll suggest meals.", ideas }; }
+  const q = it?.kind === "meal" ? it.q : s.replace(/^(?:for\s+)?(breakfast|lunch|dinner|snack)\s*[:\-]?\s*/i, "");
+  const slot = it?.slot || (low.match(/\b(breakfast|lunch|dinner|snack)\b/) || [])[1] || slotNow();
+  const items = [];
+  for (const p of parseQuick(q)) {
+    const rec = findRecipe(p.name);
+    if (rec) { items.push({ name: rec.name, amount: `${p.qty} serving${p.qty === 1 ? "" : "s"}`, kcal: rec.per.kcal * p.qty, protein: rec.per.protein * p.qty, carbs: rec.per.carbs * p.qty, fat: rec.per.fat * p.qty }); continue; }
+    const f = foodSearch(p.name, 1)[0];
+    items.push(f ? { name: f.n, amount: `${p.qty > 1 ? p.qty + " × " : ""}${f.s || "1 serving"}`, kcal: f.k * p.qty, protein: f.p * p.qty, carbs: (f.c || 0) * p.qty, fat: (f.f || 0) * p.qty } : { name: p.name, amount: "", kcal: 0, protein: 0, needs_lookup: true });
+  }
+  if (!items.length) return { reply: "", answer: "I didn't catch that. Try “lunch: turkey sandwich and an apple”, “ran 30 min”, or “add milk to my list”." };
+  const unknown = items.filter(x => !x.kcal).map(x => x.name);
+  return { meals: [{ name: items.map(x => x.name).join(", "), slot, items }], reply: unknown.length ? `I don't know the calories for ${unknown.join(", ")} without the AI key. Tap the meal in Today to fix the number.` : "Logged." };
+}
+
+/* ---------- sending ---------- */
+async function chatSend(textArg) {
+  const text = String(textArg ?? CH.draft).trim(), img = CH.img;
+  if ((!text && !img) || CH.busy) return;
+  if (KEY_RE.test(text)) {
+    CH.draft = ""; saveAnyKey(text);
+    pushMsg({ who: "app", text: `Key saved on this phone only. ${AI.via === "gemini" ? "Gemini" : "Claude"} is on. Checking it works…` });
+    try { await AI.fn("Reply with the single word: ok", { modelTier: "quick" }); pushMsg({ who: "app", text: "It works. Tell me what you ate, cooked, bought or did today." }); }
+    catch (e) { pushMsg({ who: "app", text: keyErrText(e) }); }
+    return;
+  }
+  CH.draft = ""; CH.img = null; const imgUrl = CH.imgUrl; CH.imgUrl = ""; CH.tray = false;
+  pushMsg({ who: "me", text, img: !!img });
+  if (imgUrl) setTimeout(() => URL.revokeObjectURL(imgUrl), 60000);
+  CH.busy = true; CH.ctl = new AbortController(); renderAll();
+  let res = null, err = "";
+  if (aiOn()) {
+    try {
+      res = await AI.fn.json(chatPrompt(text, !!img), { signal: CH.ctl.signal, ...(img ? { images: [img] } : {}) });
+      if (res && Array.isArray(res.meals) && res.meals.some(m => (m?.items || []).some(x => x?.needs_lookup))) await lookUpItems(res.meals, CH.ctl.signal);
+    } catch (e) {
+      if (e?.code === "cancelled") { CH.busy = false; pushMsg({ who: "app", text: "Stopped." }); return; }
+      err = aiErr(e);
+    }
+  }
+  if (!res || typeof res !== "object") {
+    if (img && !text) { CH.busy = false; pushMsg({ who: "app", text: err || "Photos need the AI key. Use Scan for receipts and order screenshots, it works without one.", retry: text }); return; }
+    res = localParse(text); if (err) res.reply = (res.reply ? res.reply + " " : "") + `(${err} I used the offline reader.)`;
+  }
+  CH.busy = false;
+  const out = applyActions(res);
+  const answer = String(res.answer || "").trim();
+  const reply = String(res.reply || "").trim() || (out.blocks.length ? "Saved." : "");
+  if (!out.blocks.length && !answer && !out.ideas.length) { pushMsg({ who: "app", text: reply || "I didn't find anything to save there. Try “lunch: 150 g chicken, 1 cup rice” or “bought eggs and spinach”.", retry: text }); return; }
+  pushMsg({ who: "app", text: [reply, answer].filter(Boolean).join(" "), blocks: out.blocks, ideas: out.ideas, undo: out.undo, tracked: out.tracked });
+}
+function keyErrText(e) {
+  const c = e?.code;
+  if (c === "bad_key") return "That key was rejected. In Google AI Studio (aistudio.google.com → Get API key), copy the key again and paste it here.";
+  if (c === "rate_limited") return "The key works, but Google says you've hit the free limit for now. Try again in a minute.";
+  if (c === "network") return "Couldn't reach Google from here. Check your connection and send the key again.";
+  return "Couldn't check the key right now" + (e?.message ? `: ${String(e.message).slice(0, 140)}` : ".");
+}
+
+/* ---------- logging a saved recipe from the Recipes tab ---------- */
+function logRecipe(id, servings = 1) {
+  const rec = myRecipes().find(r => r.id === id); if (!rec) return;
+  const out = applyActions({ meals: [{ name: rec.name, recipe: rec.name, servings, slot: slotNow(), items: [] }] });
+  pushMsg({ who: "app", text: `Logged ${fmtServ(servings)} serving${servings === 1 ? "" : "s"} of ${rec.name}.`, blocks: out.blocks, undo: out.undo, tracked: true });
+  toast(`Logged ${rec.name}.`);
+}
+
+/* ---------- rendering ---------- */
+const TABS = [["chat", "chat", "Chat"], ["fridge", "fridge", "Fridge"], ["groceries", "cart", "Groceries"], ["recipes", "book", "Recipes"]];
+function renderAll() { renderHome(); scheduleNudges(); }
+function renderDock() {}
+function renderMagnets() {}
+function placeMagnets() {}
+function renderInside() {}
+function renderHome() {
+  const T = todayId();
+  const tabs = $("#tabbar"); if (!tabs) return;
+  tabs.innerHTML = TABS.map(([k, ic, l]) => `<button class="${CH.tab === k ? "on" : ""}" data-act="tab" data-t="${k}" aria-label="${l}"${CH.tab === k ? ' aria-current="page"' : ""}>${icon(ic)}<span>${l}</span>${k === "groceries" && (S.shopping.items || []).filter(x => !x.done).length ? `<i>${(S.shopping.items || []).filter(x => !x.done).length}</i>` : ""}</button>`).join("");
+  $("#budgetStrip").innerHTML = stripHtml(T) + goalsRow(T);
+  const pane = $("#pane"), stick = CH.tab === "chat" && (CH.stick || pane.scrollHeight - pane.scrollTop - pane.clientHeight < 80);
+  const prevTop = pane.scrollTop;
+  pane.innerHTML = CH.tab === "chat" ? paneChat() : CH.tab === "fridge" ? paneFridge() : CH.tab === "groceries" ? paneGroceries() : paneRecipes();
+  pane.dataset.tab = CH.tab;
+  if (stick) { pane.scrollTop = pane.scrollHeight; CH.stick = false; } else pane.scrollTop = prevTop;
+  const comp = $("#composer"); comp.hidden = CH.tab !== "chat";
+  if (CH.tab === "chat") renderComposer();
+}
+function stripHtml(T) {
+  if (S.settings.noNumbers) return `<button class="strip plain" data-act="open" data-sheet="calories"><b>Today</b><span>${(dayOf(T).meals || []).length} meals · ${workoutsOn(T).length} workouts</span>${icon("check")}</button>`;
+  const eaten = kcalOf(T), goal = goalFor(T), left = goal - eaten, b = bodyReady() ? burnFor(T) : null, prot = Math.round(proteinOf(T));
+  return `<button class="strip" data-act="open" data-sheet="calories" aria-label="Calories today, ${num(Math.abs(left))} ${left >= 0 ? "left" : "over"}">
+    <div class="st-main"><b class="${left < 0 ? "t-bad" : ""}">${num(Math.abs(left))}</b><span>${left >= 0 ? "kcal left" : "kcal over"}</span></div>
+    <div class="st-side"><span><b>${num(eaten)}</b> eaten</span><span>${b ? `<b>${num(b.total)}</b> burned` : `<b>${num(goal)}</b> goal`}</span><span><b>${prot}</b>/${S.settings.protein} g protein</span></div>
+    <div class="st-bar"><i class="${left < 0 ? "over" : ""}" style="width:${clamp(eaten / Math.max(goal, 1) * 100, 0, 100)}%"></i></div></button>`;
+}
+function renderComposer() {
+  const c = $("#composer"); if (!c || c.dataset.ready) { syncComposer(); return; }
+  c.dataset.ready = "1";
+  c.innerHTML = `<div class="tray" id="tray" hidden>
+      <button data-act="ch-scan">${icon("camera")}<span><b>Scan receipt or order</b><small>Paper receipt or grocery-app screenshots</small></span></button>
+      <label for="chImg">${icon("image")}<span><b>Photo of my meal or groceries</b><small id="chImgNote">Needs the AI key</small></span><input type="file" id="chImg" accept="image/*" hidden></label>
+    </div>
+    <div class="attach" id="chAttach" hidden></div>
+    <div class="cbar"><button class="cplus" data-act="ch-tray" aria-label="Scan or add a photo">${icon("plus")}</button>
+    <textarea id="chIn" rows="1" placeholder="What did you eat or do?" enterkeyhint="send" autocomplete="off" aria-label="Message"></textarea>
+    <button class="csend" data-act="ch-send" aria-label="Send">${icon("send")}</button></div>`;
+  syncComposer();
+}
+function syncComposer() {
+  const t = $("#chIn"); if (t && document.activeElement !== t && t.value !== CH.draft) { t.value = CH.draft; autoGrow(t); }
+  const tray = $("#tray"); if (tray) tray.hidden = !CH.tray;
+  const note = $("#chImgNote"); if (note) note.textContent = aiOn() ? "It reads the photo and logs it" : "Needs the AI key (Settings)";
+  const at = $("#chAttach"); if (at) { at.hidden = !CH.imgUrl; at.innerHTML = CH.imgUrl ? `<img src="${CH.imgUrl}" alt="Attached photo"><button data-act="ch-unimg" aria-label="Remove photo">${icon("x")}</button>` : ""; }
+  const s = $("#composer .csend"); if (s) { s.disabled = CH.busy; s.classList.toggle("ready", !!(CH.draft.trim() || CH.img)); }
+}
+const EXAMPLES = [
+  ["Breakfast: 2 eggs, 1 slice Dave's Killer Bread, 10 g butter", "🍳"],
+  ["Recipe: chicken chili. 500 g chicken breast, 1 can black beans, 1 can tomatoes, 1 onion, 1 tbsp olive oil. Makes 4 servings", "📖"],
+  ["Had a serving of my chicken chili", "🥣"],
+  ["Ran 5 km in 30 min, then 20 min of weights", "🏃"],
+  ["Bought milk, eggs, spinach and 2 avocados", "🛍️"],
+  ["Add oat milk and lemons to my list", "📝"],
+  ["What can I make tonight?", "💡"]
+];
+function dayLabel(id) { const d = diffDays(id, todayId()); return d === 0 ? "Today" : d === 1 ? "Yesterday" : fmtShort(id); }
+function paneChat() {
+  const msgs = CH.msgs.slice(-60);
+  let h = `<div class="feed">`;
+  if (!msgs.length) {
+    h += `<div class="hello"><h2>Hi${S.settings.name ? " " + esc(S.settings.name) : ""}. Just tell me.</h2><p>Type what you ate (with grams and brands if you have them), a recipe to save, a workout, or groceries you bought. I'll track the calories and keep everything organised.</p>
+      ${aiOn() ? "" : `<p class="keynote">For exact numbers per ingredient, paste your Gemini API key here as a message. It stays on this phone.</p>`}
+      <div class="ex">${EXAMPLES.map(([t, e]) => `<button data-act="ch-example" data-t="${esc(t)}"><span>${e}</span>${esc(t)}</button>`).join("")}</div></div>`;
+  }
+  let lastDay = "";
+  for (const m of msgs) {
+    if (m.day !== lastDay) { h += `<div class="daysep">${esc(dayLabel(m.day || todayId()))}</div>`; lastDay = m.day; }
+    h += m.who === "me" ? `<div class="msg me"><div class="bub">${m.img ? `<span class="imgtag">${icon("image")}Photo</span>` : ""}${esc(m.text)}</div></div>` : appMsg(m);
+  }
+  if (CH.busy) h += `<div class="msg app"><div class="card typing"><span class="dots"><i></i><i></i><i></i></span><button class="linkbtn" data-act="ch-stop">Stop</button></div></div>`;
+  return h + `</div>`;
+}
+function itemRow(x, nn) { return `<li><span>${esc(x.name)}${x.brand ? ` <em>${esc(x.brand)}</em>` : ""}${x.amt ? `<small>${esc(x.amt)}</small>` : ""}</span>${nn ? "" : `<b>${x.kcal ? num(x.kcal) : "?"}</b>`}</li>`; }
+function blockHtml(b, m) {
+  const nn = S.settings.noNumbers;
+  switch (b.k) {
+    case "meal": return `<div class="blk meal"><div class="bh"><span class="btag">${cap(b.slot || "meal")}</span><b>${esc(b.name)}</b>${nn ? "" : `<strong>${num(b.kcal)}<small> kcal</small></strong>`}</div>
+      ${nn ? "" : `<div class="macros"><span>${num(b.protein)} g protein</span><span>${num(b.carbs)} g carbs</span><span>${num(b.fat)} g fat</span></div>`}
+      ${(b.items || []).length > 1 || (b.items?.[0]?.amt) ? `<ul class="items">${b.items.map(x => itemRow(x, nn)).join("")}</ul>` : ""}
+      ${b.note ? `<p class="bnote">${esc(b.note)}</p>` : ""}${b.guess ? `<p class="bnote">Some numbers are estimates. Correct me in a message if you know better.</p>` : ""}
+      ${b.fridge?.length && !m.undone && !b.usedDone ? `<div class="useq"><span>From your fridge: ${esc(b.fridge.join(", "))}?</span><button class="linkbtn" data-act="ch-use" data-mid="${esc(m.id)}" data-bid="${esc(b.id)}">Mark used</button></div>` : ""}</div>`;
+    case "recipe": return `<div class="blk"><div class="bh"><span class="btag">${b.updated ? "Recipe updated" : "Recipe saved"}</span><b>${esc(b.name)}</b>${nn ? "" : `<strong>${num(b.per.kcal)}<small> kcal/serving</small></strong>`}</div>
+      <div class="macros"><span>${b.servings} serving${b.servings === 1 ? "" : "s"}</span>${nn ? "" : `<span>${num(b.per.protein)} g protein each</span><span>${num(b.total.kcal)} kcal total</span>`}</div>
+      ${m.undone ? "" : `<div class="bact"><button class="pillbtn" data-act="rec-log1" data-id="${esc(b.id)}">Log a serving</button><button class="linkbtn" data-act="rec-view" data-id="${esc(b.id)}">See ingredients</button></div>`}</div>`;
+    case "workout": return `<div class="blk"><div class="bh"><span class="btag">Workout</span><b>${esc(b.emoji || "")} ${esc(b.name)} · ${b.min} min</b>${nn ? "" : `<strong>${num(b.kcal)}<small> kcal</small></strong>`}</div>${b.details ? `<p class="bnote">${esc(b.details)}</p>` : ""}${b.est && !nn ? `<p class="bnote">Add your weight in Today for an exact burn.</p>` : ""}</div>`;
+    case "steps": return `<div class="blk"><div class="bh"><span class="btag">Steps</span><b>${num(b.v)} steps</b>${nn || !bodyReady() ? "" : `<strong>${num(Math.max(0, b.v - 2500) * kcalPerStep())}<small> kcal</small></strong>`}</div></div>`;
+    case "active": return `<div class="blk"><div class="bh"><span class="btag">Apple Health</span><b>${num(b.v)} active kcal</b></div></div>`;
+    case "weight": return `<div class="blk"><div class="bh"><span class="btag">Weight</span><b>${b.v} ${esc(b.unit)}</b></div></div>`;
+    case "bought": return `<div class="blk"><div class="bh"><span class="btag">Bought · in your fridge</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
+    case "have": return `<div class="blk"><div class="bh"><span class="btag">Now tracking</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
+    case "list": return `<div class="blk"><div class="bh"><span class="btag">Added to grocery list</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
+    case "unlist": return `<div class="blk"><div class="bh"><span class="btag">Off the list</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
+    case "used": return `<div class="blk"><div class="bh"><span class="btag">Used up</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
+    case "tossed": return `<div class="blk"><div class="bh"><span class="btag">Tossed</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
+    case "goals": return `<div class="blk"><div class="bh"><span class="btag">Goals updated</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
+    case "habits": return `<div class="blk"><div class="bh"><span class="btag">Habits</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
+    case "removed": return `<div class="blk"><div class="bh"><span class="btag">Removed</span></div><p class="names">${esc(b.names.join(", "))}</p></div>`;
+  }
+  return "";
+}
+function ideaHtml(r, m, i) {
+  const nn = S.settings.noNumbers, key = m.id + ":" + i, open = CH.openRec === key;
+  return `<div class="blk idea"><button class="ihead" data-act="ch-idea" data-k="${esc(key)}" aria-expanded="${open}"><b>${esc(r.name)}</b><small>${r.minutes} min${nn ? "" : ` · ${num(r.kcal)} kcal · ${num(r.protein)} g protein`}</small>${r.uses?.length ? `<small class="iuses">Uses ${esc(r.uses.join(", "))}</small>` : ""}</button>
+    ${open ? `<div class="ibody">${r.ingredients?.length ? `<ul>${r.ingredients.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}${r.steps?.length ? `<ol>${r.steps.map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : ""}
+      <div class="bact"><button class="pillbtn" data-act="ch-idea-log" data-mid="${esc(m.id)}" data-i="${i}">I made this</button><button class="linkbtn" data-act="ch-idea-save" data-mid="${esc(m.id)}" data-i="${i}">${isSaved(r) ? "Saved" : "Save idea"}</button></div></div>` : ""}</div>`;
+}
+function appMsg(m) {
+  const blocks = (m.blocks || []).map(b => blockHtml(b, m)).join(""), ideas = (m.ideas || []).map((r, i) => ideaHtml(r, m, i)).join("");
+  const T = m.day || todayId(), showLeft = m.tracked && !m.undone && !S.settings.noNumbers && T === todayId() && m === [...CH.msgs].reverse().find(x => x.tracked && !x.undone);
+  const left = goalFor(T) - kcalOf(T);
+  return `<div class="msg app"><div class="card ${m.undone ? "undone" : ""}">${m.text ? `<p class="said">${esc(m.text)}</p>` : ""}${blocks}${ideas}
+    ${showLeft || (m.undo && !m.undone) || m.undone || m.retry ? `<div class="mfoot">${showLeft ? `<span>${left >= 0 ? `${num(left)} kcal left today` : `${num(-left)} kcal over today`}</span>` : "<span></span>"}${m.undone ? `<span class="muted">Undone</span>` : m.undo ? `<button class="linkbtn" data-act="ch-undo" data-mid="${esc(m.id)}">Undo</button>` : ""}${m.retry ? `<button class="linkbtn" data-act="ch-retry" data-mid="${esc(m.id)}">Edit and resend</button>` : ""}</div>` : ""}</div></div>`;
+}
+
+/* ---------- Fridge tab ---------- */
+const ZONE_GROUP = z => z === "freezer" ? "freezer" : z === "pantry" ? "pantry" : "fridge";
+function itemRowHtml(i) {
+  const l = lifeInfo(i);
+  return `<button class="row-i" data-act="item" data-id="${esc(i.id)}"><span class="emo">${esc(i.emoji || "🛒")}</span><span class="nm"><b>${esc(i.name)}${(i.qty || 1) > 1 ? ` <em>×${i.qty}</em>` : ""}</b><small>${esc(ZONE_SHORT[i.zone] || "")}${i.boughtAt ? ` · since ${fmtShort(i.boughtAt)}` : ""}</small></span><span class="pill ${l.cls}">${esc(l.label)}</span></button>`;
+}
+function paneFridge() {
+  const all = S.items.filter(i => i.status === "fresh"), z = CH.fzone;
+  const shown = all.filter(i => z === "all" || ZONE_GROUP(i.zone) === z).sort((a, b) => daysLeft(a) - daysLeft(b));
+  const soon = shown.filter(i => i.zone !== "pantry" && daysLeft(i) <= 3), rest = shown.filter(i => !soon.includes(i));
+  const cnt = k => all.filter(i => k === "all" || ZONE_GROUP(i.zone) === k).length;
+  let h = `<div class="pane-in"><h2 class="ptitle">What I have</h2>
+    <form class="addrow" id="fridgeAdd"><input class="inp" id="fridgeIn" placeholder="Add food, e.g. 2 avocados, milk" autocomplete="off" enterkeyhint="done"><button class="btn sm">Add</button></form>
+    <div class="row2"><button class="btn soft sm" data-act="ch-scan">${icon("camera")}Scan receipt</button><button class="btn soft sm" data-act="open" data-sheet="scan" data-mode="photo">${icon("image")}Fridge photo</button></div>
+    <div class="seg">${[["all", "All"], ["fridge", "Fridge"], ["freezer", "Freezer"], ["pantry", "Pantry"]].map(([k, l]) => `<button class="${z === k ? "on" : ""}" data-act="fzone" data-z="${k}">${l} ${cnt(k) ? `<small>${cnt(k)}</small>` : ""}</button>`).join("")}</div>`;
+  if (S.items.some(i => i.example)) h += `<div class="banner2">This is example food. <button class="linkbtn" data-act="clear-examples">Clear examples</button></div>`;
+  if (!shown.length) h += `<p class="empty">Nothing here yet. Type above, scan a receipt, or tell the chat “bought eggs and spinach”.</p>`;
+  if (soon.length) h += `<div class="gtitle warn">Eat soon</div><div class="group">${soon.map(itemRowHtml).join("")}</div>`;
+  if (rest.length) h += `<div class="gtitle">${soon.length ? "Everything else" : "All good"}</div><div class="group">${rest.map(itemRowHtml).join("")}</div>`;
+  return h + `</div>`;
+}
+function fridgeAddText(text) {
+  const rows = parseQuick(text); if (!rows.length) return;
+  const zone = CH.fzone === "freezer" ? "freezer" : CH.fzone === "pantry" ? "pantry" : null, U = { items: [], itemPrev: [], shopPrev: null };
+  const added = addToFridge(rows.map(r => ({ name: r.name, qty: r.qty, zone: zone || r.zone })), "typed", U);
+  track("quickAdds", added.length); renderAll();
+  toast(`Added ${added.map(a => a.name).join(", ")}.`, () => { U.items.forEach(id => removeItem(id)); if (U.shopPrev) { S.shopping = { ...S.shopping, items: U.shopPrev }; putShopping(); } renderAll(); });
+}
+
+/* ---------- Groceries tab ---------- */
+function paneGroceries() {
+  const items = S.shopping.items || [], open = items.filter(x => !x.done), done = items.filter(x => x.done), act = S.items.filter(i => i.status === "fresh");
+  const due = restockDue().filter(r => !open.some(x => nameMatch(x.name, r.name)));
+  const recentUsed = []; S.items.filter(i => i.status !== "fresh" && i.closedAt >= addDays(todayId(), -21) && !act.some(a => nameMatch(a.name, i.name)) && !open.some(x => nameMatch(x.name, i.name)) && !due.some(r => nameMatch(r.name, i.name))).forEach(i => { if (!recentUsed.some(u => nameMatch(u.name, i.name))) recentUsed.push(i); });
+  const again = [...due.map(r => ({ name: r.name, why: `every ~${r.every}d` })), ...recentUsed.slice(0, 8).map(i => ({ name: i.name, why: "ran out" }))].slice(0, 10);
+  let h = `<div class="pane-in"><h2 class="ptitle">Grocery list</h2>
+    <form class="addrow" id="listAdd"><input class="inp" id="listIn" placeholder="Add items, e.g. oat milk, lemons" autocomplete="off" enterkeyhint="done"><button class="btn sm">Add</button></form>`;
+  h += open.length ? `<div class="group">${open.map(x => { const home = act.filter(a => nameMatch(a.name, x.name)); return `<div class="row-l"><button class="tickbtn" data-act="list-tick" data-id="${esc(x.id)}" aria-label="Bought ${esc(x.name)}"></button><span class="nm"><b>${esc(x.name)}</b>${home.length ? `<small class="t-ok">You have ${esc(home[0].name)} (${esc(lifeInfo(home[0]).label.toLowerCase())})</small>` : ""}</span><button class="x-btn" data-act="list-del" data-id="${esc(x.id)}" aria-label="Remove ${esc(x.name)}">${icon("x")}</button></div>`; }).join("")}</div><p class="hint">Tick an item when you buy it and it moves into your fridge.</p>`
+    : `<p class="empty">Your list is empty. Add above, or tell the chat “add oat milk to my list”.</p>`;
+  if (done.length) h += `<div class="gtitle">Bought <button class="linkbtn" data-act="shop-clear">Clear</button></div><div class="group dim">${done.map(x => `<div class="row-l"><span class="tickbtn on">${icon("check")}</span><span class="nm"><b>${esc(x.name)}</b></span></div>`).join("")}</div>`;
+  if (again.length) h += `<div class="gtitle">Buy again</div><div class="chips2">${again.map(a => `<button data-act="list-again" data-name="${esc(a.name)}">+ ${esc(a.name)}<small>${esc(a.why)}</small></button>`).join("")}</div>`;
+  h += `<button class="btn soft block" data-act="ch-scan">${icon("camera")}Scan a receipt or order screenshots</button>`;
+  // purchase history
+  const since = addDays(todayId(), -30), bought = S.items.filter(i => i.boughtAt && i.boughtAt >= since && !["have", "example"].includes(i.source) && !i.example).sort((a, b) => b.boughtAt.localeCompare(a.boughtAt));
+  if (bought.length) {
+    const spend = bought.reduce((s, i) => s + (+i.price || 0), 0), byDay = {}; bought.forEach(i => (byDay[i.boughtAt] = byDay[i.boughtAt] || []).push(i));
+    const freq = {}; S.items.filter(i => i.boughtAt && !i.example && i.source !== "have").forEach(i => { const k = canon(i.name) || normName(i.name); (freq[k] = freq[k] || { name: i.name, n: 0 }).n += 1; });
+    const top = Object.values(freq).filter(f => f.n > 1).sort((a, b) => b.n - a.n).slice(0, 6);
+    h += `<div class="gtitle">What I've bought <small>last 30 days${spend ? ` · ${money(spend)}` : ""}</small></div><div class="group hist">${Object.keys(byDay).slice(0, 10).map(d => `<div class="hday"><span>${esc(dayLabel(d))}</span><p>${esc(byDay[d].map(i => i.name + ((i.qty || 1) > 1 ? " ×" + i.qty : "")).join(", "))}</p></div>`).join("")}</div>`;
+    if (top.length) h += `<div class="gtitle">Bought most often</div><div class="chips2 static">${top.map(f => `<span>${esc(f.name)}<small>${f.n}×</small></span>`).join("")}</div>`;
+  }
+  return h + `</div>`;
+}
+function listTick(id) {
+  const x = (S.shopping.items || []).find(i => i.id === id); if (!x) return;
+  const U = { items: [], itemPrev: [], shopPrev: S.shopping.items.map(i => ({ ...i })) };
+  S.shopping = { ...S.shopping, items: S.shopping.items.map(i => i.id === id ? { ...i, done: true } : i) }; putShopping();
+  addToFridge([{ name: x.name }], "bought", U); renderAll();
+  toast(`${x.name} is in your fridge.`, () => { U.items.forEach(i => removeItem(i)); S.shopping = { ...S.shopping, items: U.shopPrev }; putShopping(); renderAll(); });
+}
+
+/* ---------- Recipes tab ---------- */
+function paneRecipes() {
+  const L = myRecipes(), nn = S.settings.noNumbers, ideas = savedRecipes();
+  let h = `<div class="pane-in"><h2 class="ptitle">My recipes</h2>`;
+  if (!L.length) h += `<div class="emptycard"><p>Type a recipe in Chat and it's saved here with calories per serving. Then just say “had a serving of my chili”.</p><button class="pillbtn" data-act="ch-example" data-t="${esc(EXAMPLES[1][0])}">Try an example</button></div>`;
+  for (const r of L) {
+    const open = CH.openRec === r.id;
+    h += `<div class="rcard"><button class="rhead" data-act="rec-toggle" data-id="${esc(r.id)}" aria-expanded="${open}"><span class="nm"><b>${esc(r.name)}</b><small>${r.servings} serving${r.servings === 1 ? "" : "s"}${nn ? "" : ` · ${num(r.per.protein)} g protein each`}</small></span>${nn ? "" : `<strong>${num(r.per.kcal)}<small>kcal/serving</small></strong>`}</button>
+      ${open ? `<div class="rbody"><div class="gtitle">Ingredients · whole batch</div><ul class="items">${r.items.map(x => itemRow(x, nn)).join("")}</ul>${!nn ? `<p class="bnote">Batch: ${num(r.total.kcal)} kcal · ${num(r.total.protein)} g protein · ${num(r.total.carbs)} g carbs · ${num(r.total.fat)} g fat${r.cookedG ? ` · ${num(r.cookedG)} g cooked` : ""}</p>` : ""}
+        ${r.steps?.length ? `<div class="gtitle">Steps</div><ol class="steps">${r.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
+        <div class="rcook"><span>Servings</span><div class="stepper"><button data-act="rec-serv2" data-d="-0.5" aria-label="Fewer">−</button><output>${fmtServ(CH.serv || 1)}</output><button data-act="rec-serv2" data-d="0.5" aria-label="More">+</button></div><button class="btn sm" data-act="rec-log1" data-id="${esc(r.id)}">Log it</button></div>
+        <div class="bact"><button class="linkbtn" data-act="rec-edit" data-id="${esc(r.id)}">Change it in chat</button><button class="linkbtn danger" data-act="rec-del" data-id="${esc(r.id)}">Delete</button></div></div>` : ""}</div>`;
+  }
+  h += `<div class="gtitle">Ideas</div><button class="btn soft block" data-act="open" data-sheet="recipes">${icon("spark")}What can I make with my fridge?</button>`;
+  if (ideas.length) h += `<div class="group">${ideas.slice(0, 20).map(s => `<button class="row-i" data-act="open" data-sheet="recipes" data-tab="saved"><span class="nm"><b>${esc(s.name)}</b><small>${s.minutes || 15} min${nn ? "" : ` · ${num(s.kcal)} kcal`}</small></span></button>`).join("")}</div>`;
+  return h + `</div>`;
+}
+
+/* ---------- events for the new screens ---------- */
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  const a = el.dataset.act, msg = () => CH.msgs.find(m => m.id === el.dataset.mid);
+  switch (a) {
+    case "tab": CH.tab = el.dataset.t; CH.openRec = ""; CH.stick = CH.tab === "chat"; renderAll(); $("#pane").scrollTop = CH.tab === "chat" ? $("#pane").scrollHeight : 0; break;
+    case "ch-send": chatSend(); break;
+    case "ch-stop": CH.ctl?.abort(); break;
+    case "ch-tray": CH.tray = !CH.tray; syncComposer(); break;
+    case "ch-scan": CH.tray = false; syncComposer(); openSheet("scan"); break;
+    case "ch-unimg": if (CH.imgUrl) URL.revokeObjectURL(CH.imgUrl); CH.img = null; CH.imgUrl = ""; syncComposer(); break;
+    case "ch-example": CH.tab = "chat"; CH.draft = el.dataset.t; renderAll(); { const t = $("#chIn"); if (t) { t.value = CH.draft; autoGrow(t); t.focus(); } } syncComposer(); break;
+    case "ch-undo": { const m = msg(); if (m) { undoMsg(m); toast("Undone."); } break; }
+    case "ch-retry": { const m = msg(), i = CH.msgs.indexOf(m), me = CH.msgs.slice(0, i).reverse().find(x => x.who === "me"); CH.draft = m?.retry || me?.text || ""; syncComposer(); const t = $("#chIn"); if (t) { t.value = CH.draft; autoGrow(t); t.focus(); } break; }
+    case "ch-use": { const m = msg(), b = m?.blocks?.find(x => x.id === el.dataset.bid); if (!b) break; const used = useFromFridge(b.fridge.map(canon)); b.usedDone = true; editDay(m.day || todayId(), d => { const ml = d.meals.find(x => x.id === b.id); if (ml) ml.uses = used.map(u => canon(u.name)); }); chatSave(); renderAll(); toast(used.length ? `Took ${used.map(u => u.name.toLowerCase()).join(", ")} off the shelf.` : "Nothing matched in your fridge."); break; }
+    case "ch-idea": CH.openRec = CH.openRec === el.dataset.k ? "" : el.dataset.k; renderAll(); break;
+    case "ch-idea-save": { const r = msg()?.ideas?.[+el.dataset.i]; if (r) { const was = isSaved(r); toggleSave({ ...r, useNames: r.uses }); toast(was ? "Removed from saved ideas." : "Saved to Recipes."); renderAll(); } break; }
+    case "ch-idea-log": { const r = msg()?.ideas?.[+el.dataset.i]; if (!r) break; const out = applyActions({ meals: [{ name: r.name, slot: slotNow(), items: [{ name: r.name, amount: "1 serving", kcal: r.kcal, protein: r.protein }] }] }); const b = out.blocks[0]; if (b && r.uses?.length) b.fridge = r.uses.map(n => fridgeMatch(canon(n))?.name).filter(Boolean); pushMsg({ who: "app", text: `Logged ${r.name}.`, blocks: out.blocks, undo: out.undo, tracked: true }); break; }
+    case "fzone": CH.fzone = el.dataset.z; renderAll(); break;
+    case "list-tick": listTick(el.dataset.id); break;
+    case "list-del": { const prev = S.shopping.items.map(i => ({ ...i })); S.shopping = { ...S.shopping, items: S.shopping.items.filter(x => x.id !== el.dataset.id) }; putShopping(); renderAll(); toast("Removed.", () => { S.shopping = { ...S.shopping, items: prev }; putShopping(); renderAll(); }); break; }
+    case "list-again": { const U = { shopPrev: null }; listAdd([el.dataset.name], U); renderAll(); break; }
+    case "rec-toggle": CH.openRec = CH.openRec === el.dataset.id ? "" : el.dataset.id; CH.serv = 1; renderAll(); break;
+    case "rec-serv2": CH.serv = clamp((CH.serv || 1) + Number(el.dataset.d), 0.5, 8); renderAll(); break;
+    case "rec-log1": logRecipe(el.dataset.id, CH.tab === "recipes" ? (CH.serv || 1) : 1); if (CH.tab === "recipes") { CH.serv = 1; renderAll(); } break;
+    case "rec-view": CH.tab = "recipes"; CH.openRec = el.dataset.id; CH.serv = 1; renderAll(); $("#pane").scrollTop = 0; break;
+    case "rec-edit": { const r = myRecipes().find(x => x.id === el.dataset.id); if (!r) break; CH.tab = "chat"; CH.draft = `Update my ${r.name} recipe: `; renderAll(); const t = $("#chIn"); if (t) { t.value = CH.draft; autoGrow(t); t.focus(); } break; }
+    case "rec-del": { const r = myRecipes().find(x => x.id === el.dataset.id); if (!r) break; LRN.data.mine = myRecipes().filter(x => x.id !== r.id); saveLearn(); renderAll(); toast(`Deleted ${r.name}.`, () => { LRN.data.mine = [r, ...myRecipes()]; saveLearn(); renderAll(); }); break; }
+  }
+});
+document.addEventListener("input", e => { if (e.target.id === "chIn") { CH.draft = e.target.value; autoGrow(e.target); syncComposer(); } });
+document.addEventListener("keydown", e => {
+  if (e.target.id === "chIn" && e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); chatSend(); }
+});
+document.addEventListener("submit", e => {
+  if (e.target.id === "fridgeAdd") { e.preventDefault(); const i = $("#fridgeIn"); const v = i.value; i.value = ""; fridgeAddText(v); setTimeout(() => $("#fridgeIn")?.focus(), 30); }
+  if (e.target.id === "listAdd") { e.preventDefault(); const i = $("#listIn"); const v = i.value; i.value = ""; const U = { shopPrev: null }; const add = listAdd(splitNames(v), U); renderAll(); if (add.length) toast(`Added ${add.join(", ")}.`); setTimeout(() => $("#listIn")?.focus(), 30); }
+});
+document.addEventListener("change", e => {
+  if (e.target.id === "chImg" && e.target.files?.[0]) { const f = e.target.files[0]; e.target.value = ""; if (CH.imgUrl) URL.revokeObjectURL(CH.imgUrl); CH.img = f; CH.imgUrl = URL.createObjectURL(f); CH.tray = false; syncComposer(); $("#chIn")?.focus(); }
+});
+
+/* ===================== Goals: set them, see which ones you hit ===================== */
+function goalList(T) {
+  const g = [], nn = S.settings.noNumbers, eaten = kcalOf(T), goal = goalFor(T), past = T < todayId();
+  if (!nn) g.push({ id: "kcal", label: "Calories in budget", val: eaten ? `${num(eaten)} of ${num(goal)}` : "nothing logged", done: eaten > 0 && eaten <= goal * 1.03, miss: eaten > goal * 1.03 || (past && !eaten), frac: eaten / Math.max(goal, 1) });
+  const p = Math.round(proteinOf(T)), pg = +S.settings.protein || 0;
+  if (pg) g.push({ id: "protein", label: "Protein", val: `${p} of ${pg} g`, done: p >= pg, frac: p / pg });
+  const st = +actOf(T).steps || 0, sg = stepGoal();
+  if (sg) g.push({ id: "steps", label: "Steps", val: `${num(st)} of ${num(sg)}`, done: st >= sg, frac: st / sg });
+  const am = wkMinutes(T), ag = +fit().activeMin || 0;
+  if (ag) g.push({ id: "active", label: "Active minutes", val: `${am} of ${ag} min`, done: am >= ag, frac: am / ag });
+  const ww = weekWorkouts(T).length, wg = +fit().weekWorkouts || 0;
+  if (wg) g.push({ id: "week", label: "Workouts this week", val: `${ww} of ${wg}`, done: ww >= wg, frac: ww / wg, weekly: true });
+  for (const h of S.settings.habits || []) { const c = habitCount(h, T), t = h.target || 1; g.push({ id: "h:" + h.id, hid: h.id, label: h.name, val: t > 1 ? `${c} of ${t} ${h.unit || ""}`.trim() : c ? "done" : "not yet", done: c >= t, frac: c / t, habit: true, target: t }); }
+  return g;
+}
+function goalsRow(T) {
+  const g = goalList(T); if (!g.length) return "";
+  const done = g.filter(x => x.done).length;
+  return `<button class="goalsrow" data-act="open" data-sheet="goals" aria-label="Goals: ${done} of ${g.length} hit today"><span class="gcount"><b>${done}/${g.length}</b> goals</span><span class="gchips">${g.map(x => `<span class="gc ${x.done ? "ok" : ""}">${x.done ? icon("check") : `<i style="--p:${Math.round(clamp(x.frac || 0, 0, 1) * 100)}%"></i>`}${esc(x.label)}</span>`).join("")}</span></button>`;
+}
+function goalRowHtml(x, T) {
+  const today = T === todayId();
+  return `<div class="grow ${x.done ? "ok" : x.miss ? "miss" : ""}"><span class="gmark">${x.done ? icon("check") : ""}</span><span class="nm"><b>${esc(x.label)}</b><small>${esc(x.val)}${x.weekly ? " · weekly" : ""}</small><span class="gbar"><i style="width:${Math.round(clamp(x.frac || 0, 0, 1) * 100)}%"></i></span></span>
+    ${x.habit && today ? `<span class="stepper sm"><button data-act="g-hab" data-id="${esc(x.hid)}" data-d="-1" aria-label="Less ${esc(x.label)}">−</button><button data-act="g-hab" data-id="${esc(x.hid)}" data-d="1" aria-label="More ${esc(x.label)}">+</button></span>` : ""}</div>`;
+}
+function vGoals() {
+  const G = SH.goal, T = G.day, st = S.settings, list = goalList(T), done = list.filter(x => x.done).length;
+  const days = Array.from({ length: 7 }, (_, i) => addDays(todayId(), i - 6));
+  let h = `<div class="stack">`;
+  h += `<div class="gweek">${days.map(d => { const l = goalList(d), n = l.filter(x => x.done).length, any = (dayOf(d).meals || []).length || workoutsOn(d).length || +actOf(d).steps; return `<button class="${d === T ? "on" : ""}" data-act="g-day" data-d="${d}"><small>${esc(parseId(d).toLocaleDateString(undefined, { weekday: "narrow" }))}</small><span class="gdot ${!any ? "none" : n === l.length ? "all" : n ? "some" : ""}">${any ? n : ""}</span></button>`; }).join("")}</div>`;
+  h += `<div class="ghead"><b>${T === todayId() ? "Today" : dayLabel(T)}</b><span>${done} of ${list.length} goals hit${done === list.length && list.length ? " 🎉" : ""}</span></div>`;
+  h += `<div class="glist">${list.map(x => goalRowHtml(x, T)).join("")}</div>`;
+  h += `<div class="section-t">My goals</div><div class="card stack" style="gap:12px">`;
+  if (!st.noNumbers) {
+    const auto = st.goalMode === "auto" && bodyReady();
+    h += `<div><label class="lbl">Calories</label><div class="seg"><button class="${auto ? "on" : ""}" data-act="g-mode" data-v="auto">Follow my activity</button><button class="${!auto ? "on" : ""}" data-act="g-mode" data-v="fixed">Fixed number</button></div></div>`;
+    if (auto) h += `<div><label class="lbl">Daily deficit</label><div class="seg">${[250, 500, 750].map(v => `<button class="${(+st.deficit || 500) === v ? "on" : ""}" data-act="def-set" data-v="${v}">${v} kcal</button>`).join("")}</div><p class="muted tiny" style="margin:6px 0 0">Your budget is what you burn minus this. ${v500(st)}</p></div>`;
+    else h += `<div><label class="lbl" for="gK">Calories per day</label><input class="inp" id="gK" type="number" inputmode="numeric" value="${esc(st.kcal)}" data-goalf="kcal"></div>`;
+  }
+  h += `<div class="grid2"><div><label class="lbl" for="gP">Protein (g)</label><input class="inp" id="gP" type="number" inputmode="numeric" value="${esc(st.protein)}" data-goalf="protein"></div><div><label class="lbl" for="gS">Steps</label><input class="inp" id="gS" type="number" inputmode="numeric" value="${esc(stepGoal())}" data-goalf="stepGoal"></div>
+    <div><label class="lbl" for="gA">Active min/day</label><input class="inp" id="gA" type="number" inputmode="numeric" value="${esc(fit().activeMin)}" data-goalf="activeMin"></div><div><label class="lbl" for="gW">Workouts/week</label><input class="inp" id="gW" type="number" inputmode="numeric" value="${esc(fit().weekWorkouts)}" data-goalf="weekWorkouts"></div></div></div>`;
+  h += `<div class="section-t">Daily habits</div><div class="card stack" style="gap:8px">${(st.habits || []).map((hb, i) => `<div class="row" style="flex-wrap:nowrap;justify-content:space-between"><span><b>${esc(hb.name)}</b> <span class="muted tiny">${(hb.target || 1) > 1 ? `${hb.target} ${esc(hb.unit || "times")} a day` : "once a day"}</span></span><button class="x-btn" data-act="g-hdel" data-i="${i}" aria-label="Remove ${esc(hb.name)}">${icon("x")}</button></div>`).join("") || `<span class="muted tiny">No habits yet.</span>`}
+    <div class="row" style="flex-wrap:nowrap"><input class="inp" id="gHn" placeholder="New habit, e.g. Drink water" value="${esc(G.hn)}" data-goaln="hn"><input class="inp" id="gHt" type="number" min="1" style="width:64px" value="${esc(G.ht)}" aria-label="Times per day" data-goaln="ht"><button class="btn soft sm" data-act="g-hadd">Add</button></div></div>
+    <p class="muted tiny" style="margin:0">You can also just tell the chat: “set my protein goal to 120 g” or “drank 3 glasses of water”.</p>`;
+  return h + `</div>`;
+}
+function v500(st) { return bodyReady() ? `Right now that's ${num(goalFor(todayId()))} kcal today.` : ""; }
+function setGoalsFrom(sg, U) {
+  if (!sg || typeof sg !== "object") return [];
+  const prev = { ...S.settings }, changes = [], st = { ...S.settings }, f = { ...fit() };
+  if (+sg.protein > 0) { st.protein = Math.round(+sg.protein); changes.push(`protein ${st.protein} g`); }
+  if (+sg.steps > 0) { st.stepGoal = Math.round(+sg.steps); changes.push(`${num(st.stepGoal)} steps`); }
+  if (+sg.kcal > 0) { st.kcal = Math.round(+sg.kcal); st.goalMode = "fixed"; changes.push(`${num(st.kcal)} kcal a day`); }
+  if (+sg.deficit > 0) { st.deficit = Math.round(+sg.deficit); if (bodyReady()) st.goalMode = "auto"; changes.push(`${num(st.deficit)} kcal deficit`); }
+  if (+sg.active_min > 0) { f.activeMin = Math.round(+sg.active_min); changes.push(`${f.activeMin} active min`); }
+  if (+sg.week_workouts > 0) { f.weekWorkouts = Math.round(+sg.week_workouts); changes.push(`${f.weekWorkouts} workouts a week`); }
+  for (const hb of Array.isArray(sg.habits_add) ? sg.habits_add : []) { if (!hb?.name || (st.habits || []).some(x => normName(x.name) === normName(hb.name))) continue; st.habits = [...(st.habits || []), { id: uid(), name: String(hb.name), target: Math.max(1, Math.round(+hb.target || 1)), unit: hb.unit ? String(hb.unit) : "" }]; changes.push(`new habit: ${hb.name}`); }
+  if (!changes.length) return [];
+  st.fit = f; S.settings = st; putSettings(); U.settingsPrev = prev;
+  return changes;
+}
+function habitsFrom(list, U) {
+  const T = todayId(), done = [];
+  for (const x of Array.isArray(list) ? list : []) {
+    const hb = (S.settings.habits || []).find(h => normName(h.name) === normName(x.name)) || (S.settings.habits || []).find(h => nameMatch(h.name, x.name)); if (!hb) continue;
+    if (!U.habitsPrev) U.habitsPrev = { ...(dayOf(T).habits || {}) };
+    const n = x.count != null ? Math.max(0, Math.round(+x.count)) : (hb.target || 1);
+    editDay(T, d => { d.habits[hb.id] = x.add ? (Number(d.habits[hb.id]) || 0) + n : n; });
+    done.push(`${hb.name}${(hb.target || 1) > 1 ? ` ${habitCount(hb, T)}/${hb.target}` : ""}`);
+  }
+  return done;
+}
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el || !SH || SH.kind !== "goals") return;
+  const G = SH.goal;
+  switch (el.dataset.act) {
+    case "g-day": G.day = el.dataset.d; renderSheet(); break;
+    case "g-hab": habitStep(el.dataset.id, Number(el.dataset.d)); renderSheet(); break;
+    case "g-mode": if (el.dataset.v === "auto" && !bodyReady()) { closeSheet(); setTimeout(() => openSheet("calories"), 200); toast("Add your body stats first, then switch on “Follow my activity”."); break; } S.settings = { ...S.settings, goalMode: el.dataset.v }; putSettings(); renderAll(); renderSheet(); break;
+    case "g-hadd": { const n = String(G.hn || "").trim(); if (!n) { toast("Name the habit first."); break; } S.settings = { ...S.settings, habits: [...(S.settings.habits || []), { id: uid(), name: n, target: Math.max(1, +G.ht || 1) }] }; putSettings(); G.hn = ""; G.ht = 1; renderAll(); renderSheet(); break; }
+    case "g-hdel": { const hs = [...(S.settings.habits || [])]; hs.splice(+el.dataset.i, 1); S.settings = { ...S.settings, habits: hs }; putSettings(); renderAll(); renderSheet(); break; }
+  }
+});
+document.addEventListener("input", e => { const d = e.target.dataset; if (d.goaln && SH?.goal) SH.goal[d.goaln] = e.target.value; });
+document.addEventListener("change", e => {
+  const t = e.target, f = t.dataset.goalf; if (!f) return;
+  const v = Math.round(+t.value); if (!(v > 0)) return;
+  if (f === "activeMin" || f === "weekWorkouts") setFit({ [f]: v });
+  else { S.settings = { ...S.settings, [f]: v, ...(f === "kcal" ? { goalMode: "fixed" } : {}) }; putSettings(); renderAll(); }
+  setTimeout(() => { if (SH?.kind === "goals") renderSheet(); }, 0);
+});
+
+setInterval(() => { if (!SH) renderHome(); }, 10 * 60 * 1000);
 init();
 </script>
 <script>if("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
