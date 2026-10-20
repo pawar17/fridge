@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*,*::before,*::after{box-sizing:inherit}body{margin:0;font:14px system-ui,sans-serif;background:#fffdf2}@media (prefers-color-scheme: dark){body{background:#15130e}}img{max-width:100%}[hidden]{display:none!important}</style><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Snatched"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#d7141d"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#d7141d"></head><body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*,*::before,*::after{box-sizing:inherit}body{margin:0;font:14px system-ui,sans-serif;background:#fffdf2}@media (prefers-color-scheme: dark){body{background:#15130e}}img{max-width:100%}[hidden]{display:none!important}</style><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Snatched"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f5f1"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#f6f5f1"></head><body>
 <title>Snatched</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700&display=swap">
 
@@ -1096,6 +1096,27 @@ body[data-tab=chat] .rc-bar i{background:var(--ink)}
 /* header band in the tab's soft colour + breathing room above the tabs */
 .topbar{background:var(--acc-soft);border-radius:0 0 28px 28px;padding-bottom:18px;transition:background .35s ease}
 .tabbar{margin-top:20px}
+/* win screen */
+.winscreen{position:fixed;inset:0;z-index:9999;background:#0b0a0a;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 28px calc(28px + env(safe-area-inset-bottom,0px));text-align:center;animation:wfade .3s ease both}
+.winscreen.out{animation:wfade .35s ease reverse both}
+@keyframes wfade{from{opacity:0}}
+.wconf{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.wstar{position:relative;width:min(58vw,240px);aspect-ratio:1;animation:swoop 1.25s cubic-bezier(.2,.9,.25,1.15) both,bob 2.6s ease-in-out 1.3s infinite}
+.wstar svg{width:100%;height:100%;filter:drop-shadow(0 18px 30px rgba(255,200,61,.35))}
+@keyframes swoop{0%{transform:translate(-110vw,-55vh) rotate(-260deg) scale(.35)}55%{transform:translate(8vw,4vh) rotate(18deg) scale(1.08)}78%{transform:translate(-2vw,-1vh) rotate(-6deg) scale(.97)}100%{transform:none}}
+@keyframes bob{50%{transform:translateY(-10px) rotate(4deg)}}
+.seyes{transform-origin:104px 96px;animation:blink 3.6s 1.6s infinite}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+.wtitle{position:relative;font-family:-apple-system,"SF Pro Display",BlinkMacSystemFont,system-ui,sans-serif;font-weight:800;font-size:clamp(34px,10vw,46px);letter-spacing:-.05em;line-height:1.02;margin:26px 0 0;max-width:12ch}
+.wtitle span{display:inline-block;animation:wword .5s cubic-bezier(.2,.9,.3,1.3) both;animation-delay:calc(1s + var(--i) * .09s)}
+@keyframes wword{from{opacity:0;transform:translateY(18px) scale(.9)}}
+.wsub{position:relative;color:rgba(255,255,255,.62);font-size:14px;margin:14px 0 0;animation:wword .5s 1.8s both}
+.wbtn{position:relative;margin-top:28px;background:#ffc83d;color:#141010;border:0;border-radius:999px;font:600 16px -apple-system,system-ui,sans-serif;padding:14px 26px;animation:wword .5s 2s both}
+.winscreen.calm .wstar,.winscreen.calm .wtitle span,.winscreen.calm .wsub,.winscreen.calm .wbtn{animation:none}
+.defcard{display:flex;align-items:center;gap:12px;background:#141010;color:#fff;border-radius:20px;padding:12px 14px}
+.defcard .dstar{width:46px;height:46px;flex:none}.defcard .dstar svg{width:100%;height:100%}
+.defcard>span:nth-child(2){flex:1;display:flex;flex-direction:column}.defcard b{font-size:16px}.defcard small{color:rgba(255,255,255,.65);font-size:12.5px}
+.defcard .btn{background:#ffc83d;color:#141010}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -2119,7 +2140,7 @@ function burnFor(id) {
 const FLOOR = () => (body()?.sex === "m" ? 1500 : 1200);
 function goalFor(id) {
   const st = S.settings;
-  if (st.goalMode === "auto" && bodyReady()) { const b = burnFor(id); return Math.max(FLOOR(), Math.round(b.total - (+st.deficit || 500))); }
+  if (st.goalMode === "auto" && bodyReady()) { const b = burnFor(id); /* plan on your burn goal until you actually burn more, so mornings aren't punished */ const planned = Math.max(b.total, +st.burnGoal || 0); return Math.max(FLOOR(), Math.round(planned - (+st.deficit || 500))); }
   return +st.kcal || 1600;
 }
 const macroOf = (id, k) => (dayOf(id).meals || []).reduce((s, m) => s + (+m[k] || 0), 0);
@@ -4018,7 +4039,7 @@ function renderHome() {
   const bs = $("#budgetStrip"); bs.hidden = CH.tab !== "chat"; bs.innerHTML = CH.tab === "chat" ? stripHtml(T) + syncRow(T) + goalsRow(T) : "";
   if (!CH.printed) { $("#budgetStrip .receipt")?.classList.add("fresh"); CH.printed = true; }
   countUp();
-  celebrateGoals(T);
+  celebrateGoals(T); checkDeficitWin(T);
   const pane = $("#pane"), stick = CH.tab === "chat" && (CH.stick || pane.scrollHeight - pane.scrollTop - pane.clientHeight < 80);
   const prevTop = pane.scrollTop, switched = pane.dataset.tab !== CH.tab;
   pane.innerHTML = CH.tab === "chat" ? paneChat() : CH.tab === "fridge" ? paneFridge() : CH.tab === "groceries" ? paneGroceries() : CH.tab === "train" ? paneTrain() : paneRecipes();
@@ -4263,7 +4284,7 @@ async function healthSync() {
 /* ---------- the recomp plan (numbers checked against USDA + your labels) ---------- */
 function applyPlan() {
   const prev = { ...S.settings };
-  S.settings = { ...S.settings, kcal: 1400, goalMode: "fixed", protein: 105, fiber: 25, fatMax: 50, burnGoal: 1800, stepGoal: 8000, planSet: true, fit: { ...fit(), weekWorkouts: 5, activeMin: 30 } };
+  S.settings = { ...S.settings, kcal: 1400, deficit: 400, goalMode: "fixed", protein: 105, fiber: 25, fatMax: 50, burnGoal: 1800, stepGoal: 8000, planSet: true, fit: { ...fit(), weekWorkouts: 5, activeMin: 30 } };
   putSettings();
   const R = [
     { name: "Morning drinks", servings: 1, items: [{ name: "Ghee", amount: "14 g (turmeric + splash ACV)", grams: 14 }, { name: "Apple cider vinegar", amount: "15 g", grams: 15 }, { name: "Carrot-orange-ginger juice", amount: "120 g", grams: 120 }, { name: "Coconut water", amount: "60 g", grams: 60 }, { name: "Lemon juice", amount: "15 g", grams: 15 }, { name: "Jeera, ajwain & saunf water", amount: "240 g, strained", kcal: 5, carbs: 1 }] },
@@ -4404,13 +4425,14 @@ function vGoals() {
   h += `<div class="gweek">${days.map(d => { const l = goalList(d), n = l.filter(x => x.done).length, any = (dayOf(d).meals || []).length || workoutsOn(d).length || +actOf(d).steps; return `<button class="${d === T ? "on" : ""}" data-act="g-day" data-d="${d}"><small>${esc(parseId(d).toLocaleDateString(undefined, { weekday: "narrow" }))}</small><span class="gdot ${!any ? "none" : n === l.length ? "all" : n ? "some" : ""}">${any ? n : ""}</span></button>`; }).join("")}</div>`;
   h += `<div class="ghead"><b>${T === todayId() ? "Today" : dayLabel(T)}</b><span>${done} of ${list.length} goals hit${done === list.length && list.length ? " 🎉" : ""}</span></div>`;
   h += `<div class="glist">${list.map(x => goalRowHtml(x, T)).join("")}</div>`;
+  { const dz = deficitToday(T); if (dz) h += `<div class="defcard"><span class="dstar">${starSVG("d")}</span><span><b>${num(Math.max(0, dz.def))} kcal deficit</b><small>${dz.hit ? "Hit! One day closer ⭐️" : `Goal ${num(dz.target)} · counts once you've eaten and moved`}</small></span><button class="btn sm" data-act="star-preview">Preview</button></div>`; }
   h += `<div class="section-t">Steps from Apple Health</div>${healthCard()}`;
   h += `<div class="section-t">My goals</div><div class="card stack" style="gap:12px">
     <div class="plan"><div><b>My recomp plan</b><small>Eat 1,400 · burn 1,800 · 105 g protein · 25 g fiber · fat ≤ 50 g · 8,000 steps · 5 workouts a week. Also saves your morning drinks, breakfast bowl and night stack as recipes.</small></div><button class="btn sm" data-act="g-plan">${st.planSet ? "Re-apply" : "Use it"}</button></div>`;
   if (!st.noNumbers) {
     const auto = st.goalMode === "auto" && bodyReady();
     h += `<div><label class="lbl">Calories</label><div class="seg"><button class="${auto ? "on" : ""}" data-act="g-mode" data-v="auto">Follow my activity</button><button class="${!auto ? "on" : ""}" data-act="g-mode" data-v="fixed">Fixed number</button></div></div>`;
-    if (auto) h += `<div><label class="lbl">Daily deficit</label><div class="seg">${[250, 500, 750].map(v => `<button class="${(+st.deficit || 500) === v ? "on" : ""}" data-act="def-set" data-v="${v}">${v} kcal</button>`).join("")}</div><p class="muted tiny" style="margin:6px 0 0">Your budget is what you burn minus this. ${v500(st)}</p></div>`;
+    if (auto) h += `<div><label class="lbl">Daily deficit</label><div class="seg">${[250, 400, 500, 750].map(v => `<button class="${(+st.deficit || 500) === v ? "on" : ""}" data-act="def-set" data-v="${v}">${v} kcal</button>`).join("")}</div><p class="muted tiny" style="margin:6px 0 0">Budget = your burn goal (or what you actually burn, if that\'s more) minus this. ${v500(st)}</p></div>`;
     else h += `<div><label class="lbl" for="gK">Calories per day</label><input class="inp" id="gK" type="number" inputmode="numeric" value="${esc(st.kcal)}" data-goalf="kcal"></div>`;
   }
   h += `<div class="grid2"><div><label class="lbl" for="gF">Fiber (g, at least)</label><input class="inp" id="gF" type="number" inputmode="numeric" value="${esc(st.fiber || "")}" placeholder="25" data-goalf="fiber"></div><div><label class="lbl" for="gFt">Fat (g, at most)</label><input class="inp" id="gFt" type="number" inputmode="numeric" value="${esc(st.fatMax || "")}" placeholder="50" data-goalf="fatMax"></div>
@@ -4458,6 +4480,7 @@ document.addEventListener("click", e => {
     case "g-day": G.day = el.dataset.d; renderSheet(); break;
     case "g-plan": applyPlan(); renderSheet(); break;
 
+    case "star-preview": showWin(deficitToday(todayId())); break;
     case "g-hab": habitStep(el.dataset.id, Number(el.dataset.d)); renderSheet(); break;
     case "g-mode": if (el.dataset.v === "auto" && !bodyReady()) { closeSheet(); setTimeout(() => openSheet("calories"), 200); toast("Add your body stats first, then switch on “Follow my activity”."); break; } S.settings = { ...S.settings, goalMode: el.dataset.v }; putSettings(); renderAll(); renderSheet(); break;
     case "g-hadd": { const n = String(G.hn || "").trim(); if (!n) { toast("Name the habit first."); break; } S.settings = { ...S.settings, habits: [...(S.settings.habits || []), { id: uid(), name: n, target: Math.max(1, +G.ht || 1) }] }; putSettings(); G.hn = ""; G.ht = 1; renderAll(); renderSheet(); break; }
@@ -4668,6 +4691,103 @@ document.addEventListener("input", e => {
 });
 
 setInterval(() => { const s = TR.sess, el = document.querySelector(".sess-h small"); if (s && el) el.textContent = `${Math.round((Date.now() - s.t0) / 60000)} min · ${s.ex.reduce((t, x) => t + x.sets.filter(y => y.d).length, 0)} sets done`; }, 30000);
+
+/* ---------- the Snatched star + "deficit hit" win screen ---------- */
+function starPts(cx, cy, R, r, rot) { const p = []; for (let i = 0; i < 10; i++) { const a = rot + i * Math.PI / 5 - Math.PI / 2, rr = i % 2 ? r : R; p.push((cx + rr * Math.cos(a)).toFixed(1) + " " + (cy + rr * Math.sin(a)).toFixed(1)); } return "M" + p.join(" L") + "Z"; }
+// A puffy, crayon-textured star with a little face. uid keeps SVG ids unique when drawn twice.
+function starSVG(uid = "s") {
+  const body = starPts(100, 106, 78, 42, -0.12);
+  return `<svg class="starchar" viewBox="0 0 200 200" aria-hidden="true">
+  <defs>
+    <radialGradient id="${uid}g" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#ffe88a"/><stop offset=".55" stop-color="#ffc83d"/><stop offset="1" stop-color="#f6a21c"/></radialGradient>
+    <filter id="${uid}c" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+    <filter id="${uid}t"><feTurbulence type="fractalNoise" baseFrequency="1.1 .12" numOctaves="2" seed="9"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 -.18"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+    <clipPath id="${uid}k"><path d="${body}" stroke-width="22" stroke-linejoin="round"/></clipPath>
+  </defs>
+  <g filter="url(#${uid}c)">
+    <path d="${body}" fill="url(#${uid}g)" stroke="url(#${uid}g)" stroke-width="22" stroke-linejoin="round"/>
+    <path d="${body}" fill="#fff" stroke="#fff" stroke-width="22" stroke-linejoin="round" filter="url(#${uid}t)" opacity=".55"/>
+    <path d="M58 70c8-14 22-24 36-28" fill="none" stroke="#fff6d2" stroke-width="7" stroke-linecap="round" opacity=".85"/>
+  </g>
+  <g class="sface">
+    <ellipse cx="80" cy="110" rx="12" ry="7" fill="#ff9a8a" opacity=".75"/><ellipse cx="128" cy="110" rx="12" ry="7" fill="#ff9a8a" opacity=".75"/>
+    <g class="seyes"><ellipse cx="86" cy="96" rx="5" ry="7.5" fill="#2f2a3d"/><ellipse cx="122" cy="96" rx="5" ry="7.5" fill="#2f2a3d"/></g>
+    <path d="M94 114q10 10 20 0" fill="none" stroke="#2f2a3d" stroke-width="5" stroke-linecap="round"/>
+  </g></svg>`;
+}
+
+// Deficit = what you burned minus what you ate. It only counts once the day is real:
+// you've eaten at least half your budget and (if you have a burn goal) hit it.
+function deficitTarget() { const st = S.settings; if (st.goalMode === "auto") return +st.deficit || 500; if (+st.burnGoal && +st.kcal) return Math.max(250, +st.burnGoal - +st.kcal); return +st.deficit || 500; }
+function deficitToday(T = todayId()) {
+  if (!bodyReady()) return null;
+  const b = burnFor(T); if (!b) return null;
+  const eaten = kcalOf(T), target = deficitTarget(), bg = +S.settings.burnGoal || 0;
+  const def = Math.round(b.total - eaten);
+  return { def, target, eaten, burn: b.total, hit: eaten >= goalFor(T) * 0.5 && (!bg || b.total >= bg) && def >= target };
+}
+function checkDeficitWin(T) {
+  if (T !== todayId()) return;
+  const d = deficitToday(T); if (!d || !d.hit) return;
+  let seen = null; try { seen = localStorage.getItem("fridge.starDay"); } catch (_) {}
+  if (seen === T || document.querySelector(".winscreen")) return;
+  try { localStorage.setItem("fridge.starDay", T); } catch (_) {}
+  setTimeout(() => showWin(d), 450);
+}
+
+// iOS only lets sound play after a tap, so warm the audio up on the first touch.
+let AC = null;
+function audioCtx() { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume(); } catch (_) {} return AC; }
+document.addEventListener("pointerdown", () => audioCtx(), { once: true, capture: true });
+function fanfare() {
+  const ac = audioCtx(); if (!ac) return;
+  const t0 = ac.currentTime + 0.05, out = ac.createGain(); out.gain.value = 0.22; out.connect(ac.destination);
+  const note = (f, t, d, type = "triangle", v = 1) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = type; o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t + d); o.connect(g); g.connect(out); o.start(t); o.stop(t + d + 0.05); };
+  // rising arpeggio, a little hop, then a big bright chord with sparkles on top
+  [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => note(f, t0 + i * 0.11, 0.35));
+  note(880, t0 + 0.5, 0.18); note(987.77, t0 + 0.62, 0.18);
+  [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach(f => { note(f, t0 + 0.78, 1.6, "triangle", 0.7); note(f * 2, t0 + 0.78, 0.9, "sine", 0.18); });
+  [2093, 2637, 3136, 2637, 3520].forEach((f, i) => note(f, t0 + 0.9 + i * 0.09, 0.25, "sine", 0.25));
+}
+
+function confettiRain(cv) {
+  const ctx = cv.getContext("2d"), dpr = Math.min(2, devicePixelRatio || 1);
+  const size = () => { cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; };
+  size();
+  const cols = ["#f4412e", "#ffc83d", "#8bd8f2", "#2443d6", "#ff98c8", "#ffffff"];
+  const P = Array.from({ length: 140 }, (_, i) => ({ x: Math.random() * innerWidth, y: -20 - Math.random() * innerHeight * (i < 70 ? 0.3 : 1.2), w: 6 + Math.random() * 6, h: 9 + Math.random() * 8, c: cols[i % cols.length], vy: 1.6 + Math.random() * 2.4, vx: -1 + Math.random() * 2, r: Math.random() * 6, vr: -0.15 + Math.random() * 0.3, round: Math.random() < 0.25 }));
+  let alive = true, t = 0;
+  (function frame() {
+    if (!alive) return; t++;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, innerWidth, innerHeight);
+    for (const p of P) {
+      p.y += p.vy; p.x += p.vx + Math.sin((t + p.r * 40) / 30) * 0.6; p.r += p.vr;
+      if (p.y > innerHeight + 20) { p.y = -20; p.x = Math.random() * innerWidth; }
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c;
+      if (p.round) { ctx.beginPath(); ctx.arc(0, 0, p.w / 2, 0, 7); ctx.fill(); } else { ctx.scale(1, Math.cos(p.r * 2)); ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
+      ctx.restore();
+    }
+    requestAnimationFrame(frame);
+  })();
+  return () => { alive = false; };
+}
+
+function showWin(d) {
+  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const el = document.createElement("div"); el.className = "winscreen" + (calm ? " calm" : "");
+  el.setAttribute("role", "dialog"); el.setAttribute("aria-label", "Deficit goal hit");
+  const words = "One day closer to your fitness goals.".split(" ");
+  el.innerHTML = `<canvas class="wconf"></canvas>
+    <div class="wstar">${starSVG("w")}</div>
+    <h2 class="wtitle">${words.map((w, i) => `<span style="--i:${i}">${w}</span>`).join(" ")}</h2>
+    ${d ? `<p class="wsub">${num(d.def)} kcal deficit today<br>burned ${num(d.burn)} · ate ${num(d.eaten)}</p>` : ""}
+    <button class="wbtn">Keep going ✨</button>`;
+  document.body.appendChild(el);
+  const stop = calm ? () => {} : confettiRain(el.querySelector(".wconf"));
+  fanfare(); if (navigator.vibrate) navigator.vibrate([30, 40, 60]);
+  const close = () => { el.classList.add("out"); setTimeout(() => { stop(); el.remove(); }, 350); };
+  el.addEventListener("click", close);
+}
 
 setInterval(() => { if (!SH) renderHome(); }, 10 * 60 * 1000);
 init();
