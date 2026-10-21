@@ -1165,6 +1165,11 @@ body[data-tab=chat] .rc-bar i{background:var(--ink)}
 .lg-meal.twin{background:linear-gradient(#fffaf0,#fffaf0);margin:0 -8px;padding:4px 8px 6px}
 .lg-wrow{display:flex;align-items:center;gap:8px}.lg-wrow>p{flex:1;min-width:0}
 .lg-add{display:block;width:100%;margin-top:8px;background:none;border:1.5px dashed var(--edge);border-radius:12px;padding:9px;font:600 13px var(--f);color:var(--ink)}
+.lg-days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:10px}
+.lg-days button{display:flex;flex-direction:column;align-items:center;gap:1px;background:#fff;border:1px solid var(--edge);border-radius:14px;padding:6px 0 5px;font-family:var(--f);color:var(--ink)}
+.lg-days small{font-size:10.5px;color:var(--ink-2);font-weight:500}.lg-days b{font-size:16px;font-weight:700}.lg-days i{font-style:normal;font-size:10px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.lg-days button.on{background:var(--ink);border-color:var(--ink);color:#fff}.lg-days button.on small,.lg-days button.on i{color:rgba(255,255,255,.7)}
+.dayto{font-size:13px;color:var(--ink-2);padding:2px 0 8px}.dayto b{color:var(--ink)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -2395,7 +2400,9 @@ const kcalChart = energyChart;
 function vCalories() {
   const T = todayId(), d = dayOf(T), eaten = kcalOf(T), nn = S.settings.noNumbers, C = SH.cal || (SH.cal = {});
   const a = actOf(T), steps = +a.steps || 0, sg = +S.settings.stepGoal || 8000, auto = bodyReady() && S.settings.goalMode !== "fixed";
-  let h = `<div class="stack">` + ledgerCard(T);
+  const D = C.day && C.day <= T ? C.day : T;
+  let h = `<div class="stack">` + dayStrip(D) + ledgerCard(D);
+  if (D !== T) return h + `<button class="btn soft block" data-act="cal-day" data-d="${T}">Back to today</button></div>`;
   if (!bodyReady() || C.editProf) {
     const P = C.prof || (C.prof = profDraft()), us = P.units === "us";
     h += `<div class="card stack" style="gap:10px"><div><b>Set up accurate calories</b><div class="muted tiny">Your burn is worked out from your body (Mifflin-St Jeor, the formula dietitians use) plus your steps and workouts. Stays on this device.</div></div>
@@ -3393,7 +3400,7 @@ document.addEventListener("click", e => {
     case "log-est": { const L = SH.log, x = L.est; if (!x || !String(x.name).trim()) { toast("Give the dish a name."); break; } logEntry(x.name, x.kcal, x.protein, L.slot, L.portion, { carbs: x.carbs, fat: x.fat, src: x.source && /official/i.test(x.source) ? x.source : "" }); L.est = null; L.q = ""; if (L.url) { URL.revokeObjectURL(L.url); L.url = null; L.file = null; } L.status = "idle"; renderSheet(); break; }
     case "log-show-manual": SH.log.manual = true; SH.log.mName = SH.log.mName || SH.log.q; renderSheet(); setTimeout(() => $("#mKcal")?.focus(), 30); break;
     case "log-manual": { const L = SH.log; if (!L.mName.trim()) { toast("Give the dish a name."); break; } logEntry(L.mName, L.mKcal, L.mProt, L.slot, 1); L.mName = L.mKcal = L.mProt = ""; L.manual = false; L.q = ""; renderSheet(); break; }
-    case "meal-del": { const T = todayId(), m = (dayOf(T).meals || []).find(x => x.id === el.dataset.id); editDay(T, d => { d.meals = d.meals.filter(x => x.id !== el.dataset.id); }); renderAll(); renderSheet(); if (m) toast(`Removed ${m.name}.`, () => { editDay(T, d => d.meals.push(m)); renderAll(); refreshSheet(); }); break; }
+    case "meal-del": { const T = el.dataset.day || todayId(), m = (dayOf(T).meals || []).find(x => x.id === el.dataset.id); editDay(T, d => { d.meals = d.meals.filter(x => x.id !== el.dataset.id); }); renderAll(); renderSheet(); if (m) toast(`Removed ${m.name}.`, () => { editDay(T, d => d.meals.push(m)); renderAll(); refreshSheet(); }); break; }
     // scan
     case "scan-mode": (SH.scan.urls || []).forEach(u => URL.revokeObjectURL(u)); SH.scan = { mode: el.dataset.mode, file: null, url: null, files: [], urls: [], status: "idle", rows: [], seen: [], missing: [], meta: {} }; renderSheet(); break;
     case "scan-read": scanRead(); break;
@@ -3853,15 +3860,27 @@ function tidyRes(res) {
   if (r.delete_workout_ids != null) r.delete_workout_ids = [].concat(r.delete_workout_ids).map(v => String(v ?? "").trim().replace(/^id[\s:#-]*/i, "")).filter(Boolean);
   return r;
 }
+// "yesterday", "2026-10-20", "monday" → a past (or today's) date id; never the future, at most 30 days back
+function pickDay(v) {
+  const T = todayId(); if (!v) return T;
+  const s = String(v).trim().toLowerCase();
+  if (s === "today") return T;
+  if (/^yesterday|last night/.test(s)) return addDays(T, -1);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s <= T && diffDays(s, T) <= 30 ? s : T;
+  const wd = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"].findIndex(d => s.startsWith(d.slice(0, 3)));
+  if (wd >= 0) { for (let i = 1; i <= 7; i++) { const d = addDays(T, -i); if (parseId(d).getDay() === wd) return d; } }
+  return T;
+}
 function applyActions(res) {
   res = tidyRes(res) || {};
-  const T = todayId(), U = { meals: [], workouts: [], items: [], itemPrev: [], recipes: [], recipePrev: [], delMeals: [], delWorkouts: [], act: null, body: null, shopPrev: null };
+  const T = pickDay(res.day), U = { day: T, meals: [], workouts: [], items: [], itemPrev: [], recipes: [], recipePrev: [], delMeals: [], delWorkouts: [], act: null, body: null, shopPrev: null };
   const blocks = [];
   const keepAct = () => { if (!U.act) U.act = { ...(actOf(T)) }; };
   // corrections first
   const delM = (res.delete_meal_ids || []).map(String), delW = (res.delete_workout_ids || []).map(String);
-  if (delM.length) { const gone = (dayOf(T).meals || []).filter(m => delM.includes(m.id)); if (gone.length) { U.delMeals = gone.map(m => ({ ...m })); editDay(T, d => { d.meals = d.meals.filter(m => !delM.includes(m.id)); }); blocks.push({ k: "removed", names: gone.map(m => m.name) }); } }
-  if (delW.length) { const gone = workoutsOn(T).filter(w => delW.includes(w.id)); if (gone.length) { keepAct(); editDay(T, d => { d.act = { ...(d.act || {}), workouts: (d.act?.workouts || []).filter(w => !delW.includes(w.id)) }; }); blocks.push({ k: "removed", names: gone.map(w => w.name || WK[w.type]?.[2] || "Workout") }); } }
+  const recentDays = Array.from({ length: 8 }, (_, i) => addDays(todayId(), -i));
+  if (delM.length) for (const D of recentDays) { const gone = (dayOf(D).meals || []).filter(m => delM.includes(m.id)); if (!gone.length) continue; U.delMeals.push(...gone.map(m => ({ ...m, _day: D }))); editDay(D, d => { d.meals = d.meals.filter(m => !delM.includes(m.id)); }); blocks.push({ k: "removed", names: gone.map(m => m.name + (D !== T ? ` (${dayLabel(D)})` : "")) }); }
+  if (delW.length) for (const D of recentDays) { const gone = workoutsOn(D).filter(w => delW.includes(w.id)); if (!gone.length) continue; if (D === T) keepAct(); U.delWorkouts.push(...gone.map(w => ({ ...w, _day: D }))); editDay(D, d => { d.act = { ...(d.act || {}), workouts: (d.act?.workouts || []).filter(w => !delW.includes(w.id)) }; }); blocks.push({ k: "removed", names: gone.map(w => (w.name || WK[w.type]?.[2] || "Workout") + (D !== T ? ` (${dayLabel(D)})` : "")) }); }
   // recipes before meals, so "made X and had a serving" works
   for (const r of res.save_recipes || []) {
     if (!r || !r.name) continue;
@@ -3921,13 +3940,19 @@ function applyActions(res) {
   const hab = habitsFrom(res.habits_done, U); if (hab.length) blocks.push({ k: "habits", names: hab });
   const ideas = (Array.isArray(res.ideas) ? res.ideas : []).filter(r => r && r.name).slice(0, 3).map(r => ({ name: String(r.name), minutes: +r.minutes || 15, kcal: r0(r.kcal), protein: r0(r.protein), uses: Array.isArray(r.uses) ? r.uses.map(String) : [], ingredients: Array.isArray(r.ingredients) ? r.ingredients.map(String) : [], steps: Array.isArray(r.steps) ? r.steps.map(String) : [] }));
   const any = blocks.length > 0;
-  return { blocks, ideas, undo: any ? U : null, tracked: blocks.some(b => ["meal", "workout", "steps", "active", "removed", "habits"].includes(b.k)) };
+  if (T !== todayId() && blocks.length) blocks.unshift({ k: "dayto", day: T });
+  return { day: T, blocks, ideas, undo: any ? U : null, tracked: blocks.some(b => ["meal", "workout", "steps", "active", "removed", "habits"].includes(b.k)) };
 }
 function undoMsg(msg) {
   const U = msg.undo; if (!U || msg.undone) return;
   const T = msg.day || todayId();
-  editDay(T, d => {
-    d.meals = (d.meals || []).filter(m => !U.meals.includes(m.id)).concat(U.delMeals || []);
+  const T0 = U.day || T;
+  // things that were removed from other days go back where they came from
+  for (const m of U.delMeals || []) if (m._day && m._day !== T0) { const { _day, ...mm } = m; editDay(_day, d => { d.meals.push(mm); }); }
+  for (const w of U.delWorkouts || []) { const { _day, ...ww } = w; if (_day && _day !== T0) editDay(_day, d => { d.act = { ...(d.act || {}), workouts: [...(d.act?.workouts || []), ww] }; }); }
+  editDay(T0, d => {
+    d.meals = (d.meals || []).filter(m => !U.meals.includes(m.id)).concat((U.delMeals || []).filter(m => !m._day || m._day === T0).map(({ _day, ...m }) => m));
+    if (!U.act) d.act = { ...(d.act || {}), workouts: [...(d.act?.workouts || []), ...(U.delWorkouts || []).filter(w => !w._day || w._day === T0).map(({ _day, ...w }) => w)] };
     if (U.habitsPrev) d.habits = U.habitsPrev;
     if (U.act) d.act = U.act; else if (U.workouts.length) d.act = { ...(d.act || {}), workouts: (d.act?.workouts || []).filter(w => !U.workouts.includes(w.id)) };
   });
@@ -3960,6 +3985,9 @@ Meals logged today:
 ${meals.join("\n") || "(none)"}
 Workouts logged today:
 ${wos.join("\n") || "(none)"}
+Yesterday (${addDays(T, -1)}) meals:
+${(dayOf(addDays(T, -1)).meals || []).map(m => `- id ${m.id}: ${m.name} (${m.slot || "snack"}, ${m.kcal} kcal)`).join("\n") || "(none)"}
+Yesterday's workouts: ${workoutsOn(addDays(T, -1)).map(w => `id ${w.id}: ${w.name || WK[w.type]?.[2] || w.type} ${w.min} min`).join("; ") || "(none)"}
 In my fridge/pantry: ${fridge.join(", ") || "(empty)"}
 My grocery list: ${list.join(", ") || "(empty)"}
 My goals today: ${gl.map(x => `${x.label} ${x.val}${x.done ? " (hit)" : ""}`).join("; ")}
@@ -3981,6 +4009,7 @@ ${staplesForPrompt()}
 - Meals: one entry per meal. If it's a meal I've had before, use the same name as before so the app can spot my patterns. Break it into items and estimate EACH item separately with USDA-style values. Use the exact weight or amount I give (grams, oz, cups, slices). If I name a brand, use that product's label (e.g. Dave's Killer Bread, Fage, Chobani, Trader Joe's, Quest). If I give no amount, assume one normal portion and write what you assumed in "amount". Weights are as eaten unless I say raw. Restaurant or chain food: use the chain's official nutrition; if you are not sure of it, still estimate and set "needs_lookup": true.
 - If I ate one of my saved recipes, set "recipe" to its exact name and "servings" (or "grams" if I weighed my portion), and put only extras in "items". Never repeat the recipe's own ingredients.
 - A recipe (a dish name with ingredients and amounts, "makes 4", "recipe:", "I cooked/meal prepped") goes in save_recipes with every ingredient and its total amount for the whole batch, plus servings (default 1) and cooked_weight_g if I give it. Only also log a meal if I say I ate some.
+- Which day: if I say yesterday, last night, or a weekday/date that has passed, set top-level "day" to that date as YYYY-MM-DD (today is ${todayId()}). "Add it to yesterday" / "that was yesterday" about something already logged today = delete it from today (its id in delete_meal_ids / delete_workout_ids) and log it again with "day" set to yesterday. Leave "day" out for today.
 - "slot": breakfast, lunch, dinner or snack. Use my words, otherwise the time of day.
 - Branded or named classes and studios (SoulCycle, Bout Fit Club, Barry's, Orangetheory, Solidcore, F45, Rumble, a gym's named class…): add "studio": the studio/class name and "research": true so the app looks up what the class actually involves; still give your best type, minutes and MET. If I didn't give a length, set "minutes_guessed": true.
 - Workouts: "type" is one of ${WTYPES.join(", ")}. Give minutes and a MET from the Compendium of Physical Activities that matches the pace, intensity, incline or weight I describe. Put distance, pace, sets x reps x weight in "details". If minutes are missing, estimate them and say so in details.
@@ -4001,7 +4030,7 @@ Return JSON only, in this shape (leave out empty fields):
  "save_recipes": [{"name": string, "servings": number, "cooked_weight_g": number|null, "source_url": string|null, "items": [same item shape, amounts for the whole batch], "steps": [string]}],
  "workouts": [{"type": string, "name": string, "minutes": number, "minutes_guessed": boolean, "met": number, "details": string, "app_kcal": number, "source": string, "studio": string, "research": boolean}],
  "steps": number, "active_kcal": number, "weight": {"value": number, "unit": "lb"|"kg"},
- "delete_meal_ids": [string], "delete_workout_ids": [string],
+ "day": "YYYY-MM-DD"|null, "delete_meal_ids": [string], "delete_workout_ids": [string],
  "bought": [{"name": string, "qty": number, "price": number, "where": string, "shelf_days": number}],
  "have": [same as bought], "grocery_add": [string], "remove_from_list": [string], "used_up": [string], "tossed": [string],
  "set_body": {"weight_kg": number, "height_cm": number, "age": number, "sex": "f"|"m"},
@@ -4082,7 +4111,9 @@ async function chatSend(textArg) {
   }
   if (!res || typeof res !== "object") {
     if (img && !text) { CH.busy = false; pushMsg({ who: "app", text: err || "Photos need the AI key. Use Scan for receipts and order screenshots, it works without one.", retry: text }); return; }
-    res = localParse(text); if (err) res.reply = (res.reply ? res.reply + " " : "") + `(${err} I used the offline reader.)`;
+    const dm = text.match(/\b(\d{4}-\d{2}-\d{2})\b/), yd = /\b(yesterday|last night)\b/i.test(text);
+    const clean = text.replace(/^\s*(yesterday|last night|[a-z]+day,?\s+[a-z]{3}\s+\d{1,2})?\s*\(?\d{4}-\d{2}-\d{2}\)?\s*(i\s+(ate|had|did))?\s*/i, "").replace(/\b(yesterday|last night)\b:?/ig, "").trim() || text;
+    res = localParse(clean); if (dm) res.day = dm[1]; else if (yd) res.day = "yesterday"; if (err) res.reply = (res.reply ? res.reply + " " : "") + `(${err} I used the offline reader.)`;
   }
   if (res && typeof res === "object") { try { const rr = tidyRes(res), st = brandGuess({ name: text }); if (st) { const cut = s => String(s || "").replace(new RegExp("\\s*(from|at|by)\\s+" + st.store + "\\S*", "i"), "").trim(); rr.meals.forEach(m => { m.name = cut(m.name) || m.name; (m.items || []).forEach(x => { if (!x.brand) x.store = st.store; x.name = cut(x.name) || x.name; }); }); } if (rr.meals.some(m => (m.items || []).some(needsLabel))) { res = rr; await labelLookup(res.meals, CH.ctl.signal); } } catch (e) { if (e?.name === "AbortError") { CH.busy = false; pushMsg({ who: "app", text: "Stopped." }); return; } } }
   CH.busy = false;
@@ -4090,7 +4121,7 @@ async function chatSend(textArg) {
   const answer = String(res.answer || "").trim();
   const reply = String(res.reply || "").trim() || (out.blocks.length ? "Saved." : "");
   if (!out.blocks.length && !answer && !out.ideas.length) { pushMsg({ who: "app", text: ((res.meals || res.meal || res.delete_meal_ids) ? "Nothing was saved, sorry. " : "") + "I didn't find anything to save there. Try “lunch: 150 g chicken, 1 cup rice” or “bought eggs and spinach”.", retry: text }); return; }
-  pushMsg({ who: "app", text: [reply, answer].filter(Boolean).join(" "), blocks: out.blocks, ideas: out.ideas, undo: out.undo, tracked: out.tracked });
+  pushMsg({ who: "app", text: [reply, answer].filter(Boolean).join(" "), blocks: out.blocks, ideas: out.ideas, undo: out.undo, tracked: out.tracked, day: out.day });
 }
 function keyErrText(e) {
   const c = e?.code, m = String(e?.detail || e?.message || "");
@@ -4234,6 +4265,7 @@ function itemRow(x, nn) { return `<li><span>${esc(x.name)}${x.brand ? ` <em>${es
 const BLK = { meal: ["peach", "bowl"], recipe: ["butter", "book"], workout: ["sky", "dumbbell"], steps: ["sky", "shoe"], active: ["sky", "watch"], weight: ["lilac", "scale"], bought: ["mint", "bag"], have: ["mint", "fridge"], list: ["pink", "note"], unlist: ["pink", "check"], used: ["mint", "check"], tossed: ["tomato", "bin"], removed: ["tomato", "undo"], goals: ["lilac", "star"], habits: ["sky", "drop"], dup: ["butter", "hearts"] };
 const BLK_TAG = { dup: "Already logged, skipped", bought: "Bought · now At home", have: "Now At home", list: "Added To buy", unlist: "Off the To buy list", used: "Used up", tossed: "Tossed", removed: "Removed", goals: "Goals updated", habits: "Habits", steps: "Steps", active: "Apple Health", weight: "Weight" };
 function blockHtml(b, m) {
+  if (b.k === "dayto") return `<div class="dayto">📅 Logged to <b>${esc(dayLabel(b.day))}</b> · <button class="linkbtn" data-act="open-day" data-d="${esc(b.day)}">See that day</button></div>`;
   const nn = S.settings.noNumbers, [col, emo0] = BLK[b.k] || ["lilac", "✨"];
   const wrap = (inner, emo = emo0) => `<div class="blk k-${b.k}"><span class="sticker c-${col}">${b.k === "meal" ? `<span class="emo-i">${dishEmoji(b.name)}</span>` : doo(emo)}</span><div class="bc">${inner}</div></div>`;
   switch (b.k) {
@@ -5055,18 +5087,19 @@ function ledgerCard(T) {
   const meals = dayOf(T).meals || [], eaten = kcalOf(T), b = bodyReady() ? burnFor(T) : null, a = actOf(T);
   const row = (l, v, cls = "", sub = "") => `<p class="${cls}"><span>${l}${sub ? `<small>${sub}</small>` : ""}</span><i></i><b>${v}</b></p>`;
   const slotName = s => ({ breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner", snack: "Snack" })[s] || "Snack";
-  let h = `<div class="receipt ledger"><div class="rc-top"><span>TODAY'S RECEIPT</span><span>${esc(fmtShort(T).toUpperCase())}</span></div>`;
+  const isToday = T === todayId(), dl = dayLabel(T);
+  let h = `<div class="receipt ledger"><div class="rc-top"><span>${isToday ? "TODAY'S" : dl === "Yesterday" ? "YESTERDAY'S" : esc(parseId(T).toLocaleDateString(undefined, { weekday: "long" }).toUpperCase() + "'S")} RECEIPT</span><span>${esc(fmtShort(T).toUpperCase())}</span></div>`;
   // IN
   h += `<div class="lg-h"><b>In</b><span>${num(eaten)} kcal</span></div>`;
-  if (!meals.length) h += `<p class="lg-empty">Nothing eaten yet. Tell the chat what you had.</p>`;
+  if (!meals.length) h += `<p class="lg-empty">${isToday ? "Nothing eaten yet. Tell the chat what you had." : "Nothing logged this day."}</p>`;
   for (const sl of SLOTS) for (const m of meals.filter(x => (x.slot || "snack") === sl)) {
     const twin = meals.filter(x => normName(x.name) === normName(m.name)).length > 1;
-    h += `<div class="lg-meal${twin ? " twin" : ""}"><div class="lg-mtop"><em class="lg-slot">${slotName(sl)}</em>${twin ? `<span class="lg-twin">Logged twice?</span>` : ""}<button class="lg-x" data-act="meal-del" data-id="${esc(m.id)}" aria-label="Remove ${esc(m.name)}">Remove</button></div>${row(esc(m.name), num(m.kcal), "lg-mrow", `${Math.round(+m.protein || 0)} g protein`)}`;
+    h += `<div class="lg-meal${twin ? " twin" : ""}"><div class="lg-mtop"><em class="lg-slot">${slotName(sl)}</em>${twin ? `<span class="lg-twin">Logged twice?</span>` : ""}<button class="lg-x" data-act="meal-del" data-day="${T}" data-id="${esc(m.id)}" aria-label="Remove ${esc(m.name)}">Remove</button></div>${row(esc(m.name), num(m.kcal), "lg-mrow", `${Math.round(+m.protein || 0)} g protein`)}`;
     const items = (m.items || []).filter(x => x && x.name);
     if (items.length > 1 || (items[0] && items[0].name !== m.name)) h += items.map(x => row(`${esc(x.name)}${x.g ? ` · ${num(x.g)} g` : x.amount ? ` · ${esc(x.amount)}` : ""}`, x.kcal != null ? num(x.kcal) : "–", "lg-item")).join("");
     h += `</div>`;
   }
-  h += `<button class="lg-add" data-act="open" data-sheet="log">+ Add food</button>`;
+  h += isToday ? `<button class="lg-add" data-act="open" data-sheet="log">+ Add food</button>` : `<button class="lg-add" data-act="lg-addto" data-d="${T}" data-what="food">+ Add food to ${esc(dl.toLowerCase() === "yesterday" ? "yesterday" : fmtShort(T))}</button>`;
   // OUT
   if (b) {
     h += `<div class="lg-h"><b>Out</b><span>${num(b.total)} kcal</span></div>`;
@@ -5078,14 +5111,14 @@ function ledgerCard(T) {
       h += row("Digestion & everyday life", num(b.base - bmr()), "", "Eating, standing, moving around (not steps)");
       const st = +a.steps || 0;
       const sg = stepGoal() || 8000, extra = Math.max(0, st - sg); h += row(`👟 Steps · ${num(st)}`, num(b.steps), "", st >= sg ? `Goal ${num(sg)} hit · +${num(Math.round(extra * kcalPerStep()))} kcal added to what you can eat` : `${num(sg - st)} to your ${num(sg)} goal · ~${Math.round(kcalPerStep() * 1000)} kcal per 1,000 steps`);
-      for (const w of workoutBurnParts(T)) h += `<div class="lg-wrow">${row(w.label, num(w.kcal), "", w.note)}<button class="lg-x" data-act="lg-wdel" data-id="${esc(w.id)}" aria-label="Remove ${esc(w.label)}">Remove</button></div>`;
+      for (const w of workoutBurnParts(T)) h += `<div class="lg-wrow">${row(w.label, num(w.kcal), "", w.note)}<button class="lg-x" data-act="lg-wdel" data-day="${T}" data-id="${esc(w.id)}" aria-label="Remove ${esc(w.label)}">Remove</button></div>`;
       if (!(a.workouts || []).length) h += `<p class="lg-empty">No workouts logged yet.</p>`;
     }
-    h += `<button class="lg-add" data-act="open" data-sheet="fitness">+ Add workout or steps</button>`;
+    h += isToday ? `<button class="lg-add" data-act="open" data-sheet="fitness">+ Add workout or steps</button>` : `<button class="lg-add" data-act="lg-addto" data-d="${T}" data-what="workout">+ Add a workout or steps to ${esc(dl.toLowerCase() === "yesterday" ? "yesterday" : fmtShort(T))}</button>`;
     const net = b.total - eaten, goal = goalFor(T), left = goal - eaten, dt = typeof deficitTarget === "function" ? deficitTarget() : +S.settings.deficit || 500;
     h += `<div class="lg-total">${row("Burned", num(b.total))}${row("Eaten", "− " + num(eaten))}
       <p class="lg-net ${net >= dt ? "ok" : net < 0 ? "over" : ""}"><span>${net >= 0 ? "Deficit" : "Surplus"}</span><b>${num(Math.abs(net))} kcal</b></p>
-      <small>${net >= dt ? `Deficit goal of ${num(dt)} hit ⭐️` : `Goal: ${num(dt)} kcal deficit.`} ${left >= 0 ? `You can still eat about ${num(left)} kcal.` : `${num(-left)} over today's budget.`}</small></div>`;
+      <small>${net >= dt ? `Deficit goal of ${num(dt)} hit ⭐️` : `Goal: ${num(dt)} kcal deficit.`} ${isToday ? (left >= 0 ? `You can still eat about ${num(left)} kcal.` : `${num(-left)} over today's budget.`) : (left >= 0 ? `${num(left)} kcal under that day's ${num(goal)} budget.` : `${num(-left)} kcal over that day's ${num(goal)} budget.`)}</small></div>`;
   } else {
     h += `<div class="lg-total"><small>Add your height, weight and age (Edit stats) to see what you burned.</small></div>`;
   }
@@ -5095,9 +5128,28 @@ function ledgerCard(T) {
 // remove a workout from the receipt, with undo
 document.addEventListener("click", e => {
   const el = e.target.closest('[data-act="lg-wdel"]'); if (!el) return;
-  const T = todayId(), w = (actOf(T).workouts || []).find(x => x.id === el.dataset.id); if (!w) return;
+  const T = el.dataset.day || todayId(), w = (actOf(T).workouts || []).find(x => x.id === el.dataset.id); if (!w) return;
   editAct(T, a => { a.workouts = (a.workouts || []).filter(x => x.id !== w.id); }); refreshSheet();
   toast(`Removed ${w.name || (WK[w.type] || [])[2] || "workout"}.`, () => { editAct(T, a => { a.workouts = [...(a.workouts || []), w]; }); refreshSheet(); });
+});
+
+// a 7-day strip on top of the receipt
+function dayStrip(D) {
+  const T = todayId(), days = Array.from({ length: 7 }, (_, i) => addDays(T, i - 6));
+  return `<div class="lg-days">${days.map(d => { const k = kcalOf(d); return `<button class="${d === D ? "on" : ""}" data-act="cal-day" data-d="${d}"><small>${d === T ? "Today" : esc(parseId(d).toLocaleDateString(undefined, { weekday: "short" }))}</small><b>${parseId(d).getDate()}</b><i>${k ? num(k) : "–"}</i></button>`; }).join("")}</div>`;
+}
+function openDay(d) { const go = () => { SH.cal = SH.cal || {}; SH.cal.day = d; renderSheet(true); }; if (SH?.kind === "calories") go(); else { openSheet("calories"); setTimeout(go, 30); } }
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  const a = el.dataset.act;
+  if (a === "cal-day") openDay(el.dataset.d);
+  else if (a === "open-day") openDay(el.dataset.d);
+  else if (a === "lg-addto") {
+    // past days go through chat, so the AI does the maths: "Yesterday: …"
+    const d = el.dataset.d, lab = dayLabel(d) === "Yesterday" ? "Yesterday" : parseId(d).toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" });
+    closeSheet(); if (CH.tab !== "chat") { CH.tab = "chat"; renderAll(); }
+    setTimeout(() => { const ti = $("#chIn"); if (!ti) return; ti.value = `${lab} (${d}) I ${el.dataset.what === "workout" ? "did " : "ate "}`; CH.draft = ti.value; ti.focus(); ti.setSelectionRange(ti.value.length, ti.value.length); }, 300);
+  }
 });
 
 /* ---------- paste a recipe link: read the page, save the recipe, log a serving ---------- */
