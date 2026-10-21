@@ -1170,6 +1170,30 @@ body[data-tab=chat] .rc-bar i{background:var(--ink)}
 .lg-days small{font-size:10.5px;color:var(--ink-2);font-weight:500}.lg-days b{font-size:16px;font-weight:700}.lg-days i{font-style:normal;font-size:10px;color:var(--ink-2);font-variant-numeric:tabular-nums}
 .lg-days button.on{background:var(--ink);border-color:var(--ink);color:#fff}.lg-days button.on small,.lg-days button.on i{color:rgba(255,255,255,.7)}
 .dayto{font-size:13px;color:var(--ink-2);padding:2px 0 8px}.dayto b{color:var(--ink)}
+.weekcard{background:#fff;border:1px solid var(--edge);border-radius:20px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.weekcard .linkbtn{background:none;border:0;font:600 13px var(--f);padding:0}
+.wk-big{margin:0;font-family:var(--fa);font-size:26px;letter-spacing:-.03em}.wk-big.ok{color:#1f8a4c}.wk-big.over{color:var(--red-t)}
+.weekcard>small{color:var(--ink-2);font-size:12.5px}
+.wk-bars{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:4px}
+.wk-c{display:flex;flex-direction:column;align-items:center;gap:4px}.wk-c small{font-size:11px;color:var(--ink-2);font-weight:600}
+.wk-b{position:relative;width:100%;height:64px;background:#f4f2ec;border-radius:10px;overflow:hidden}
+.wk-b::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px dashed #cfcac0}
+.wk-b i{position:absolute;left:18%;right:18%;border-radius:5px}.wk-b i.up{bottom:50%;background:#2fa866}.wk-b i.dn{top:50%;background:var(--tomato)}
+.wk-c.live .wk-b{background:repeating-linear-gradient(45deg,#f4f2ec 0 6px,#ece9e1 6px 12px)}.wk-c.live i{opacity:.55}
+.wk-c.fut .wk-b,.wk-c.skip .wk-b{background:#faf9f6;border:1px dashed var(--edge)}
+.wk-c.low small{color:#9a5b00}.wk-c.low .wk-b{box-shadow:inset 0 0 0 1.5px #f3c96b}
+.wk-note{margin:0;font-size:13px;color:var(--ink)}.wk-note b{font-weight:700}
+.wk-warn{margin:0;font-size:12.5px;color:#7a4a00;background:#fff6dc;border:1px solid #f3e2a8;border-radius:12px;padding:8px 10px}
+.report{background:#fff;border:1px solid var(--edge);border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;margin:4px 0}
+.rp-top{display:flex;justify-content:space-between;font-size:10.5px;letter-spacing:.12em;font-weight:700;color:var(--ink-2);padding-bottom:6px;border-bottom:1.5px dashed var(--dash)}.rp-top span:first-child{color:var(--ink)}
+.rp-big{margin:6px 0 0;font-family:var(--fa);font-size:26px;letter-spacing:-.03em}
+.report>small{color:var(--ink-2);font-size:12.5px}
+.rp-goal{margin-top:4px}.rp-gbar{height:8px;background:#efede7;border-radius:8px;overflow:hidden}.rp-gbar i{display:block;height:100%;background:var(--ink);border-radius:8px}.rp-goal small{font-size:12px;color:var(--ink-2)}
+.rp-goaltxt{margin:2px 0;font-size:13px}
+.rp-rows{display:flex;flex-direction:column;border-top:1px solid var(--edge);margin-top:4px;padding-top:4px}
+.rp-row{display:flex;gap:8px;align-items:baseline;margin:0;padding:4px 0;font-size:13.5px}.rp-row span:first-child{width:14px;font-weight:700}.rp-row.ok span:first-child{color:#1f8a4c}.rp-row.no span:first-child{color:var(--ink-2)}.rp-row span:nth-child(2){flex:1}.rp-row b{font-variant-numeric:tabular-nums}
+.rp-h{margin:8px 0 0;font-family:var(--fa);font-size:16px}.rp-p{margin:2px 0;font-size:13px;line-height:1.4}
+.rp-tip{margin:6px 0 0;font-size:12px;color:var(--ink-2)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -2043,7 +2067,7 @@ function runIntent(it) {
   if (it.kind === "steps") { setSteps(it.v); return done(`${num(it.v)} steps logged for today.`); }
   if (it.kind === "active") { editAct(todayId(), a => { a.active = it.v; }); return done(`${num(it.v)} active calories logged.`); }
   if (it.kind === "workout") { addWorkout(it.type, it.min); return done(`${WK[it.type][2]} · ${it.min} min logged.`); }
-  if (it.kind === "weight") { const b = body(); const kg = it.unit === "kg" ? it.v : lbToKg(it.v); if (b) { S.settings = { ...S.settings, body: { ...b, weightKg: Math.round(kg * 10) / 10 } }; putSettings(); renderAll(); return done(`Weight updated to ${it.v} ${it.unit}.`); } closeSheet(); setTimeout(() => { openSheet("calories"); }, 200); return; }
+  if (it.kind === "weight") { const b = body(); const kg = it.unit === "kg" ? it.v : lbToKg(it.v); if (b) { S.settings = { ...S.settings, body: { ...b, weightKg: Math.round(kg * 10) / 10 } }; putSettings(); logWeigh(kg); renderAll(); return done(`Weight updated to ${it.v} ${it.unit}.`); } closeSheet(); setTimeout(() => { openSheet("calories"); }, 200); return; }
   if (it.kind === "meal") { closeSheet(); setTimeout(() => openSheet("log", { q: it.q, slot: it.slot || slotNow() }), 200); }
 }
 
@@ -2186,7 +2210,8 @@ function burnFor(id) {
   return { base, move: steps + work, steps, work, total: base + steps + work, src: "est" };
 }
 const FLOOR = () => (body()?.sex === "m" ? 1500 : 1200);
-function goalFor(id) {
+function goalFor(id) { return Math.max(FLOOR(), baseGoalFor(id) + (typeof weekAdj === "function" ? weekAdj(id) : 0)); }
+function baseGoalFor(id) {
   const st = S.settings;
   if (st.goalMode === "auto" && bodyReady()) { /* start from your planned day (step goal + usual workouts), then earn extra for steps past your goal and workouts past your usual */ const planned = +st.burnGoal || expectedBurn(); return Math.max(FLOOR(), Math.round(planned - (+st.deficit || 500) + moveBonus(id))); }
   return +st.kcal || 1600;
@@ -2401,7 +2426,7 @@ function vCalories() {
   const T = todayId(), d = dayOf(T), eaten = kcalOf(T), nn = S.settings.noNumbers, C = SH.cal || (SH.cal = {});
   const a = actOf(T), steps = +a.steps || 0, sg = +S.settings.stepGoal || 8000, auto = bodyReady() && S.settings.goalMode !== "fixed";
   const D = C.day && C.day <= T ? C.day : T;
-  let h = `<div class="stack">` + dayStrip(D) + ledgerCard(D);
+  let h = `<div class="stack">` + dayStrip(D) + ledgerCard(D) + weekCard(D);
   if (D !== T) return h + `<button class="btn soft block" data-act="cal-day" data-d="${T}">Back to today</button></div>`;
   if (!bodyReady() || C.editProf) {
     const P = C.prof || (C.prof = profDraft()), us = P.units === "us";
@@ -3914,7 +3939,7 @@ function applyActions(res) {
   if (res.weight && +res.weight.value > 0 && body()) {
     const unit = /kg/i.test(res.weight.unit || "") ? "kg" : /lb|pound/i.test(res.weight.unit || "") ? "lb" : (S.settings.units || "us") === "us" ? "lb" : "kg";
     U.body = { ...body() }; const kg2 = unit === "kg" ? +res.weight.value : lbToKg(+res.weight.value);
-    S.settings = { ...S.settings, body: { ...body(), weightKg: Math.round(kg2 * 10) / 10 } }; putSettings();
+    S.settings = { ...S.settings, body: { ...body(), weightKg: Math.round(kg2 * 10) / 10 } }; putSettings(); logWeigh(kg2, T);
     blocks.push({ k: "weight", v: +res.weight.value, unit });
   }
   const bought = addToFridge(res.bought || [], "bought", U); if (bought.length) blocks.push({ k: "bought", names: bought.map(i => i.name + (i.qty > 1 ? " ×" + i.qty : "")) });
@@ -3933,13 +3958,17 @@ function applyActions(res) {
   const sa = res.set_aim;
   if (sa && AIMS[sa.type]) {
     if (!U.settingsPrev) U.settingsPrev = { ...S.settings };
-    const p = setAim({ type: sa.type, ...(+sa.pace_kg_week > 0 ? { pace: Math.min(1, +sa.pace_kg_week) } : {}), ...(+sa.target_kg > 25 ? { targetKg: Math.round(+sa.target_kg * 10) / 10 } : {}) });
+    const byDay = /^\d{4}-\d{2}-\d{2}$/.test(sa.by_date || "") ? sa.by_date : +sa.weeks > 0 ? addDays(todayId(), Math.round(+sa.weeks * 7)) : null;
+    const loseKg = +sa.lose_kg > 0 ? +sa.lose_kg : 0, tKg = +sa.target_kg > 25 ? +sa.target_kg : loseKg && body() ? curKg() - loseKg : 0;
+    const p = setAim({ type: sa.type, ...(+sa.pace_kg_week > 0 ? { pace: Math.min(1, +sa.pace_kg_week) } : {}), ...(tKg ? { targetKg: Math.round(tKg * 10) / 10, startKg: curKg(), startDay: todayId() } : {}), ...(byDay ? { byDay } : {}) });
+    { const gm = goalMath(); if (gm && gm.perWeek && sa.type === "lose" && !(+sa.pace_kg_week > 0)) setAim({ pace: Math.round(Math.min(gm.perWeek, gm.safePace) * 100) / 100 }); if (gm) blocks.push({ k: "goals", names: [goalLine(gm)] }); }
     blocks.push({ k: "goals", names: p ? [`${AIMS[sa.type]}: eat ${num(p.kcal)} kcal`, `${p.protein} g protein`, `${p.fiber} g fiber`, `fat ≤ ${p.fatMax} g`, `burn ${num(p.burn)} kcal`].concat(p.weeks ? [`goal weight in ~${p.weeks} weeks`] : []) : [`${AIMS[sa.type]} saved · add your height, weight, age and sex to get numbers`] });
   }
   const gch = setGoalsFrom(res.set_goals, U); if (gch.length) blocks.push({ k: "goals", names: gch });
   const hab = habitsFrom(res.habits_done, U); if (hab.length) blocks.push({ k: "habits", names: hab });
   const ideas = (Array.isArray(res.ideas) ? res.ideas : []).filter(r => r && r.name).slice(0, 3).map(r => ({ name: String(r.name), minutes: +r.minutes || 15, kcal: r0(r.kcal), protein: r0(r.protein), uses: Array.isArray(r.uses) ? r.uses.map(String) : [], ingredients: Array.isArray(r.ingredients) ? r.ingredients.map(String) : [], steps: Array.isArray(r.steps) ? r.steps.map(String) : [] }));
   const any = blocks.length > 0;
+  if (res.report && bodyReady()) blocks.push(weekReport(weekStartOf(todayId())));
   if (T !== todayId() && blocks.length) blocks.unshift({ k: "dayto", day: T });
   return { day: T, blocks, ideas, undo: any ? U : null, tracked: blocks.some(b => ["meal", "workout", "steps", "active", "removed", "habits"].includes(b.k)) };
 }
@@ -3990,6 +4019,8 @@ ${(dayOf(addDays(T, -1)).meals || []).map(m => `- id ${m.id}: ${m.name} (${m.slo
 Yesterday's workouts: ${workoutsOn(addDays(T, -1)).map(w => `id ${w.id}: ${w.name || WK[w.type]?.[2] || w.type} ${w.min} min`).join("; ") || "(none)"}
 In my fridge/pantry: ${fridge.join(", ") || "(empty)"}
 My grocery list: ${list.join(", ") || "(empty)"}
+Weight goal: ${(() => { const a = aim(), g = goalMath(a); return g ? `${a.startKg ? `started ${a.startKg} kg, ` : ""}now ${g.now} kg, target ${a.targetKg} kg${a.byDay ? ` by ${a.byDay}` : ""}. ${goalLine(g)}` : "none set"; })()}. Weigh-ins: ${weighIns(addDays(T, -60)).map(w => `${w.d} ${w.kg} kg`).join(", ") || "none"}.
+This week so far (Mon start): ${(() => { if (!bodyReady()) return "n/a"; const w = weekBank(T); return w.done.length ? `${w.done.length} fully logged day(s), total deficit ${num(w.net)} kcal vs goal ${num(deficitTarget() * w.done.length)} → ${num(Math.abs(w.sum))} kcal ${w.sum >= 0 ? "ahead" : "behind"}; today's budget is adjusted by ${weekAdj(T)} kcal (capped at ±150). Per day: ${w.days.map(x => `${x.d} ate ${x.eaten}, burned ${x.burn}, deficit ${x.net}${x.counted ? "" : " (not fully logged, not counted)"}`).join("; ")}. When I ask about deficits across days, use these numbers and explain that fat loss follows the weekly total; never suggest making up a day with a very low-calorie day.` : "no full days logged yet"; })()}
 My goals today: ${gl.map(x => `${x.label} ${x.val}${x.done ? " (hit)" : ""}`).join("; ")}
 My daily habits: ${(S.settings.habits || []).map(h => `"${h.name}"${(h.target || 1) > 1 ? ` target ${h.target} ${h.unit || ""}` : ""}`).join(", ") || "(none)"}
 Recent chat:
@@ -4009,6 +4040,8 @@ ${staplesForPrompt()}
 - Meals: one entry per meal. If it's a meal I've had before, use the same name as before so the app can spot my patterns. Break it into items and estimate EACH item separately with USDA-style values. Use the exact weight or amount I give (grams, oz, cups, slices). If I name a brand, use that product's label (e.g. Dave's Killer Bread, Fage, Chobani, Trader Joe's, Quest). If I give no amount, assume one normal portion and write what you assumed in "amount". Weights are as eaten unless I say raw. Restaurant or chain food: use the chain's official nutrition; if you are not sure of it, still estimate and set "needs_lookup": true.
 - If I ate one of my saved recipes, set "recipe" to its exact name and "servings" (or "grams" if I weighed my portion), and put only extras in "items". Never repeat the recipe's own ingredients.
 - A recipe (a dish name with ingredients and amounts, "makes 4", "recipe:", "I cooked/meal prepped") goes in save_recipes with every ingredient and its total amount for the whole batch, plus servings (default 1) and cooked_weight_g if I give it. Only also log a meal if I say I ate some.
+- "Lose 6 kg in 8 weeks" / "get to 55 kg by Dec 20" → set_aim with type "lose", lose_kg or target_kg, and weeks or by_date. The app checks whether it is realistic; in "reply", repeat its honest verdict kindly, never promise faster loss than ~1% of body weight a week, and never suggest eating under 1,200 kcal.
+- "Weekly report", "how did my week go" → set "report": true.
 - Which day: if I say yesterday, last night, or a weekday/date that has passed, set top-level "day" to that date as YYYY-MM-DD (today is ${todayId()}). "Add it to yesterday" / "that was yesterday" about something already logged today = delete it from today (its id in delete_meal_ids / delete_workout_ids) and log it again with "day" set to yesterday. Leave "day" out for today.
 - "slot": breakfast, lunch, dinner or snack. Use my words, otherwise the time of day.
 - Branded or named classes and studios (SoulCycle, Bout Fit Club, Barry's, Orangetheory, Solidcore, F45, Rumble, a gym's named class…): add "studio": the studio/class name and "research": true so the app looks up what the class actually involves; still give your best type, minutes and MET. If I didn't give a length, set "minutes_guessed": true.
@@ -4030,11 +4063,11 @@ Return JSON only, in this shape (leave out empty fields):
  "save_recipes": [{"name": string, "servings": number, "cooked_weight_g": number|null, "source_url": string|null, "items": [same item shape, amounts for the whole batch], "steps": [string]}],
  "workouts": [{"type": string, "name": string, "minutes": number, "minutes_guessed": boolean, "met": number, "details": string, "app_kcal": number, "source": string, "studio": string, "research": boolean}],
  "steps": number, "active_kcal": number, "weight": {"value": number, "unit": "lb"|"kg"},
- "day": "YYYY-MM-DD"|null, "delete_meal_ids": [string], "delete_workout_ids": [string],
+ "day": "YYYY-MM-DD"|null, "report": boolean, "delete_meal_ids": [string], "delete_workout_ids": [string],
  "bought": [{"name": string, "qty": number, "price": number, "where": string, "shelf_days": number}],
  "have": [same as bought], "grocery_add": [string], "remove_from_list": [string], "used_up": [string], "tossed": [string],
  "set_body": {"weight_kg": number, "height_cm": number, "age": number, "sex": "f"|"m"},
- "set_aim": {"type": "lose"|"recomp"|"maintain"|"gain", "target_kg": number, "pace_kg_week": number},
+ "set_aim": {"type": "lose"|"recomp"|"maintain"|"gain", "target_kg": number, "lose_kg": number, "weeks": number, "by_date": "YYYY-MM-DD", "pace_kg_week": number},
  "set_goals": {"protein": number, "fiber": number, "fat_max": number, "burn": number, "steps": number, "kcal": number, "deficit": number, "active_min": number, "week_workouts": number, "habits_add": [{"name": string, "target": number, "unit": string}]},
  "habits_done": [{"name": string, "count": number, "add": boolean}],
  "answer": string, "ideas": [{"name": string, "minutes": number, "kcal": number, "protein": number, "uses": [string], "ingredients": [string], "steps": [string]}]}`;
@@ -4152,7 +4185,7 @@ function logRecipe(id, servings = 1) {
 /* ---------- rendering ---------- */
 const TABS = [["chat", "chat", "Chat", "butter"], ["fridge", "fridge", "At home", "mint"], ["groceries", "cart", "To buy", "pink"], ["recipes", "book", "Recipes", "peach"], ["train", "dumbbell", "Train", "pink"]];
 const PAL = ["peach", "sky", "mint", "pink", "butter", "lilac"];
-function renderAll() { refreshAim(); renderHome(); scheduleNudges(); }
+function renderAll() { refreshAim(); renderHome(); scheduleNudges(); if (!UI.wr) { UI.wr = 1; setTimeout(() => { try { maybeWeekReport(); } catch (_) {} }, 1500); } }
 function renderDock() {}
 function renderMagnets() {}
 function placeMagnets() {}
@@ -4186,7 +4219,7 @@ function stripHtml(T) {
   return `<button class="receipt" data-act="open" data-sheet="calories" aria-label="Calories today, ${num(Math.abs(left))} ${left >= 0 ? "left" : "over"}">
     <div class="rc-top"><span>TODAY'S RECEIPT</span><span>NO. ${no} · ${esc(fmtShort(T).toUpperCase())}</span></div>
     <div class="rc-body"><div class="rc-main"><b class="${left < 0 ? "over" : ""}" data-to="${Math.abs(left)}">${num(Math.abs(left))}</b><span class="script">${left >= 0 ? "kcal left" : "kcal over"}</span></div>
-    <div class="rc-lines">${line("Budget", num(goal))}${line("Eaten", "− " + num(eaten))}${b ? line("Burned", num(b.total) + (S.settings.burnGoal ? `/${num(S.settings.burnGoal)}` : ""), b.total >= (S.settings.burnGoal || 1e9) ? "ok" : "muted") : ""}${line("Protein", `${prot}/${S.settings.protein} g`, prot >= S.settings.protein ? "ok" : "")}${S.settings.fiber ? line("Fiber", `${Math.round(macroOf(T, "fiber"))}/${S.settings.fiber} g`, macroOf(T, "fiber") >= S.settings.fiber ? "ok" : "") : ""}</div></div>
+    <div class="rc-lines">${line("Budget", num(goal))}${weekOn() && weekBank(T).done.length ? line("This week", num(Math.abs(weekBank(T).sum)) + (weekBank(T).sum >= 0 ? " ahead" : " behind"), weekBank(T).sum >= 0 ? "ok" : "") : ""}${line("Eaten", "− " + num(eaten))}${b ? line("Burned", num(b.total) + (S.settings.burnGoal ? `/${num(S.settings.burnGoal)}` : ""), b.total >= (S.settings.burnGoal || 1e9) ? "ok" : "muted") : ""}${line("Protein", `${prot}/${S.settings.protein} g`, prot >= S.settings.protein ? "ok" : "")}${S.settings.fiber ? line("Fiber", `${Math.round(macroOf(T, "fiber"))}/${S.settings.fiber} g`, macroOf(T, "fiber") >= S.settings.fiber ? "ok" : "") : ""}</div></div>
     <div class="rc-bar"><i class="${left < 0 ? "over" : ""}" style="width:${clamp(eaten / Math.max(goal, 1) * 100, 0, 100)}%"></i></div></button>`;
 }
 function countUp() {
@@ -4265,6 +4298,7 @@ function itemRow(x, nn) { return `<li><span>${esc(x.name)}${x.brand ? ` <em>${es
 const BLK = { meal: ["peach", "bowl"], recipe: ["butter", "book"], workout: ["sky", "dumbbell"], steps: ["sky", "shoe"], active: ["sky", "watch"], weight: ["lilac", "scale"], bought: ["mint", "bag"], have: ["mint", "fridge"], list: ["pink", "note"], unlist: ["pink", "check"], used: ["mint", "check"], tossed: ["tomato", "bin"], removed: ["tomato", "undo"], goals: ["lilac", "star"], habits: ["sky", "drop"], dup: ["butter", "hearts"] };
 const BLK_TAG = { dup: "Already logged, skipped", bought: "Bought · now At home", have: "Now At home", list: "Added To buy", unlist: "Off the To buy list", used: "Used up", tossed: "Tossed", removed: "Removed", goals: "Goals updated", habits: "Habits", steps: "Steps", active: "Apple Health", weight: "Weight" };
 function blockHtml(b, m) {
+  if (b.k === "report") return reportHtml(b);
   if (b.k === "dayto") return `<div class="dayto">📅 Logged to <b>${esc(dayLabel(b.day))}</b> · <button class="linkbtn" data-act="open-day" data-d="${esc(b.day)}">See that day</button></div>`;
   const nn = S.settings.noNumbers, [col, emo0] = BLK[b.k] || ["lilac", "✨"];
   const wrap = (inner, emo = emo0) => `<div class="blk k-${b.k}"><span class="sticker c-${col}">${b.k === "meal" ? `<span class="emo-i">${dishEmoji(b.name)}</span>` : doo(emo)}</span><div class="bc">${inner}</div></div>`;
@@ -5291,6 +5325,155 @@ async function labelLookup(meals, signal) {
     Object.assign(x, { kcal: Math.round(p.kcal * f), protein: Math.round(p.protein * f * 10) / 10, carbs: Math.round(p.carbs * f * 10) / 10, fat: Math.round(p.fat * f * 10) / 10, fiber: Math.round(p.fiber * f * 10) / 10, grams: Math.round(g), name: x.name, brand: hit.label, amount: `${x.amount || (qtyOf(x) + " serving")}${hit.servingText && !+x.grams ? ` (${hit.servingText})` : ""} · label from ${hit.src}`, needs_lookup: false, labeled: true });
   }));
 }
+
+/* ---------- the week: fat loss follows the weekly balance, not a strict 24-hour reset ----------
+   Each finished day (Mon–Sun) banks how far ahead of / behind your deficit goal it ended.
+   Today's budget shifts by that bank spread over the days left, never more than ±150 kcal,
+   so the week absorbs normal swings without asking you to "make up" a day with a severe one. */
+const WEEK_CAP = 150;
+const weekOn = () => S.settings.weekly !== false && bodyReady() && !S.settings.noNumbers;
+function weekStartOf(T) { const d = parseId(T).getDay(); return addDays(T, -((d + 6) % 7)); } // Monday
+function dayBalance(d) {
+  const b = burnFor(d); if (!b) return null;
+  const eaten = kcalOf(d), budget = baseGoalFor(d), target = deficitTarget(), net = b.total - eaten;
+  // a day only counts once it looks fully logged, otherwise a forgotten dinner reads as a huge deficit
+  const counted = eaten >= budget * 0.5;
+  return { d, eaten, burn: b.total, budget, target, net, diff: net - target, counted, low: counted && eaten < budget - 400, under: counted && eaten < FLOOR() };
+}
+function weekBank(T) {
+  const start = weekStartOf(T), days = [];
+  for (let d = start; d < T; d = addDays(d, 1)) { const x = dayBalance(d); if (x) days.push(x); }
+  const done = days.filter(x => x.counted);
+  return { start, days, done, sum: done.reduce((s, x) => s + x.diff, 0), net: done.reduce((s, x) => s + x.net, 0), left: 7 - diffDays(start, T) };
+}
+function weekAdj(T) {
+  if (!weekOn()) return 0;
+  const w = weekBank(T); if (!w.done.length) return 0;
+  return Math.max(-WEEK_CAP, Math.min(WEEK_CAP, Math.round(w.sum / Math.max(1, w.left) / 10) * 10));
+}
+function weekCard(T) {
+  if (!bodyReady() || S.settings.noNumbers) return "";
+  const today = todayId(), start = weekStartOf(T), days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
+  const rows = days.map(d => d > today ? { d, future: true } : d === today ? { ...dayBalance(d), live: true } : dayBalance(d));
+  const done = rows.filter(x => x && !x.future && !x.live && x.counted), sum = done.reduce((s, x) => s + x.diff, 0), net = done.reduce((s, x) => s + x.net, 0);
+  const tgt = deficitTarget(), adj = weekAdj(today), max = Math.max(tgt * 2, ...done.map(x => Math.abs(x.diff)), 1);
+  const bar = x => {
+    const lab = esc(parseId(x.d).toLocaleDateString(undefined, { weekday: "narrow" }));
+    if (x.future) return `<div class="wk-c fut"><span class="wk-b"></span><small>${lab}</small></div>`;
+    if (x.live) return `<div class="wk-c live" title="Today, in progress"><span class="wk-b">${x.counted ? `<i style="height:${Math.min(50, Math.abs((x.net - tgt) / max) * 50)}%" class="${x.net >= tgt ? "up" : "dn"}"></i>` : ""}</span><small>${lab}</small></div>`;
+    if (!x.counted) return `<div class="wk-c skip"><span class="wk-b"></span><small>${lab}</small></div>`;
+    const h = Math.min(50, Math.abs(x.diff) / max * 50);
+    return `<div class="wk-c${x.low ? " low" : ""}" title="${num(x.net)} kcal deficit"><span class="wk-b"><i class="${x.diff >= 0 ? "up" : "dn"}" style="height:${h}%"></i></span><small>${lab}</small></div>`;
+  };
+  const lows = done.filter(x => x.low);
+  const us = (S.settings.units || "us") === "us";
+  let h = `<div class="weekcard"><div class="aimtop"><b>This week</b><button class="linkbtn" data-act="wk-toggle">${weekOn() ? "Balancing on" : "Balancing off"}</button></div>`;
+  if (!done.length) h += `<p class="wk-big">Your week starts banking tonight.</p><small>Each fully logged day adds how far ahead or behind your ${num(tgt)} kcal deficit goal you finished. Fat loss follows the week, not any single day.</small>`;
+  else {
+    h += `<p class="wk-big ${sum >= 0 ? "ok" : "over"}">${num(Math.abs(sum))} kcal ${sum >= 0 ? "ahead" : "behind"}</p>
+      <small>${num(net)} kcal total deficit over ${done.length} day${done.length === 1 ? "" : "s"} (goal ${num(tgt * done.length)}) · about ${us ? (net / 3500).toFixed(2) + " lb" : (net / 7700).toFixed(2) + " kg"} of fat</small>`;
+  }
+  h += `<div class="wk-bars">${rows.map(bar).join("")}</div>`;
+  if (weekOn() && adj) h += `<p class="wk-note">${adj > 0 ? `You're ahead, so today's budget is <b>+${adj} kcal</b>.` : `To even out the week, today's budget is <b>${adj} kcal</b>.`} Spread over the ${weekBank(today).left} days left and never more than ${WEEK_CAP} a day, so you're never asked to make up a day by eating very little.</p>`;
+  h += `<button class="btn soft block" data-act="wk-report">See this week's report</button>`;
+  if (lows.length) h += `<p class="wk-warn">${lows.map(x => esc(parseId(x.d).toLocaleDateString(undefined, { weekday: "long" }))).join(" and ")} ${lows.length === 1 ? "was" : "were"} 400+ kcal under budget. Very low days often swing back as hunger the next day and make protein harder to hit. Aim to land within about 150 of your budget and let the week do the balancing.</p>`;
+  return h + `</div>`;
+}
+document.addEventListener("click", e => {
+  const el = e.target.closest('[data-act="wk-toggle"]'); if (!el) return;
+  S.settings = { ...S.settings, weekly: !weekOn() && S.settings.weekly === false ? true : false }; putSettings(); renderAll(); refreshSheet();
+  toast(S.settings.weekly === false ? "Weekly balancing off. Every day uses its own budget." : "Weekly balancing on.");
+});
+
+/* ---------- weight goal + weekly reports ----------
+   Weigh-ins are kept per day. A goal is "get to X kg by a date". The app checks it honestly:
+   fat loss needs ~7,700 kcal per kg, and eating below your floor isn't an option it will plan for. */
+function logWeigh(kg, T = todayId()) { editDay(T, d => { d.weight = Math.round(kg * 10) / 10; }); const a = aim(); if (a && !a.startKg) { S.settings = { ...S.settings, aim: { ...a, startKg: Math.round(kg * 10) / 10, startDay: T } }; putSettings(); } }
+function weighIns(fromId) { return Object.keys(S.days || {}).filter(d => (!fromId || d >= fromId) && +S.days[d]?.weight > 0).sort().map(d => ({ d, kg: +S.days[d].weight })); }
+const curKg = () => { const w = weighIns(); return w.length ? w[w.length - 1].kg : body()?.weightKg || null; };
+// what it takes to reach the goal from today
+function goalMath(a = aim()) {
+  if (!a || !(+a.targetKg > 25) || !bodyReady()) return null;
+  const now = curKg(), need = Math.round((now - a.targetKg) * 10) / 10; if (need <= 0) return { done: true, now, need: 0 };
+  const burn = expectedBurn(), floor = FLOOR(), kpd = 7700 / 7;
+  const weeksLeft = a.byDay ? Math.max(0.5, diffDays(todayId(), a.byDay) / 7) : null;
+  const perWeek = weeksLeft ? need / weeksLeft : null, dailyDef = perWeek ? Math.round(perWeek * kpd) : null;
+  // the safe pace: at most ~1% of body weight a week, and never eating under your floor without moving more
+  const safePace = Math.min(0.01 * now, (burn - floor) / kpd, 1);
+  const safeWeeks = Math.ceil(need / Math.max(0.1, Math.min(safePace, 0.75)));
+  let verdict = "ok", extraKcal = 0;
+  if (perWeek && perWeek > 0.01 * now + 0.05) verdict = "too_fast";
+  else if (dailyDef && burn - dailyDef < floor) { verdict = "needs_moving"; extraKcal = Math.round(floor + dailyDef - burn); }
+  const eat = dailyDef ? Math.max(floor, Math.round((burn - dailyDef) / 10) * 10) : null;
+  return { now, need, burn, weeksLeft, perWeek, dailyDef, eat, safePace, safeWeeks, verdict, extraKcal, extraSteps: extraKcal ? Math.round(extraKcal / kcalPerStep() / 500) * 500 : 0 };
+}
+function goalLine(g) {
+  if (!g) return "";
+  if (g.done) return "You've reached your goal weight. 🎉";
+  const us = (S.settings.units || "us") === "us", W = kg => us ? `${(kg / 0.4536).toFixed(1)} lb` : `${kg.toFixed(1)} kg`;
+  if (!g.weeksLeft) return `${W(g.need)} to go. At a safe pace (~${W(g.safePace)}/week) that's about ${g.safeWeeks} weeks.`;
+  if (g.verdict === "too_fast") return `${W(g.need)} in ${Math.round(g.weeksLeft)} weeks is ${W(g.perWeek)}/week, faster than the ~1% of body weight a week that's realistic for fat (the rest would be water and muscle). A safe pace gets you there in about ${g.safeWeeks} weeks.`;
+  if (g.verdict === "needs_moving") return `${W(g.need)} in ${Math.round(g.weeksLeft)} weeks needs a ${num(g.dailyDef)} kcal daily deficit. Eating alone can't do that above your ${num(FLOOR())} kcal floor, so it also needs ~${num(g.extraKcal)} kcal more movement a day (≈ ${num(g.extraSteps)} extra steps or a daily class).`;
+  return `${W(g.need)} in ${Math.round(g.weeksLeft)} weeks = ${W(g.perWeek)}/week: eat about ${num(g.eat)} kcal on a normal day. Doable.`;
+}
+/* ---- the weekly report ---- */
+function weekReport(start) {
+  const T = todayId(), days = Array.from({ length: 7 }, (_, i) => addDays(start, i)).filter(d => d <= T);
+  const bal = days.map(dayBalance).filter(Boolean), done = bal.filter(x => x.counted);
+  const tgt = deficitTarget(), pg = +S.settings.protein || 0, sg = stepGoal() || 8000, wg = +fit().weekWorkouts || 0;
+  const net = done.reduce((s, x) => s + x.net, 0), fatKg = net / 7700;
+  const prot = days.map(d => Math.round(proteinOf(d))), protHit = done.filter(x => proteinOf(x.d) >= pg).length;
+  const full = days.filter(d => d < T || done.some(x => x.d === d)), steps = full.map(d => +actOf(d).steps || 0), stepAvg = Math.round(steps.reduce((s, x) => s + x, 0) / Math.max(1, full.length));
+  const wos = days.reduce((s, d) => s + workoutsOn(d).filter(w => !w.fin).length, 0);
+  const defHit = done.filter(x => x.net >= tgt).length, lows = done.filter(x => x.low);
+  const ws = weighIns(start).filter(w => w.d <= days[days.length - 1]);
+  const wDelta = ws.length >= 2 ? Math.round((ws[ws.length - 1].kg - ws[0].kg) * 10) / 10 : null;
+  const overs = done.filter(x => x.eaten > x.budget + 150);
+  const a = aim(), g = goalMath(a), startKg = a?.startKg || null, lostSoFar = startKg ? Math.round((startKg - curKg()) * 10) / 10 : null;
+  // what to do better next week: the two weakest areas
+  const fixes = [];
+  if (done.length < days.length - 1) fixes.push([9, `Log every day. ${days.length - done.length} day${days.length - done.length === 1 ? " wasn't" : "s weren't"} fully logged, so the week's numbers are a guess.`]);
+  if (pg && protHit < done.length * 0.7) fixes.push([8, `Protein hit ${protHit} of ${done.length} days (goal ${pg} g). An extra scoop of your chia yogurt base or a string cheese at snack time closes most of the gap, and it protects muscle while you're in a deficit.`]);
+  if (stepAvg < sg * 0.85) fixes.push([7, `Steps averaged ${num(stepAvg)} vs your ${num(sg)} goal. A 25-minute walk most days adds about 3,000 steps (~${Math.round(3000 * kcalPerStep())} kcal).`]);
+  if (wg && wos < wg) fixes.push([6, `${wos} of ${wg} workouts. Book next week's classes now so they're in your calendar.`]);
+  if (overs.length >= 2) fixes.push([5, `${overs.map(x => parseId(x.d).toLocaleDateString(undefined, { weekday: "short" })).join(", ")} ran 150+ over budget. Plan those days ahead: a lighter lunch or a longer walk.`]);
+  if (lows.length) fixes.push([4, `${lows.length} very low day${lows.length === 1 ? "" : "s"} (400+ under). Those tend to swing back as hunger; aim for steady days within ~150 of budget.`]);
+  const wins = [];
+  if (defHit >= Math.max(1, done.length - 1)) wins.push(`Hit your deficit ${defHit} of ${done.length} days`);
+  if (pg && protHit >= done.length * 0.7 && done.length) wins.push(`Protein on ${protHit} days`);
+  if (stepAvg >= sg) wins.push(`Averaged ${num(stepAvg)} steps`);
+  if (wg && wos >= wg) wins.push(`All ${wos} workouts done`);
+  return { k: "report", start, end: days[days.length - 1], partial: days.length < 7, logged: done.length, n: days.length, net, fatKg, defHit, tgt, protHit, pg, stepAvg, sg, wos, wg, wDelta, lostSoFar, goal: g ? goalLine(g) : "", target: a?.targetKg || null, need: g?.need ?? null, startKg, fixes: fixes.sort((a, b) => b[0] - a[0]).slice(0, 2).map(x => x[1]), wins: wins.slice(0, 2), weighed: ws.length > 0 };
+}
+function reportHtml(b) {
+  const us = (S.settings.units || "us") === "us", W = kg => us ? `${(kg / 0.4536).toFixed(1)} lb` : `${kg.toFixed(1)} kg`;
+  const range = `${fmtShort(b.start)} – ${fmtShort(b.end)}`;
+  const pct = b.target && b.startKg && b.startKg > b.target ? Math.max(0, Math.min(100, Math.round((b.startKg - (b.startKg - (b.lostSoFar || 0))) / (b.startKg - b.target) * 100))) : null;
+  const row = (ok, l, v) => `<p class="rp-row ${ok ? "ok" : "no"}"><span>${ok ? "✓" : "○"}</span><span>${l}</span><b>${v}</b></p>`;
+  return `<div class="report"><div class="rp-top"><span>${b.partial ? "THIS WEEK SO FAR" : "WEEKLY REPORT"}</span><span>${esc((b.start.slice(5, 7) === b.end.slice(5, 7) ? fmtShort(b.start) + "–" + parseId(b.end).getDate() : range).toUpperCase())}</span></div>
+    <p class="rp-big">${b.logged ? `≈ ${W(Math.max(0, b.fatKg))} of fat` : "Not enough logged yet"}</p>
+    <small>${b.logged ? `${num(b.net)} kcal total deficit over ${b.logged} logged day${b.logged === 1 ? "" : "s"}` : "Log full days to see your week"}${b.wDelta != null ? ` · scale ${b.wDelta <= 0 ? "down" : "up"} ${W(Math.abs(b.wDelta))} (water swings ±1 kg are normal)` : ""}</small>
+    ${pct != null ? `<div class="rp-goal"><div class="rp-gbar"><i style="width:${pct}%"></i></div><small>${W(Math.max(0, b.lostSoFar || 0))} of ${W(b.startKg - b.target)} lost · ${pct}%</small></div>` : ""}
+    ${b.goal ? `<p class="rp-goaltxt">${esc(b.goal)}</p>` : ""}
+    <div class="rp-rows">${row(b.defHit >= Math.max(1, b.logged - 1), "Deficit days", `${b.defHit}/${b.logged}`)}${b.pg ? row(b.protHit >= b.logged * 0.7, "Protein days", `${b.protHit}/${b.logged}`) : ""}${row(b.stepAvg >= b.sg, "Avg steps", num(b.stepAvg))}${b.wg ? row(b.wos >= b.wg, "Workouts", `${b.wos}/${b.wg}`) : ""}${row(b.logged >= b.n - 1, "Days logged", `${b.logged}/${b.n}`)}</div>
+    ${b.wins.length ? `<p class="rp-h">Keep doing</p><p class="rp-p">${b.wins.map(esc).join(" · ")}</p>` : ""}
+    ${b.fixes.length ? `<p class="rp-h">Do better next week</p>${b.fixes.map(f => `<p class="rp-p">• ${esc(f)}</p>`).join("")}` : ""}
+    ${b.weighed ? "" : `<p class="rp-tip">Weigh in once a week, same morning: just tell chat “weighed 58.4 kg”.</p>`}</div>`;
+}
+// Monday: drop last week's report into chat once
+function maybeWeekReport() {
+  if (!bodyReady() || S.settings.noNumbers) return;
+  const T = todayId(), last = addDays(weekStartOf(T), -7);
+  if (S.settings.lastReport === last) return;
+  const r = weekReport(last); S.settings = { ...S.settings, lastReport: last }; putSettings();
+  if (!r.logged) return;
+  pushMsg({ who: "app", text: "Your week in review.", blocks: [r] });
+}
+document.addEventListener("click", e => {
+  const el = e.target.closest('[data-act="wk-report"]'); if (!el) return;
+  closeSheet(); if (CH.tab !== "chat") { CH.tab = "chat"; }
+  pushMsg({ who: "app", text: "Here's your week so far.", blocks: [weekReport(weekStartOf(todayId()))] });
+});
 
 setInterval(() => { if (!SH) renderHome(); }, 10 * 60 * 1000);
 init();
