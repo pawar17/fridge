@@ -3921,7 +3921,9 @@ function applyActions(res) {
     const isImport = !!m0.source && /fitness ?pal|mfp|cal ?ai|lose ?it|cronometer|apple|health|strava|hevy|screenshot|import/i.test(String(m0.source));
     const prev = !res.again && (dayOf(T).meals || []).find(x => normName(x.name) === normName(m.name) || (isImport && x.via && x.via === m0.source && x.slot === m.slot));
     const pend = { name: m.name, kcal: m.kcal, protein: m.protein, carbs: m.carbs, fat: m.fat, fiber: m.fiber, slot: m.slot, portion: 1, src: "chat", ...(isImport ? { via: String(m0.source) } : {}), items: m.items.map(({ look, ...x }) => x), uses: [] };
-    if (prev) { blocks.push({ k: "dupask", id: uid(), day: T, name: m.name, slot: m.slot, kcal: m.kcal, prevSlot: prev.slot || "snack", prevKcal: prev.kcal, meal: pend }); continue; }
+    // the earlier one had no calories (logged before we could find them)? replace it with this one instead of asking
+    if (prev && !(+prev.kcal > 0) && m.kcal > 0) { U.delMeals.push({ ...prev, _day: T }); editDay(T, d => { d.meals = d.meals.filter(x => x.id !== prev.id); }); }
+    else if (prev) { blocks.push({ k: "dupask", id: uid(), day: T, name: m.name, slot: m.slot, kcal: m.kcal, prevSlot: prev.slot || "snack", prevKcal: prev.kcal, meal: pend }); continue; }
     // nothing we could put a number on: ask for it rather than logging a 0 that never shows in your totals
     if (!(m.kcal > 0) && !S.settings.noNumbers) { blocks.push({ k: "needkcal", id: uid(), day: T, name: m.name, slot: m.slot, meal: pend }); continue; }
     const fridgeNames = []; m.items.forEach(x => { if (x.rid) return; const it = fridgeMatch(canon(x.name)); if (it && !fridgeNames.includes(it.name)) fridgeNames.push(it.name); });
