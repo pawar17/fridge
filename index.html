@@ -1200,6 +1200,7 @@ body[data-tab=chat] .rc-bar i{background:var(--ink)}
 .lg-wform label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--ink-2);font-weight:600}
 .lg-wform .inp{padding:8px;font-size:15px}.lg-wform .pillbtn{grid-column:1/-1}
 .lg-wrow .lg-x+.lg-x{margin-left:4px}
+.wk-seg{margin-top:2px}.wk-note.muted{color:var(--ink-2);font-size:12.5px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -3306,7 +3307,7 @@ function vSettings() {
     ${SH.set.restore ? `<div class="stack" style="gap:8px"><label class="drop" for="restoreFile" style="padding:14px"><input type="file" id="restoreFile" accept=".json,application/json,text/plain"><b>Choose a backup file</b><span class="muted tiny">or paste copied data below</span></label><textarea class="inp" id="restoreText" rows="3" placeholder="Paste backup here" style="font:12px ui-monospace,Menlo,monospace"></textarea>
       ${SH.set.pending ? `<div class="err">This replaces everything here with the backup from ${esc(fmtShort(SH.set.pending.day || String(SH.set.pending.exportedAt || "").slice(0, 10) || todayId()))}: ${SH.set.pending.items.filter(i => i.status === "fresh").length} foods in the fridge, ${Object.keys(SH.set.pending.days || {}).length} days of meals.</div><div class="grid2"><button class="btn danger" data-act="restore-yes">Replace my data</button><button class="btn soft" data-act="restore-no">Cancel</button></div>` : `<button class="btn soft sm" data-act="restore-check" style="align-self:flex-start">Check backup</button>`}</div>` : `<button class="btn soft sm" data-act="restore-open" style="align-self:flex-start">Restore from a backup</button>`}</div>`;
   h += `<button class="btn soft block" data-act="replay-welcome">Replay the welcome tour</button>`;
-  h += `<p class="muted tiny" style="margin:4px 0 0;text-align:center">Snatched v31 · updates load each time you open the app</p>`;
+  h += `<p class="muted tiny" style="margin:4px 0 0;text-align:center">Snatched v32 · updates load each time you open the app</p>`;
   h += s.confirmReset ? `<div class="err">Delete every food, meal and habit check? This can't be undone.</div><div class="grid2"><button class="btn danger" data-act="reset-yes">Delete all</button><button class="btn soft" data-act="reset-no">Keep my data</button></div>` : `<button class="btn danger block" data-act="reset-ask">Start fresh</button>`;
   return h + `</div>`;
 }
@@ -5033,7 +5034,7 @@ const plannedWorkPerDay = () => bodyReady() ? (+fit().weekWorkouts || 3) * (5 - 
 function moveBonus(T) {
   const b = burnFor(T); if (!b) return 0;
   if (b.src === "health") return Math.max(0, b.total - (+S.settings.burnGoal || expectedBurn()));
-  const sg = stepGoal() || 8000, st = +actOf(T).steps || 0;
+  const sg = (stepGoal() || 8000) + (typeof weekPlan === "function" ? weekPlan(T).steps : 0), st = +actOf(T).steps || 0; // catch-up steps don't earn food back
   return Math.round(Math.max(0, st - sg) * kcalPerStep() + Math.max(0, b.work - plannedWorkPerDay()));
 }
 const r5 = x => Math.round(x / 5) * 5, r50 = x => Math.round(x / 50) * 50;
@@ -5200,7 +5201,7 @@ function ledgerCard(T) {
     } else {
       h += row("Digestion & everyday life", num(b.base - bmr()), "", "Eating, standing, moving around (not steps)");
       const st = +a.steps || 0;
-      const sg = stepGoal() || 8000, extra = Math.max(0, st - sg); h += row(`👟 Steps · ${num(st)}`, num(b.steps), "", st >= sg ? `Goal ${num(sg)} hit · +${num(Math.round(extra * kcalPerStep()))} kcal added to what you can eat` : `${num(sg - st)} to your ${num(sg)} goal · ~${Math.round(kcalPerStep() * 1000)} kcal per 1,000 steps`);
+      const cs = typeof weekPlan === "function" ? weekPlan(T).steps : 0, sg = (stepGoal() || 8000) + cs, extra = Math.max(0, st - sg); h += row(`👟 Steps · ${num(st)}`, num(b.steps), "", (st >= sg ? `Goal ${num(sg)} hit · +${num(Math.round(extra * kcalPerStep()))} kcal added to what you can eat` : `${num(sg - st)} to your ${num(sg)} goal · ~${Math.round(kcalPerStep() * 1000)} kcal per 1,000 steps`) + (cs ? ` (includes +${num(cs)} catch-up steps)` : ""));
       for (const w of workoutBurnParts(T)) {
         const raw = (a.workouts || []).find(x => x.id === w.id) || {};
         h += `<div class="lg-wrow">${row(w.label, num(w.kcal), "", [w.note, raw.app ? `your watch: ${num(raw.app)} kcal` : ""].filter(Boolean).join(" · "))}<button class="lg-x" data-act="lg-wedit" data-id="${esc(w.id)}">Edit</button><button class="lg-x" data-act="lg-wdel" data-day="${T}" data-id="${esc(w.id)}" aria-label="Remove ${esc(w.label)}">Remove</button></div>`;
@@ -5436,11 +5437,21 @@ function weekSoFar(T) {
   const b = weekBank(T), t = dayBalance(T), all = t && t.counted ? [...b.done, { ...t, live: true }] : b.done;
   return { ...b, all, todayIn: !!(t && t.counted), sumAll: all.reduce((s, x) => s + x.diff, 0), netAll: all.reduce((s, x) => s + x.net, 0) };
 }
-function weekAdj(T) {
+// how far off the week is, per remaining day (capped at ±150)
+function weekRaw(T) {
   if (!weekOn()) return 0;
   const w = weekBank(T); if (!w.done.length) return 0;
   return Math.max(-WEEK_CAP, Math.min(WEEK_CAP, Math.round(w.sum / Math.max(1, w.left) / 10) * 10));
 }
+// catching up: eat a bit less, move a bit more, or half and half. Being ahead always means you can eat a bit more.
+const catchMode = () => S.settings.catchup || "both";
+function weekPlan(T) {
+  const raw = weekRaw(T); if (raw >= 0) return { raw, eat: raw, steps: 0 };
+  const share = catchMode() === "eat" ? 1 : catchMode() === "move" ? 0 : 0.5;
+  const eat = Math.round(raw * share / 10) * 10, moveK = -(raw - eat);
+  return { raw, eat, steps: moveK > 0 ? Math.round(moveK / kcalPerStep() / 100) * 100 : 0, moveK };
+}
+const weekAdj = T => weekPlan(T).eat;
 function weekCard(T) {
   if (!bodyReady() || S.settings.noNumbers) return "";
   const today = todayId(), start = weekStartOf(T), days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
@@ -5456,7 +5467,7 @@ function weekCard(T) {
     const h = Math.min(50, Math.abs(x.diff) / max * 50);
     return `<div class="wk-c${x.low ? " low" : ""}" title="${num(x.net)} kcal deficit"><span class="wk-b"><i class="${x.diff >= 0 ? "up" : "dn"}" style="height:${h}%"></i></span><small>${lab}</small></div>`;
   };
-  const lows = done.filter(x => x.low);
+  const lows = done.filter(x => x.low && !x.live);
   const us = (S.settings.units || "us") === "us";
   let h = `<div class="weekcard"><div class="aimtop"><b>This week</b><button class="linkbtn" data-act="wk-toggle">${weekOn() ? "Balancing on" : "Balancing off"}</button></div>`;
   if (!done.length) h += `<p class="wk-big">Your week starts banking tonight.</p><small>Each fully logged day adds how far ahead or behind your ${num(tgt)} kcal deficit goal you finished. Fat loss follows the week, not any single day.</small>`;
@@ -5467,7 +5478,18 @@ function weekCard(T) {
       ${live && past.length ? `<small>${past.map(x => `${esc(parseId(x.d).toLocaleDateString(undefined, { weekday: "short" }))}: ${x.net >= 0 ? `${num(x.net)} deficit` : `${num(-x.net)} surplus`} (${x.diff >= 0 ? "+" : "−"}${num(Math.abs(x.diff))} vs goal)`).join(" · ")} · Today: ${num(live.net)} deficit (${live.diff >= 0 ? "+" : "−"}${num(Math.abs(live.diff))})</small>` : ""}`;
   }
   h += `<div class="wk-bars">${rows.map(bar).join("")}</div>`;
-  if (weekOn() && adj) h += `<p class="wk-note">${adj > 0 ? `You were ahead going into today, so today's budget is <b>+${adj} kcal</b>.` : `To even out the days before today, today's budget is <b>${adj} kcal</b>.`} Spread over the ${weekBank(today).left} days left and never more than ${WEEK_CAP} a day, so you're never asked to make up a day by eating very little.</p>`;
+  if (weekOn()) {
+    const pl = weekPlan(today), left = weekBank(today).left;
+    const tmr = addDays(today, 1), daysAfter = Math.max(1, 7 - diffDays(start, tmr));
+    const perDay = Math.round(Math.max(-WEEK_CAP, Math.min(WEEK_CAP, sum / daysAfter)) / 10) * 10;
+    const how = k => catchMode() === "eat" ? `a budget ${k} lower` : catchMode() === "move" ? `~${num(Math.round(k / kcalPerStep() / 100) * 100)} extra steps` : `${Math.round(k / 2 / 10) * 10} less food + ~${num(Math.round(k / 2 / kcalPerStep() / 100) * 100)} extra steps`;
+    if (pl.raw > 0) h += `<p class="wk-note">You were ahead going into today, so today's budget is <b>+${pl.raw} kcal</b>.</p>`;
+    else if (pl.raw < 0) h += `<p class="wk-note">Catching up today: ${pl.eat ? `<b>${-pl.eat} kcal</b> off your budget` : ""}${pl.eat && pl.steps ? " and " : ""}${pl.steps ? `<b>+${num(pl.steps)} steps</b> (≈ ${Math.round(pl.steps / 110)} min of walking)` : ""}.</p>`;
+    if (live && tmr <= days[6] && perDay < 0) h += `<p class="wk-note muted">If today ends here, the rest of the week needs about <b>${-perDay} kcal a day</b> for ${daysAfter} day${daysAfter === 1 ? "" : "s"}: ${how(-perDay)} a day.</p>`;
+    else if (live && sum >= 0) h += `<p class="wk-note muted">With today, you've made up the week so far. 🎉</p>`;
+    h += `<div class="seg wk-seg"><button class="${catchMode() === "eat" ? "on" : ""}" data-act="wk-mode" data-v="eat">Eat less</button><button class="${catchMode() === "both" ? "on" : ""}" data-act="wk-mode" data-v="both">Both</button><button class="${catchMode() === "move" ? "on" : ""}" data-act="wk-mode" data-v="move">Move more</button></div>
+      <small>How to catch up when you're short. Never more than ${WEEK_CAP} kcal a day, so a big day gets spread out, never "paid back" with a very low one.</small>`;
+  }
   h += `<button class="btn soft block" data-act="wk-report">See this week's report</button>`;
   if (lows.length) h += `<p class="wk-warn">${lows.map(x => esc(parseId(x.d).toLocaleDateString(undefined, { weekday: "long" }))).join(" and ")} ${lows.length === 1 ? "was" : "were"} 400+ kcal under budget. Very low days often swing back as hunger the next day and make protein harder to hit. Aim to land within about 150 of your budget and let the week do the balancing.</p>`;
   return h + `</div>`;
@@ -5476,6 +5498,11 @@ document.addEventListener("click", e => {
   const el = e.target.closest('[data-act="wk-toggle"]'); if (!el) return;
   S.settings = { ...S.settings, weekly: !weekOn() && S.settings.weekly === false ? true : false }; putSettings(); renderAll(); refreshSheet();
   toast(S.settings.weekly === false ? "Weekly balancing off. Every day uses its own budget." : "Weekly balancing on.");
+});
+
+document.addEventListener("click", e => {
+  const el = e.target.closest('[data-act="wk-mode"]'); if (!el) return;
+  S.settings = { ...S.settings, catchup: el.dataset.v }; putSettings(); renderAll(); refreshSheet();
 });
 
 /* ---------- weight goal + weekly reports ----------
