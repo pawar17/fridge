@@ -1194,6 +1194,8 @@ body[data-tab=chat] .rc-bar i{background:var(--ink)}
 .rp-row{display:flex;gap:8px;align-items:baseline;margin:0;padding:4px 0;font-size:13.5px}.rp-row span:first-child{width:14px;font-weight:700}.rp-row.ok span:first-child{color:#1f8a4c}.rp-row.no span:first-child{color:var(--ink-2)}.rp-row span:nth-child(2){flex:1}.rp-row b{font-variant-numeric:tabular-nums}
 .rp-h{margin:8px 0 0;font-family:var(--fa);font-size:16px}.rp-p{margin:2px 0;font-size:13px;line-height:1.4}
 .rp-tip{margin:6px 0 0;font-size:12px;color:var(--ink-2)}
+.bh-q{margin:0;font-size:14px;line-height:1.4}.bh-q b{font-weight:700}
+.kfix{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;margin-top:8px}.kfix .inp{padding:9px 10px;font-size:15px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -3915,9 +3917,15 @@ function applyActions(res) {
   for (const m0 of res.meals || []) {
     if (!m0) continue;
     const m = buildMeal(m0); if (!m.items.length && !m.kcal) continue;
-    if (m0.source && (dayOf(T).meals || []).some(x => normName(x.name) === normName(m.name) || (x.via && x.via === m0.source && x.slot === m.slot))) { blocks.push({ k: "dup", names: [m.name] }); continue; }
+    // same food already on this day? ask instead of silently skipping (imports from other apps also match on app + meal time)
+    const isImport = !!m0.source && /fitness ?pal|mfp|cal ?ai|lose ?it|cronometer|apple|health|strava|hevy|screenshot|import/i.test(String(m0.source));
+    const prev = !res.again && (dayOf(T).meals || []).find(x => normName(x.name) === normName(m.name) || (isImport && x.via && x.via === m0.source && x.slot === m.slot));
+    const pend = { name: m.name, kcal: m.kcal, protein: m.protein, carbs: m.carbs, fat: m.fat, fiber: m.fiber, slot: m.slot, portion: 1, src: "chat", ...(isImport ? { via: String(m0.source) } : {}), items: m.items.map(({ look, ...x }) => x), uses: [] };
+    if (prev) { blocks.push({ k: "dupask", id: uid(), day: T, name: m.name, slot: m.slot, kcal: m.kcal, prevSlot: prev.slot || "snack", prevKcal: prev.kcal, meal: pend }); continue; }
+    // nothing we could put a number on: ask for it rather than logging a 0 that never shows in your totals
+    if (!(m.kcal > 0) && !S.settings.noNumbers) { blocks.push({ k: "needkcal", id: uid(), day: T, name: m.name, slot: m.slot, meal: pend }); continue; }
     const fridgeNames = []; m.items.forEach(x => { if (x.rid) return; const it = fridgeMatch(canon(x.name)); if (it && !fridgeNames.includes(it.name)) fridgeNames.push(it.name); });
-    const meal = { id: uid(), name: m.name, kcal: m.kcal, protein: m.protein, carbs: m.carbs, fat: m.fat, fiber: m.fiber, slot: m.slot, portion: 1, src: "chat", ...(m0.source ? { via: String(m0.source) } : {}), items: m.items.map(({ look, ...x }) => x), uses: [] };
+    const meal = { id: uid(), name: m.name, kcal: m.kcal, protein: m.protein, carbs: m.carbs, fat: m.fat, fiber: m.fiber, slot: m.slot, portion: 1, src: "chat", ...(isImport ? { via: String(m0.source) } : {}), items: m.items.map(({ look, ...x }) => x), uses: [] };
     editDay(T, d => d.meals.push(meal)); U.meals.push(meal.id); track("logs"); track("logMs", 1500);
     blocks.push(mealBlock(meal, { via: meal.via || "", fridge: fridgeNames, note: m.recipeNote || "", guess: m.items.some(x => x.look), pattern: patternNote(meal) }));
   }
@@ -3967,7 +3975,7 @@ function applyActions(res) {
   const gch = setGoalsFrom(res.set_goals, U); if (gch.length) blocks.push({ k: "goals", names: gch });
   const hab = habitsFrom(res.habits_done, U); if (hab.length) blocks.push({ k: "habits", names: hab });
   const ideas = (Array.isArray(res.ideas) ? res.ideas : []).filter(r => r && r.name).slice(0, 3).map(r => ({ name: String(r.name), minutes: +r.minutes || 15, kcal: r0(r.kcal), protein: r0(r.protein), uses: Array.isArray(r.uses) ? r.uses.map(String) : [], ingredients: Array.isArray(r.ingredients) ? r.ingredients.map(String) : [], steps: Array.isArray(r.steps) ? r.steps.map(String) : [] }));
-  const any = blocks.length > 0;
+  const any = blocks.some(b => !["dupask", "needkcal", "dayto"].includes(b.k));
   if (res.report && bodyReady()) blocks.push(weekReport(weekStartOf(todayId())));
   if (T !== todayId() && blocks.length) blocks.unshift({ k: "dayto", day: T });
   return { day: T, blocks, ideas, undo: any ? U : null, tracked: blocks.some(b => ["meal", "workout", "steps", "active", "removed", "habits"].includes(b.k)) };
@@ -4149,10 +4157,12 @@ async function chatSend(textArg) {
     res = localParse(clean); if (dm) res.day = dm[1]; else if (yd) res.day = "yesterday"; if (err) res.reply = (res.reply ? res.reply + " " : "") + `(${err} I used the offline reader.)`;
   }
   if (res && typeof res === "object") { try { const rr = tidyRes(res), st = brandGuess({ name: text }); if (st) { const cut = s => String(s || "").replace(new RegExp("\\s*(from|at|by)\\s+" + st.store + "\\S*", "i"), "").trim(); rr.meals.forEach(m => { m.name = cut(m.name) || m.name; (m.items || []).forEach(x => { if (!x.brand) x.store = st.store; x.name = cut(x.name) || x.name; }); }); } if (rr.meals.some(m => (m.items || []).some(needsLabel))) { res = rr; await labelLookup(res.meals, CH.ctl.signal); } } catch (e) { if (e?.name === "AbortError") { CH.busy = false; pushMsg({ who: "app", text: "Stopped." }); return; } } }
+  if (res && typeof res === "object" && /\b(again|another|second|one more|2nd)\b/i.test(text)) res.again = true;
   CH.busy = false;
   const out = applyActions(res);
   const answer = String(res.answer || "").trim();
-  const reply = String(res.reply || "").trim() || (out.blocks.length ? "Saved." : "");
+  const asks = out.blocks.filter(b => b.k === "dupask" || b.k === "needkcal"), saved = out.blocks.filter(b => b.k !== "dupask" && b.k !== "needkcal" && b.k !== "dayto");
+  const reply = asks.length && !saved.length ? "" : asks.length ? "Saved the rest." : String(res.reply || "").trim() || (out.blocks.length ? "Saved." : "");
   if (!out.blocks.length && !answer && !out.ideas.length) { pushMsg({ who: "app", text: ((res.meals || res.meal || res.delete_meal_ids) ? "Nothing was saved, sorry. " : "") + "I didn't find anything to save there. Try “lunch: 150 g chicken, 1 cup rice” or “bought eggs and spinach”.", retry: text }); return; }
   pushMsg({ who: "app", text: [reply, answer].filter(Boolean).join(" "), blocks: out.blocks, ideas: out.ideas, undo: out.undo, tracked: out.tracked, day: out.day });
 }
@@ -4298,6 +4308,8 @@ function itemRow(x, nn) { return `<li><span>${esc(x.name)}${x.brand ? ` <em>${es
 const BLK = { meal: ["peach", "bowl"], recipe: ["butter", "book"], workout: ["sky", "dumbbell"], steps: ["sky", "shoe"], active: ["sky", "watch"], weight: ["lilac", "scale"], bought: ["mint", "bag"], have: ["mint", "fridge"], list: ["pink", "note"], unlist: ["pink", "check"], used: ["mint", "check"], tossed: ["tomato", "bin"], removed: ["tomato", "undo"], goals: ["lilac", "star"], habits: ["sky", "drop"], dup: ["butter", "hearts"] };
 const BLK_TAG = { dup: "Already logged, skipped", bought: "Bought · now At home", have: "Now At home", list: "Added To buy", unlist: "Off the To buy list", used: "Used up", tossed: "Tossed", removed: "Removed", goals: "Goals updated", habits: "Habits", steps: "Steps", active: "Apple Health", weight: "Weight" };
 function blockHtml(b, m) {
+  if (b.k === "dupask") return `<div class="blk k-dupask"><span class="sticker"><span class="emo-i">${b.done ? "✅" : "👀"}</span></span><div class="bc">${b.done ? `<p class="bh-q">Logged <b>${esc(b.name)}</b> again${S.settings.noNumbers ? "" : ` · ${num(b.kcal)} kcal`}.</p>` : `<p class="bh-q">You already logged <b>${esc(b.name)}</b>${b.day !== todayId() ? ` on ${esc(dayLabel(b.day).toLowerCase())}` : " today"} (${esc(b.prevSlot)}${S.settings.noNumbers ? "" : `, ${num(b.prevKcal)} kcal`}). Log it again?</p><div class="bact"><button class="pillbtn" data-act="dup-log" data-mid="${esc(m.id)}" data-bid="${esc(b.id)}">Yes, log it again</button><button class="linkbtn" data-act="dup-no" data-mid="${esc(m.id)}" data-bid="${esc(b.id)}">No</button></div>`}</div></div>`;
+  if (b.k === "needkcal") return `<div class="blk k-needkcal"><span class="sticker"><span class="emo-i">${b.done ? "✅" : "🔎"}</span></span><div class="bc">${b.done ? `<p class="bh-q">Logged <b>${esc(b.name)}</b> · ${num(b.kcal)} kcal.</p>` : `<p class="bh-q">I couldn't find nutrition for <b>${esc(b.name)}</b>, so it's not in your totals yet. Add the calories (from the label or the menu) to log it, or tell me more, like the brand or size.</p><div class="kfix"><input class="inp" type="number" inputmode="numeric" placeholder="kcal" data-kfix="kcal" data-bid="${esc(b.id)}"><input class="inp" type="number" inputmode="decimal" placeholder="protein g" data-kfix="protein" data-bid="${esc(b.id)}"><button class="pillbtn" data-act="kfix-log" data-mid="${esc(m.id)}" data-bid="${esc(b.id)}">Log it</button></div>`}</div></div>`;
   if (b.k === "report") return reportHtml(b);
   if (b.k === "dayto") return `<div class="dayto">📅 Logged to <b>${esc(dayLabel(b.day))}</b> · <button class="linkbtn" data-act="open-day" data-d="${esc(b.day)}">See that day</button></div>`;
   const nn = S.settings.noNumbers, [col, emo0] = BLK[b.k] || ["lilac", "✨"];
@@ -4658,6 +4670,30 @@ document.addEventListener("change", e => {
   setTimeout(() => { if (SH?.kind === "goals") renderSheet(); }, 0);
 });
 
+
+/* ---------- answers to "log it again?" and "how many calories?" ---------- */
+function addPendingMeal(msgId, bid, patch = {}) {
+  const m = CH.msgs.find(x => x.id === msgId), b = m?.blocks?.find(x => x.id === bid); if (!m || !b || b.done) return null;
+  const T = b.day || todayId(), meal = { ...b.meal, ...patch, id: uid() };
+  editDay(T, d => d.meals.push(meal));
+  if (!m.undo) m.undo = { day: T, meals: [], workouts: [], items: [], itemPrev: [], recipes: [], recipePrev: [], delMeals: [], delWorkouts: [] };
+  m.undo.meals.push(meal.id); m.tracked = true; m.day = T; b.done = true; b.kcal = meal.kcal; track("logs");
+  chatSave(); renderAll(); refreshSheet(); return meal;
+}
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  const a = el.dataset.act;
+  if (a === "dup-log") { const meal = addPendingMeal(el.dataset.mid, el.dataset.bid); if (meal) toast(`Logged ${meal.name} again.`); }
+  else if (a === "dup-no") { const m = CH.msgs.find(x => x.id === el.dataset.mid), b = m?.blocks?.find(x => x.id === el.dataset.bid); if (m && b) { m.blocks = m.blocks.filter(x => x !== b); if (!m.blocks.length && !m.text) m.text = "Okay, not logged again."; chatSave(); renderAll(); } }
+  else if (a === "kfix-log") {
+    const box = el.closest(".kfix"), k = +box.querySelector('[data-kfix="kcal"]').value, p = +box.querySelector('[data-kfix="protein"]').value || 0;
+    if (!(k > 0)) { toast("Add the calories first."); return; }
+    const m = CH.msgs.find(x => x.id === el.dataset.mid), b = m?.blocks?.find(x => x.id === el.dataset.bid); if (!b) return;
+    const items = [{ name: b.name, amt: b.meal.items?.[0]?.amt || "1 serving", kcal: Math.round(k), protein: p, carbs: 0, fat: 0, fiber: 0, typed: true }];
+    const meal = addPendingMeal(el.dataset.mid, el.dataset.bid, { kcal: Math.round(k), protein: p, items });
+    if (meal) toast(`Logged ${meal.name}.`);
+  }
+});
 
 /* ===================== Train: split, exercise library for your gym, set logging ===================== */
 const GROUPS = [["glutes", "Glutes"], ["hamstrings", "Hamstrings"], ["quads", "Quads"], ["calves", "Calves"], ["chest", "Chest"], ["shoulders", "Shoulders"], ["triceps", "Triceps"], ["back", "Back"], ["biceps", "Biceps"], ["core", "Core"], ["conditioning", "Cardio"]];
