@@ -1196,6 +1196,10 @@ body[data-tab=chat] .rc-bar i{background:var(--ink)}
 .rp-tip{margin:6px 0 0;font-size:12px;color:var(--ink-2)}
 .bh-q{margin:0;font-size:14px;line-height:1.4}.bh-q b{font-weight:700}
 .kfix{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;margin-top:8px}.kfix .inp{padding:9px 10px;font-size:15px}
+.lg-wform{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;align-items:end;padding:6px 0 10px}
+.lg-wform label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--ink-2);font-weight:600}
+.lg-wform .inp{padding:8px;font-size:15px}.lg-wform .pillbtn{grid-column:1/-1}
+.lg-wrow .lg-x+.lg-x{margin-left:4px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -3302,7 +3306,7 @@ function vSettings() {
     ${SH.set.restore ? `<div class="stack" style="gap:8px"><label class="drop" for="restoreFile" style="padding:14px"><input type="file" id="restoreFile" accept=".json,application/json,text/plain"><b>Choose a backup file</b><span class="muted tiny">or paste copied data below</span></label><textarea class="inp" id="restoreText" rows="3" placeholder="Paste backup here" style="font:12px ui-monospace,Menlo,monospace"></textarea>
       ${SH.set.pending ? `<div class="err">This replaces everything here with the backup from ${esc(fmtShort(SH.set.pending.day || String(SH.set.pending.exportedAt || "").slice(0, 10) || todayId()))}: ${SH.set.pending.items.filter(i => i.status === "fresh").length} foods in the fridge, ${Object.keys(SH.set.pending.days || {}).length} days of meals.</div><div class="grid2"><button class="btn danger" data-act="restore-yes">Replace my data</button><button class="btn soft" data-act="restore-no">Cancel</button></div>` : `<button class="btn soft sm" data-act="restore-check" style="align-self:flex-start">Check backup</button>`}</div>` : `<button class="btn soft sm" data-act="restore-open" style="align-self:flex-start">Restore from a backup</button>`}</div>`;
   h += `<button class="btn soft block" data-act="replay-welcome">Replay the welcome tour</button>`;
-  h += `<p class="muted tiny" style="margin:4px 0 0;text-align:center">Snatched v28 · updates load each time you open the app</p>`;
+  h += `<p class="muted tiny" style="margin:4px 0 0;text-align:center">Snatched v29 · updates load each time you open the app</p>`;
   h += s.confirmReset ? `<div class="err">Delete every food, meal and habit check? This can't be undone.</div><div class="grid2"><button class="btn danger" data-act="reset-yes">Delete all</button><button class="btn soft" data-act="reset-no">Keep my data</button></div>` : `<button class="btn danger block" data-act="reset-ask">Start fresh</button>`;
   return h + `</div>`;
 }
@@ -4057,6 +4061,7 @@ ${staplesForPrompt()}
 - Which day: if I say yesterday, last night, or a weekday/date that has passed, set top-level "day" to that date as YYYY-MM-DD (today is ${todayId()}). "Add it to yesterday" / "that was yesterday" about something already logged today = delete it from today (its id in delete_meal_ids / delete_workout_ids) and log it again with "day" set to yesterday. Leave "day" out for today.
 - "slot": breakfast, lunch, dinner or snack. Use my words, otherwise the time of day.
 - Branded or named classes and studios (SoulCycle, Bout Fit Club, Barry's, Orangetheory, Solidcore, F45, Rumble, a gym's named class…): add "studio": the studio/class name and "research": true so the app looks up what the class actually involves; still give your best type, minutes and MET. If I didn't give a length, set "minutes_guessed": true.
+- Classes with no length given: assume a standard class (pilates, yoga, barre ≈ 50 min; spin, HIIT, boxing ≈ 45 min) and set "minutes_guessed": true. Match MET to how hard it sounds: pilates/barre ≈ 3 gentle, ≈ 4 a challenging mat class, ≈ 5 a hard reformer or "power" class; yoga ≈ 2.5 gentle, ≈ 4 vinyasa/power/hot.
 - Workouts: "type" is one of ${WTYPES.join(", ")}. Give minutes and a MET from the Compendium of Physical Activities that matches the pace, intensity, incline or weight I describe. Put distance, pace, sets x reps x weight in "details". If minutes are missing, estimate them and say so in details.
 - Other apps (screenshots or pasted text): Strava activity → a workout with distance, pace, elevation in details and the calories it shows as "app_kcal". Hevy workout → a gym workout with each exercise's sets x reps x weight in details, its duration, and calories if shown. MyFitnessPal diary → one meal per section (breakfast, lunch, dinner, snacks) with each food and its calories and macros as shown. Apple Health or Fitness → steps, active_kcal, and any workouts. Set "source" to the app's name on everything you import. Skip anything that matches a meal or workout already logged today (same food or same type and similar time), so nothing is counted twice.
 - Steps → "steps". Active calories from my watch → "active_kcal". My body weight → "weight".
@@ -5158,7 +5163,7 @@ function workoutBurnParts(T) {
     const full = workoutKcal(w), m = WK[w.type] || [];
     // walks/runs/hikes are partly already in your steps, so only the extra counts (same rule as the burn maths)
     const overlap = +a.steps > 0 && ["walk", "run", "hike"].includes(w.type) ? Math.round((+w.min || 0) * (w.type === "run" ? 160 : 105) * spc) : 0;
-    return { id: w.id, label: `${m[1] || "💪"} ${esc(w.name || m[2] || w.type)} · ${w.min} min`, kcal: Math.max(0, full - overlap), note: overlap ? "on top of its steps" : w.kcal != null ? "from your app" : "" };
+    return { id: w.id, label: `${m[1] || "💪"} ${esc(w.name || m[2] || w.type)} · ${w.min} min`, kcal: Math.max(0, full - overlap), note: overlap ? "on top of its steps" : w.via ? `from ${w.via}` : w.app ? "" : (w.met ? `effort score ${w.met}` : "") };
   });
 }
 function ledgerCard(T) {
@@ -5190,7 +5195,11 @@ function ledgerCard(T) {
       h += row("Digestion & everyday life", num(b.base - bmr()), "", "Eating, standing, moving around (not steps)");
       const st = +a.steps || 0;
       const sg = stepGoal() || 8000, extra = Math.max(0, st - sg); h += row(`👟 Steps · ${num(st)}`, num(b.steps), "", st >= sg ? `Goal ${num(sg)} hit · +${num(Math.round(extra * kcalPerStep()))} kcal added to what you can eat` : `${num(sg - st)} to your ${num(sg)} goal · ~${Math.round(kcalPerStep() * 1000)} kcal per 1,000 steps`);
-      for (const w of workoutBurnParts(T)) h += `<div class="lg-wrow">${row(w.label, num(w.kcal), "", w.note)}<button class="lg-x" data-act="lg-wdel" data-day="${T}" data-id="${esc(w.id)}" aria-label="Remove ${esc(w.label)}">Remove</button></div>`;
+      for (const w of workoutBurnParts(T)) {
+        const raw = (a.workouts || []).find(x => x.id === w.id) || {};
+        h += `<div class="lg-wrow">${row(w.label, num(w.kcal), "", [w.note, raw.app ? `your watch: ${num(raw.app)} kcal` : ""].filter(Boolean).join(" · "))}<button class="lg-x" data-act="lg-wedit" data-id="${esc(w.id)}">Edit</button><button class="lg-x" data-act="lg-wdel" data-day="${T}" data-id="${esc(w.id)}" aria-label="Remove ${esc(w.label)}">Remove</button></div>`;
+        if (UI.wedit === w.id) h += `<div class="lg-wform"><label>Minutes<input class="inp" type="number" inputmode="numeric" value="${esc(raw.min || "")}" data-wf="min"></label><label>How hard<select class="inp" data-wf="lvl">${[["", "Keep"], ["easy", "Easy"], ["mod", "Moderate"], ["hard", "Hard"]].map(([v, t]) => `<option value="${v}">${t}</option>`).join("")}</select></label><label>Watch kcal<input class="inp" type="number" inputmode="numeric" placeholder="optional" value="${esc(raw.app || "")}" data-wf="app"></label><button class="pillbtn" data-act="lg-wsave" data-day="${T}" data-id="${esc(w.id)}">Save</button></div>`;
+      }
       if (!(a.workouts || []).length) h += `<p class="lg-empty">No workouts logged yet.</p>`;
     }
     h += isToday ? `<button class="lg-add" data-act="open" data-sheet="fitness">+ Add workout or steps</button>` : `<button class="lg-add" data-act="lg-addto" data-d="${T}" data-what="workout">+ Add a workout or steps to ${esc(dl.toLowerCase() === "yesterday" ? "yesterday" : fmtShort(T))}</button>`;
@@ -5228,6 +5237,24 @@ document.addEventListener("click", e => {
     const d = el.dataset.d, lab = dayLabel(d) === "Yesterday" ? "Yesterday" : parseId(d).toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" });
     closeSheet(); if (CH.tab !== "chat") { CH.tab = "chat"; renderAll(); }
     setTimeout(() => { const ti = $("#chIn"); if (!ti) return; ti.value = `${lab} (${d}) I ${el.dataset.what === "workout" ? "did " : "ate "}`; CH.draft = ti.value; ti.focus(); ti.setSelectionRange(ti.value.length, ti.value.length); }, 300);
+  }
+});
+
+// fix a workout: real length, how hard it was, or the number from your watch
+const LVL = { easy: 0.8, mod: 1.15, hard: 1.5 };
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  if (el.dataset.act === "lg-wedit") { UI.wedit = UI.wedit === el.dataset.id ? null : el.dataset.id; refreshSheet(); }
+  else if (el.dataset.act === "lg-wsave") {
+    const box = el.closest(".lg-wform"), T = el.dataset.day || todayId(), id = el.dataset.id;
+    const min = Math.round(+box.querySelector('[data-wf="min"]').value || 0), lvl = box.querySelector('[data-wf="lvl"]').value, app = Math.round(+box.querySelector('[data-wf="app"]').value || 0);
+    const kg = body()?.weightKg || 65;
+    editAct(T, a => { a.workouts = (a.workouts || []).map(w => { if (w.id !== id) return w;
+      const m = min > 0 ? min : w.min, base = WK[w.type]?.[3] || 4, met = lvl ? Math.round(base * LVL[lvl] * 10) / 10 : (+w.met || base);
+      // a watch reports total burn; take off the resting part so it isn't counted twice
+      const kcal = app > 0 ? Math.max(0, Math.round(app - kg * m / 60)) : Math.round((met - 1) * kg * m / 60);
+      return { ...w, min: m, met, kcal, ...(app > 0 ? { app } : { app: undefined }) }; }); });
+    UI.wedit = null; refreshSheet(); toast("Workout updated.");
   }
 });
 
