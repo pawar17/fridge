@@ -3306,7 +3306,7 @@ function vSettings() {
     ${SH.set.restore ? `<div class="stack" style="gap:8px"><label class="drop" for="restoreFile" style="padding:14px"><input type="file" id="restoreFile" accept=".json,application/json,text/plain"><b>Choose a backup file</b><span class="muted tiny">or paste copied data below</span></label><textarea class="inp" id="restoreText" rows="3" placeholder="Paste backup here" style="font:12px ui-monospace,Menlo,monospace"></textarea>
       ${SH.set.pending ? `<div class="err">This replaces everything here with the backup from ${esc(fmtShort(SH.set.pending.day || String(SH.set.pending.exportedAt || "").slice(0, 10) || todayId()))}: ${SH.set.pending.items.filter(i => i.status === "fresh").length} foods in the fridge, ${Object.keys(SH.set.pending.days || {}).length} days of meals.</div><div class="grid2"><button class="btn danger" data-act="restore-yes">Replace my data</button><button class="btn soft" data-act="restore-no">Cancel</button></div>` : `<button class="btn soft sm" data-act="restore-check" style="align-self:flex-start">Check backup</button>`}</div>` : `<button class="btn soft sm" data-act="restore-open" style="align-self:flex-start">Restore from a backup</button>`}</div>`;
   h += `<button class="btn soft block" data-act="replay-welcome">Replay the welcome tour</button>`;
-  h += `<p class="muted tiny" style="margin:4px 0 0;text-align:center">Snatched v30 · updates load each time you open the app</p>`;
+  h += `<p class="muted tiny" style="margin:4px 0 0;text-align:center">Snatched v31 · updates load each time you open the app</p>`;
   h += s.confirmReset ? `<div class="err">Delete every food, meal and habit check? This can't be undone.</div><div class="grid2"><button class="btn danger" data-act="reset-yes">Delete all</button><button class="btn soft" data-act="reset-no">Keep my data</button></div>` : `<button class="btn danger block" data-act="reset-ask">Start fresh</button>`;
   return h + `</div>`;
 }
@@ -4035,7 +4035,7 @@ Yesterday's workouts: ${workoutsOn(addDays(T, -1)).map(w => `id ${w.id}: ${w.nam
 In my fridge/pantry: ${fridge.join(", ") || "(empty)"}
 My grocery list: ${list.join(", ") || "(empty)"}
 Weight goal: ${(() => { const a = aim(), g = goalMath(a); return g ? `${a.startKg ? `started ${a.startKg} kg, ` : ""}now ${g.now} kg, target ${a.targetKg} kg${a.byDay ? ` by ${a.byDay}` : ""}. ${goalLine(g)}` : "none set"; })()}. Weigh-ins: ${weighIns(addDays(T, -60)).map(w => `${w.d} ${w.kg} kg`).join(", ") || "none"}.
-This week so far (Mon start): ${(() => { if (!bodyReady()) return "n/a"; const w = weekBank(T); return w.done.length ? `${w.done.length} fully logged day(s), total deficit ${num(w.net)} kcal vs goal ${num(deficitTarget() * w.done.length)} → ${num(Math.abs(w.sum))} kcal ${w.sum >= 0 ? "ahead" : "behind"}; today's budget is adjusted by ${weekAdj(T)} kcal (capped at ±150). Per day: ${w.days.map(x => `${x.d} ate ${x.eaten}, burned ${x.burn}, deficit ${x.net}${x.counted ? "" : " (not fully logged, not counted)"}`).join("; ")}. When I ask about deficits across days, use these numbers and explain that fat loss follows the weekly total; never suggest making up a day with a very low-calorie day.` : "no full days logged yet"; })()}
+This week so far (Mon start): ${(() => { if (!bodyReady()) return "n/a"; const w = weekBank(T); return w.done.length ? `${w.done.length} finished day(s) before today: net ${w.net >= 0 ? "deficit" : "surplus"} ${num(Math.abs(w.net))} kcal vs goal ${num(deficitTarget() * w.done.length)} → ${num(Math.abs(w.sum))} kcal ${w.sum >= 0 ? "ahead" : "short"}. Including today so far: ${(() => { const s = weekSoFar(T); return `net ${s.netAll >= 0 ? "deficit" : "surplus"} ${num(Math.abs(s.netAll))} vs goal ${num(deficitTarget() * s.all.length)} → ${num(Math.abs(s.sumAll))} ${s.sumAll >= 0 ? "ahead" : "short"}`; })()}; today's budget is adjusted by ${weekAdj(T)} kcal (capped at ±150). Per day: ${w.days.map(x => `${x.d} ate ${x.eaten}, burned ${x.burn}, deficit ${x.net}${x.counted ? "" : " (not fully logged, not counted)"}`).join("; ")}. When I ask about deficits across days, use these numbers and explain that fat loss follows the weekly total; never suggest making up a day with a very low-calorie day.` : "no full days logged yet"; })()}
 My goals today: ${gl.map(x => `${x.label} ${x.val}${x.done ? " (hit)" : ""}`).join("; ")}
 My daily habits: ${(S.settings.habits || []).map(h => `"${h.name}"${(h.target || 1) > 1 ? ` target ${h.target} ${h.unit || ""}` : ""}`).join(", ") || "(none)"}
 Recent chat:
@@ -4249,7 +4249,7 @@ function stripHtml(T) {
   return `<button class="receipt" data-act="open" data-sheet="calories" aria-label="Calories today, ${num(Math.abs(left))} ${left >= 0 ? "left" : "over"}">
     <div class="rc-top"><span>TODAY'S RECEIPT</span><span>NO. ${no} · ${esc(fmtShort(T).toUpperCase())}</span></div>
     <div class="rc-body"><div class="rc-main"><b class="${left < 0 ? "over" : ""}" data-to="${Math.abs(left)}">${num(Math.abs(left))}</b><span class="script">${left >= 0 ? "kcal left" : "kcal over"}</span></div>
-    <div class="rc-lines">${line("Budget", num(goal))}${weekOn() && weekBank(T).done.length ? line("This week", num(Math.abs(weekBank(T).sum)) + (weekBank(T).sum >= 0 ? " ahead" : " behind"), weekBank(T).sum >= 0 ? "ok" : "") : ""}${line("Eaten", "− " + num(eaten))}${b ? line("Burned", num(b.total) + (S.settings.burnGoal ? `/${num(S.settings.burnGoal)}` : ""), b.total >= (S.settings.burnGoal || 1e9) ? "ok" : "muted") : ""}${line("Protein", `${prot}/${S.settings.protein} g`, prot >= S.settings.protein ? "ok" : "")}${S.settings.fiber ? line("Fiber", `${Math.round(macroOf(T, "fiber"))}/${S.settings.fiber} g`, macroOf(T, "fiber") >= S.settings.fiber ? "ok" : "") : ""}</div></div>
+    <div class="rc-lines">${line("Budget", num(goal))}${weekOn() && weekSoFar(T).all.length ? line("This week", num(Math.abs(weekSoFar(T).sumAll)) + (weekSoFar(T).sumAll >= 0 ? " ahead" : " short"), weekSoFar(T).sumAll >= 0 ? "ok" : "") : ""}${line("Eaten", "− " + num(eaten))}${b ? line("Burned", num(b.total) + (S.settings.burnGoal ? `/${num(S.settings.burnGoal)}` : ""), b.total >= (S.settings.burnGoal || 1e9) ? "ok" : "muted") : ""}${line("Protein", `${prot}/${S.settings.protein} g`, prot >= S.settings.protein ? "ok" : "")}${S.settings.fiber ? line("Fiber", `${Math.round(macroOf(T, "fiber"))}/${S.settings.fiber} g`, macroOf(T, "fiber") >= S.settings.fiber ? "ok" : "") : ""}</div></div>
     <div class="rc-bar"><i class="${left < 0 ? "over" : ""}" style="width:${clamp(eaten / Math.max(goal, 1) * 100, 0, 100)}%"></i></div></button>`;
 }
 function countUp() {
@@ -5432,6 +5432,10 @@ function weekBank(T) {
   const done = days.filter(x => x.counted);
   return { start, days, done, sum: done.reduce((s, x) => s + x.diff, 0), net: done.reduce((s, x) => s + x.net, 0), left: 7 - diffDays(start, T) };
 }
+function weekSoFar(T) {
+  const b = weekBank(T), t = dayBalance(T), all = t && t.counted ? [...b.done, { ...t, live: true }] : b.done;
+  return { ...b, all, todayIn: !!(t && t.counted), sumAll: all.reduce((s, x) => s + x.diff, 0), netAll: all.reduce((s, x) => s + x.net, 0) };
+}
 function weekAdj(T) {
   if (!weekOn()) return 0;
   const w = weekBank(T); if (!w.done.length) return 0;
@@ -5441,7 +5445,8 @@ function weekCard(T) {
   if (!bodyReady() || S.settings.noNumbers) return "";
   const today = todayId(), start = weekStartOf(T), days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
   const rows = days.map(d => d > today ? { d, future: true } : d === today ? { ...dayBalance(d), live: true } : dayBalance(d));
-  const done = rows.filter(x => x && !x.future && !x.live && x.counted), sum = done.reduce((s, x) => s + x.diff, 0), net = done.reduce((s, x) => s + x.net, 0);
+  const done = rows.filter(x => x && !x.future && x.counted), sum = done.reduce((s, x) => s + x.diff, 0), net = done.reduce((s, x) => s + x.net, 0);
+  const past = done.filter(x => !x.live), pastSum = past.reduce((s, x) => s + x.diff, 0), live = done.find(x => x.live);
   const tgt = deficitTarget(), adj = weekAdj(today), max = Math.max(tgt * 2, ...done.map(x => Math.abs(x.diff)), 1);
   const bar = x => {
     const lab = esc(parseId(x.d).toLocaleDateString(undefined, { weekday: "narrow" }));
@@ -5456,11 +5461,13 @@ function weekCard(T) {
   let h = `<div class="weekcard"><div class="aimtop"><b>This week</b><button class="linkbtn" data-act="wk-toggle">${weekOn() ? "Balancing on" : "Balancing off"}</button></div>`;
   if (!done.length) h += `<p class="wk-big">Your week starts banking tonight.</p><small>Each fully logged day adds how far ahead or behind your ${num(tgt)} kcal deficit goal you finished. Fat loss follows the week, not any single day.</small>`;
   else {
-    h += `<p class="wk-big ${sum >= 0 ? "ok" : "over"}">${num(Math.abs(sum))} kcal ${sum >= 0 ? "ahead" : "behind"}</p>
-      <small>${num(net)} kcal total deficit over ${done.length} day${done.length === 1 ? "" : "s"} (goal ${num(tgt * done.length)}) · about ${us ? (net / 3500).toFixed(2) + " lb" : (net / 7700).toFixed(2) + " kg"} of fat</small>`;
+    const fat = Math.abs(net) / (us ? 3500 : 7700);
+    h += `<p class="wk-big ${sum >= 0 ? "ok" : "over"}">${num(Math.abs(sum))} kcal ${sum >= 0 ? "ahead of goal" : "short of goal"}</p>
+      <small>${net >= 0 ? `${num(net)} kcal net deficit` : `${num(-net)} kcal net surplus`} over ${done.length} day${done.length === 1 ? "" : "s"}${live ? " (including today so far)" : ""}. Goal: ${num(tgt)} a day = ${num(tgt * done.length)}. ${net >= 0 ? `That's still about ${fat.toFixed(2)} ${us ? "lb" : "kg"} of fat lost.` : ""}</small>
+      ${live && past.length ? `<small>${past.map(x => `${esc(parseId(x.d).toLocaleDateString(undefined, { weekday: "short" }))}: ${x.net >= 0 ? `${num(x.net)} deficit` : `${num(-x.net)} surplus`} (${x.diff >= 0 ? "+" : "−"}${num(Math.abs(x.diff))} vs goal)`).join(" · ")} · Today: ${num(live.net)} deficit (${live.diff >= 0 ? "+" : "−"}${num(Math.abs(live.diff))})</small>` : ""}`;
   }
   h += `<div class="wk-bars">${rows.map(bar).join("")}</div>`;
-  if (weekOn() && adj) h += `<p class="wk-note">${adj > 0 ? `You're ahead, so today's budget is <b>+${adj} kcal</b>.` : `To even out the week, today's budget is <b>${adj} kcal</b>.`} Spread over the ${weekBank(today).left} days left and never more than ${WEEK_CAP} a day, so you're never asked to make up a day by eating very little.</p>`;
+  if (weekOn() && adj) h += `<p class="wk-note">${adj > 0 ? `You were ahead going into today, so today's budget is <b>+${adj} kcal</b>.` : `To even out the days before today, today's budget is <b>${adj} kcal</b>.`} Spread over the ${weekBank(today).left} days left and never more than ${WEEK_CAP} a day, so you're never asked to make up a day by eating very little.</p>`;
   h += `<button class="btn soft block" data-act="wk-report">See this week's report</button>`;
   if (lows.length) h += `<p class="wk-warn">${lows.map(x => esc(parseId(x.d).toLocaleDateString(undefined, { weekday: "long" }))).join(" and ")} ${lows.length === 1 ? "was" : "were"} 400+ kcal under budget. Very low days often swing back as hunger the next day and make protein harder to hit. Aim to land within about 150 of your budget and let the week do the balancing.</p>`;
   return h + `</div>`;
