@@ -1,4 +1,4 @@
-const C = "snatched-v32";
+const C = "snatched-v33";
 const FILES = ["./", "index.html", "manifest.webmanifest", "star-180.png", "star-192.png", "star-512.png", "tess/tesseract.min.js", "tess/worker.min.js", "tess/tesseract-core-simd-lstm.wasm.js", "tess/tesseract-core-lstm.wasm.js", "tess/eng.traineddata.gz.wasm"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(C).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(k => Promise.all(k.filter(x => x !== C).map(x => caches.delete(x)))).then(() => self.clients.claim())); });

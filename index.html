@@ -1201,6 +1201,7 @@ body[data-tab=chat] .rc-bar i{background:var(--ink)}
 .lg-wform .inp{padding:8px;font-size:15px}.lg-wform .pillbtn{grid-column:1/-1}
 .lg-wrow .lg-x+.lg-x{margin-left:4px}
 .wk-seg{margin-top:2px}.wk-note.muted{color:var(--ink-2);font-size:12.5px}
+.rc-lines small.adj{font-weight:500;color:var(--ink-2);font-size:10.5px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -3307,7 +3308,7 @@ function vSettings() {
     ${SH.set.restore ? `<div class="stack" style="gap:8px"><label class="drop" for="restoreFile" style="padding:14px"><input type="file" id="restoreFile" accept=".json,application/json,text/plain"><b>Choose a backup file</b><span class="muted tiny">or paste copied data below</span></label><textarea class="inp" id="restoreText" rows="3" placeholder="Paste backup here" style="font:12px ui-monospace,Menlo,monospace"></textarea>
       ${SH.set.pending ? `<div class="err">This replaces everything here with the backup from ${esc(fmtShort(SH.set.pending.day || String(SH.set.pending.exportedAt || "").slice(0, 10) || todayId()))}: ${SH.set.pending.items.filter(i => i.status === "fresh").length} foods in the fridge, ${Object.keys(SH.set.pending.days || {}).length} days of meals.</div><div class="grid2"><button class="btn danger" data-act="restore-yes">Replace my data</button><button class="btn soft" data-act="restore-no">Cancel</button></div>` : `<button class="btn soft sm" data-act="restore-check" style="align-self:flex-start">Check backup</button>`}</div>` : `<button class="btn soft sm" data-act="restore-open" style="align-self:flex-start">Restore from a backup</button>`}</div>`;
   h += `<button class="btn soft block" data-act="replay-welcome">Replay the welcome tour</button>`;
-  h += `<p class="muted tiny" style="margin:4px 0 0;text-align:center">Snatched v32 · updates load each time you open the app</p>`;
+  h += `<p class="muted tiny" style="margin:4px 0 0;text-align:center">Snatched v33 · updates load each time you open the app</p>`;
   h += s.confirmReset ? `<div class="err">Delete every food, meal and habit check? This can't be undone.</div><div class="grid2"><button class="btn danger" data-act="reset-yes">Delete all</button><button class="btn soft" data-act="reset-no">Keep my data</button></div>` : `<button class="btn danger block" data-act="reset-ask">Start fresh</button>`;
   return h + `</div>`;
 }
@@ -4250,7 +4251,7 @@ function stripHtml(T) {
   return `<button class="receipt" data-act="open" data-sheet="calories" aria-label="Calories today, ${num(Math.abs(left))} ${left >= 0 ? "left" : "over"}">
     <div class="rc-top"><span>TODAY'S RECEIPT</span><span>NO. ${no} · ${esc(fmtShort(T).toUpperCase())}</span></div>
     <div class="rc-body"><div class="rc-main"><b class="${left < 0 ? "over" : ""}" data-to="${Math.abs(left)}">${num(Math.abs(left))}</b><span class="script">${left >= 0 ? "kcal left" : "kcal over"}</span></div>
-    <div class="rc-lines">${line("Budget", num(goal))}${weekOn() && weekSoFar(T).all.length ? line("This week", num(Math.abs(weekSoFar(T).sumAll)) + (weekSoFar(T).sumAll >= 0 ? " ahead" : " short"), weekSoFar(T).sumAll >= 0 ? "ok" : "") : ""}${line("Eaten", "− " + num(eaten))}${b ? line("Burned", num(b.total) + (S.settings.burnGoal ? `/${num(S.settings.burnGoal)}` : ""), b.total >= (S.settings.burnGoal || 1e9) ? "ok" : "muted") : ""}${line("Protein", `${prot}/${S.settings.protein} g`, prot >= S.settings.protein ? "ok" : "")}${S.settings.fiber ? line("Fiber", `${Math.round(macroOf(T, "fiber"))}/${S.settings.fiber} g`, macroOf(T, "fiber") >= S.settings.fiber ? "ok" : "") : ""}</div></div>
+    <div class="rc-lines">${line("Budget", num(goal) + (weekOn() && weekAdj(T) ? ` <small class="adj">(${weekAdj(T) > 0 ? "+" : "−"}${Math.abs(weekAdj(T))} week)</small>` : ""))}${weekOn() && weekSoFar(T).all.length ? line("This week", num(Math.abs(weekSoFar(T).sumAll)) + (weekSoFar(T).sumAll >= 0 ? " ahead" : " short"), weekSoFar(T).sumAll >= 0 ? "ok" : "") : ""}${line("Eaten", "− " + num(eaten))}${b ? line("Burned", num(b.total) + (S.settings.burnGoal ? `/${num(S.settings.burnGoal)}` : ""), b.total >= (S.settings.burnGoal || 1e9) ? "ok" : "muted") : ""}${line("Protein", `${prot}/${S.settings.protein} g`, prot >= S.settings.protein ? "ok" : "")}${S.settings.fiber ? line("Fiber", `${Math.round(macroOf(T, "fiber"))}/${S.settings.fiber} g`, macroOf(T, "fiber") >= S.settings.fiber ? "ok" : "") : ""}</div></div>
     <div class="rc-bar"><i class="${left < 0 ? "over" : ""}" style="width:${clamp(eaten / Math.max(goal, 1) * 100, 0, 100)}%"></i></div></button>`;
 }
 function countUp() {
@@ -5444,7 +5445,7 @@ function weekRaw(T) {
   return Math.max(-WEEK_CAP, Math.min(WEEK_CAP, Math.round(w.sum / Math.max(1, w.left) / 10) * 10));
 }
 // catching up: eat a bit less, move a bit more, or half and half. Being ahead always means you can eat a bit more.
-const catchMode = () => S.settings.catchup || "both";
+const catchMode = () => S.settings.catchup || "eat"; // default: the budget itself adjusts
 function weekPlan(T) {
   const raw = weekRaw(T); if (raw >= 0) return { raw, eat: raw, steps: 0 };
   const share = catchMode() === "eat" ? 1 : catchMode() === "move" ? 0 : 0.5;
